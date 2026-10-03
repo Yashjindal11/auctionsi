@@ -15,8 +15,8 @@ from auctionsi._version import __version__
 
 
 def git_commit(cwd: str | Path | None = None) -> str | None:
-    """Commit hash of the git repository at ``cwd`` (``None`` if unavailable/dirty-free check
-    not attempted). A ``+dirty`` suffix marks uncommitted changes."""
+    """Commit hash of the git repository at ``cwd`` (``None`` if unavailable). A ``+dirty``
+    suffix marks uncommitted changes to tracked files."""
     git = shutil.which("git")
     if git is None:
         return None
@@ -27,7 +27,11 @@ def git_commit(cwd: str | Path | None = None) -> str | None:
         if head.returncode != 0:
             return None
         dirty = subprocess.run(  # noqa: S603
-            [git, "status", "--porcelain"], cwd=cwd, capture_output=True, text=True, timeout=5
+            [git, "status", "--porcelain", "--untracked-files=no"],
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            timeout=5,
         )
     except (OSError, subprocess.SubprocessError):
         return None
