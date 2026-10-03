@@ -4,9 +4,11 @@ import json
 import threading
 from collections.abc import Iterator
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 from typing import Any
 
 import pytest
+import yaml
 
 from auctionsi.adapters import (
     HTTPAdapterError,
@@ -16,6 +18,8 @@ from auctionsi.adapters import (
     PythonFunctionAgent,
 )
 from auctionsi.adapters.http_client import post_json
+from auctionsi.adapters.specs import agent_spec, build_agent
+from auctionsi.cli.main import main
 from auctionsi.core import BidContext, Contract, Task
 from auctionsi.errors import ValidationError
 from auctionsi.verification import ExactMatchVerifier, SchemaVerifier
@@ -71,6 +75,35 @@ def server() -> Iterator[str]:
 
 
 CTX = BidContext("a", "first_price_reverse", 0.0, True, "credits")
+
+
+def test_specs_build_http_and_simulated_agents(
+    server: str,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    spec = {"kind": "http", "agent_id": "remote", "base_url": server, "capabilities": ["analysis"]}
+    agent = build_agent(spec)
+    assert isinstance(agent, HTTPAgent)
+    assert build_agent(agent_spec(agent)).describe() == agent.describe()
+    sim = build_agent({"agent_id": "s", "capabilities": ["x"], "cost_model": {"fixed_cost": 0.1}})
+    assert agent_spec(sim)["kind"] == "simulated"
+    for bad in ({"kind": "rpc"}, {"kind": "http", "agent_id": "x"}, {"kind": "http", "evil": 1}):
+        with pytest.raises(ValidationError):
+            build_agent(bad)
+    with pytest.raises(ValidationError):
+        agent_spec(HumanAgent("h", capabilities=["x"]))
+
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "agents.yaml").write_text(yaml.safe_dump({"agents": [spec]}), encoding="utf-8")
+    (tmp_path / "auctionsi.yaml").write_text(
+        "verification: {verifier: {name: exact_match, expected: 42, key: answer}}\n",
+        encoding="utf-8",
+    )
+    assert main(["agent", "register", "agents.yaml"]) == 0
+    assert main(["auction", "run", "--type", "analysis", "--budget", "1"]) == 0
+    assert "Winner: remote" in capsys.readouterr().out
 
 
 def test_http_agent_end_to_end(

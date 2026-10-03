@@ -115,3 +115,16 @@ class HTTPAgent(Agent):
 
     def describe(self) -> dict[str, Any]:
         return {**super().describe(), "endpoint": self.base_url}
+
+    def spec(self) -> dict[str, Any]:
+        """Declarative spec for registries; holds the env var *name*, never the token."""
+        return {
+            "kind": "http",
+            "agent_id": self.agent_id,
+            "base_url": self.base_url,
+            "capabilities": [c.to_dict() for c in self.capabilities],
+            "timeout": self.timeout,
+            "max_response_bytes": self.max_response_bytes,
+            "token_env": self.token_env,
+            "max_concurrent_tasks": self.max_concurrent_tasks,
+        }

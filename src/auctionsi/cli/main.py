@@ -13,6 +13,7 @@ from typing import Any
 import yaml
 
 from auctionsi._version import __version__
+from auctionsi.adapters.specs import agent_spec, build_agent
 from auctionsi.config import DEFAULT_CONFIG_YAML, MarketConfig
 from auctionsi.core.task import Task
 from auctionsi.errors import AuctionSIError, ConfigurationError, NotFoundError, ValidationError
@@ -22,7 +23,6 @@ from auctionsi.market.replay import replay_auction
 from auctionsi.market.trace import format_trace
 from auctionsi.reputation.base import MultiDimensionalReputation
 from auctionsi.security.loading import load_config_file
-from auctionsi.simulation.agents import agent_from_spec
 from auctionsi.simulation.generators import generate_agents
 from auctionsi.storage.sqlite import SQLiteStore
 
@@ -104,7 +104,7 @@ class Context:
         for profile in self.store.list_agents():
             spec = profile.get("spec")
             if spec:
-                market.register(agent_from_spec(spec))
+                market.register(build_agent(spec))
         market.attach_store(self.store)
         return market
 
@@ -151,8 +151,8 @@ def cmd_agent_register(ctx: Context) -> int:
     if not isinstance(specs, list):
         raise ConfigurationError("agent file must be a list or {agents: [...]}")
     for spec in specs:
-        agent = agent_from_spec(spec)
-        ctx.store.save_agent(agent.describe(), agent.spec())
+        agent = build_agent(spec)
+        ctx.store.save_agent(agent.describe(), agent_spec(agent))
         print(f"registered {agent.agent_id}")
     return 0
 
@@ -162,7 +162,7 @@ def cmd_agent_generate(ctx: Context) -> int:
         ctx.args.count, seed=ctx.args.seed, strategy=ctx.args.strategy, prefix=ctx.args.prefix
     )
     for agent in agents:
-        ctx.store.save_agent(agent.describe(), agent.spec())
+        ctx.store.save_agent(agent.describe(), agent_spec(agent))
     print(f"registered {len(agents)} simulated agents")
     return 0
 
