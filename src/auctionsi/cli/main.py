@@ -415,6 +415,17 @@ def cmd_experiment_compare(ctx: Context) -> int:
     return 0
 
 
+def cmd_calibration(ctx: Context) -> int:
+    from auctionsi.reports import calibration_report, calibration_table, reliability_bins
+
+    observations = ctx.store.observations(ctx.args.agent)
+    if ctx.args.json:
+        _dump({"agents": calibration_table(observations), "bins": reliability_bins(observations)})
+    else:
+        print(calibration_report(observations))
+    return 0
+
+
 def _print_experiment(result: Any) -> None:
     summary = result.summary()
     rows = []
@@ -568,6 +579,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("auction_id")
     p = add(sub, "report", cmd_report, "regenerate an experiment report")
     p.add_argument("results_dir")
+    p = add(sub, "calibration", cmd_calibration, "claimed vs delivered quality and latency")
+    p.add_argument("--agent")
+    json_flag(p)
     return parser
 
 
