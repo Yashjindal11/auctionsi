@@ -25,6 +25,7 @@ from auctionsi.market.trace import format_trace
 from auctionsi.reputation.base import MultiDimensionalReputation
 from auctionsi.security.loading import load_config_file
 from auctionsi.simulation.generators import generate_agents
+from auctionsi.storage import SQLStore, open_store
 from auctionsi.storage.sqlite import SQLiteStore
 
 EXAMPLE_TASK = {
@@ -83,17 +84,17 @@ def _dump(data: Any) -> None:
 class Context:
     def __init__(self, args: argparse.Namespace) -> None:
         self.args = args
-        self.db_path = Path(args.db)
+        self.db_path = args.db
         config_path = Path(args.config) if args.config else Path("auctionsi.yaml")
         self.config = MarketConfig.load(config_path if config_path.exists() else None)
         if args.config and not config_path.exists():
             raise ConfigurationError(f"config file {config_path} does not exist")
-        self._store: SQLiteStore | None = None
+        self._store: SQLStore | None = None
 
     @property
-    def store(self) -> SQLiteStore:
+    def store(self) -> SQLStore:
         if self._store is None:
-            self._store = SQLiteStore(self.db_path, run_id=uuid.uuid4().hex[:8])
+            self._store = open_store(self.db_path, run_id=uuid.uuid4().hex[:8])
         return self._store
 
     def market(self) -> Marketplace:
@@ -500,7 +501,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--version", action="version", version=f"auctionsi {__version__}")
     parser.add_argument(
-        "--db", default="auctionsi.db", help="SQLite database (default: ./auctionsi.db)"
+        "--db",
+        default="auctionsi.db",
+        help="SQLite path or postgresql:// URL (default: ./auctionsi.db)",
     )
     parser.add_argument("--config", help="market config (default: ./auctionsi.yaml if present)")
     sub = parser.add_subparsers(dest="command", required=True)
