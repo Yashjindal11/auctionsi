@@ -10,10 +10,11 @@ from typing import Any
 class Settlement:
     """Money-like flows for one contract, in ``unit`` units.
 
-    ``payment`` and ``bonus`` flow buyer -> agent; ``penalty`` flows agent -> buyer.
-    ``refund`` is the part of the escrowed ``payment_price`` the buyer gets back.
-    ``buyer_cost = payment + bonus - penalty``; ``agent_revenue`` is the same amount
-    from the agent's side.
+    Reverse (procurement): ``payment`` and ``bonus`` flow task owner -> agent.
+    Forward (the agent acquires something): ``payment`` flows agent -> task owner.
+    ``penalty`` always flows agent -> task owner. ``buyer_cost`` is the task owner's
+    net outflow (negative when it earns money); ``agent_revenue`` is the same amount
+    seen from the agent.
     """
 
     contract_id: str
@@ -29,10 +30,12 @@ class Settlement:
     on_time: bool
     reason: str
     policy: str
+    direction: str = "reverse"
 
     @property
     def buyer_cost(self) -> float:
-        return self.payment + self.bonus - self.penalty
+        signed = self.payment if self.direction == "reverse" else -self.payment
+        return signed + self.bonus - self.penalty
 
     @property
     def agent_revenue(self) -> float:

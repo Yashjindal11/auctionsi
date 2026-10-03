@@ -43,12 +43,15 @@ class SettlementPolicy(ABC):
             payment=payment,
             penalty=penalty,
             bonus=bonus,
-            refund=max(0.0, contract.payment_price - payment),
+            refund=max(0.0, contract.payment_price - payment)
+            if contract.direction == "reverse"
+            else 0.0,
             quality_score=verification.quality_score,
             passed=verification.passed,
             on_time=on_time,
             reason=reason,
             policy=self.name,
+            direction=contract.direction,
         )
 
 

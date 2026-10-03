@@ -59,6 +59,7 @@ class Contract:
     estimated_quality: float | None = None
     estimated_latency: float | None = None
     attempt: int = 1
+    direction: str = "reverse"
     status: ContractStatus = ContractStatus.CREATED
     history: list[tuple[str, float]] = field(default_factory=list)
 
@@ -102,6 +103,7 @@ class Contract:
             "estimated_quality": self.estimated_quality,
             "estimated_latency": self.estimated_latency,
             "attempt": self.attempt,
+            "direction": self.direction,
             "status": self.status.value,
             "history": [list(item) for item in self.history],
         }

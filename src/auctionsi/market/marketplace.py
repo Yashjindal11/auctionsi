@@ -444,6 +444,7 @@ class Marketplace:
             executor=self._pool() if self.bid_timeout is not None else None,
             bid_keys=self.bid_keys,
             require_signatures=self.require_signatures,
+            direction=mechanism.direction,
         )
         pending = _Pending(
             intake, discovery, mechanism, policy, verifier, settlement, reopens_left, exclude
@@ -613,6 +614,7 @@ class Marketplace:
             estimated_quality=bid.estimated_quality,
             estimated_latency=bid.estimated_latency,
             attempt=attempt,
+            direction=pending.mechanism.direction,
         )
         auction.contracts.append(contract)
         ids: dict[str, Any] = {"agent_id": bid.agent_id, "contract_id": contract.contract_id}

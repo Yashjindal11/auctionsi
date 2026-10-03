@@ -120,6 +120,7 @@ class RejectionCode(StrEnum):
     MALFORMED = "malformed"
     INVALID_PRICE = "invalid_price"
     OVER_BUDGET = "over_budget"
+    BELOW_RESERVE = "below_reserve"
     INVALID_LATENCY = "invalid_latency"
     DEADLINE_INFEASIBLE = "deadline_infeasible"
     INVALID_ESTIMATE = "invalid_estimate"

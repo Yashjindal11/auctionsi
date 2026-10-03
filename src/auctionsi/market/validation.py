@@ -41,8 +41,13 @@ def validate_proposal(
     eligible: bool,
     now: float,
     config: BidValidationConfig,
+    direction: str = "reverse",
 ) -> list[BidRejection]:
-    """Return every reason the proposal is invalid (empty list = valid)."""
+    """Return every reason the proposal is invalid (empty list = valid).
+
+    Reverse auctions cap prices at the task budget; forward auctions (agents paying
+    to acquire something) require at least the task's reserve price instead.
+    """
     if task is None:
         return [BidRejection(R.UNKNOWN_TASK, "task does not exist")]
     if agent is None or not eligible:
@@ -58,7 +63,13 @@ def validate_proposal(
     else:
         if proposal.price < 0 and not config.allow_negative_prices:
             out.append(BidRejection(R.INVALID_PRICE, "negative prices are not allowed"))
-        if config.enforce_budget and task.budget is not None and proposal.price > task.budget:
+        if direction == "forward":
+            reserve = task.reserve_price
+            if reserve is not None and proposal.price < reserve:
+                out.append(
+                    BidRejection(R.BELOW_RESERVE, f"price {proposal.price} below reserve {reserve}")
+                )
+        elif config.enforce_budget and task.budget is not None and proposal.price > task.budget:
             out.append(
                 BidRejection(R.OVER_BUDGET, f"price {proposal.price} exceeds budget {task.budget}")
             )

@@ -44,6 +44,7 @@ class Task:
     verification_policy: str | None = None
     payment_policy: str | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)
+    reserve_price: float | None = None
 
     def __post_init__(self) -> None:
         check_identifier(self.task_id, "task_id")
@@ -73,6 +74,11 @@ class Task:
             check_number(min_quality, "min_quality", minimum=0, maximum=1, allow_none=True),
         )
         set_(self, "value", check_number(self.value, "value", allow_none=True))
+        set_(
+            self,
+            "reserve_price",
+            check_number(self.reserve_price, "reserve_price", minimum=0, allow_none=True),
+        )
         set_(self, "created_at", check_number(self.created_at, "created_at", minimum=0))
         check_identifier(self.unit, "unit")
         if self.input_reference is not None:
@@ -109,6 +115,7 @@ class Task:
             "verification_policy": self.verification_policy,
             "payment_policy": self.payment_policy,
             "metadata": dict(self.metadata),
+            "reserve_price": self.reserve_price,
         }
 
     @classmethod

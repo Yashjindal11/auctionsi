@@ -42,6 +42,7 @@ class BidIntake:
         executor: Executor | None = None,
         bid_keys: Mapping[str, bytes] | None = None,
         require_signatures: bool = False,
+        direction: str = "reverse",
     ) -> None:
         self.auction = auction
         self.agents = agents
@@ -55,6 +56,7 @@ class BidIntake:
         self.executor = executor
         self.bid_keys = bid_keys or {}
         self.require_signatures = require_signatures
+        self.direction = direction
         self._revisions: dict[str, int] = {}
 
     def context(self, round: int = 0) -> BidContext:
@@ -128,6 +130,7 @@ class BidIntake:
             eligible=agent_id in auction.participants,
             now=now,
             config=self.config,
+            direction=self.direction,
         )
         previous = auction.bids.get(agent_id)
         if not reasons and isinstance(proposal, BidProposal):
