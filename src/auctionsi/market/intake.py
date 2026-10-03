@@ -15,6 +15,7 @@ from auctionsi.market.clock import Clock, IdGenerator
 from auctionsi.market.events import EventBus, EventType
 from auctionsi.market.validation import BidValidationConfig, validate_proposal
 from auctionsi.security import DEFAULT_LIMITS, Limits
+from auctionsi.security.signing import verify_proposal
 
 R = RejectionCode
 
@@ -39,6 +40,8 @@ class BidIntake:
         limits: Limits = DEFAULT_LIMITS,
         timeout: float | None = None,
         executor: Executor | None = None,
+        bid_keys: Mapping[str, bytes] | None = None,
+        require_signatures: bool = False,
     ) -> None:
         self.auction = auction
         self.agents = agents
@@ -50,6 +53,8 @@ class BidIntake:
         self.limits = limits
         self.timeout = timeout
         self.executor = executor
+        self.bid_keys = bid_keys or {}
+        self.require_signatures = require_signatures
         self._revisions: dict[str, int] = {}
 
     def context(self, round: int = 0) -> BidContext:
@@ -125,6 +130,8 @@ class BidIntake:
             config=self.config,
         )
         previous = auction.bids.get(agent_id)
+        if not reasons and isinstance(proposal, BidProposal):
+            reasons = self._signature_problems(agent_id, proposal)
         if not reasons and len(auction.bid_log) >= self.limits.max_bids_per_auction:
             reasons = [BidRejection(R.TOO_MANY_BIDS, "auction bid limit reached")]
         limit = self.config.max_bids_per_operator
@@ -188,6 +195,21 @@ class BidIntake:
             data={"bid": bid.to_dict(), "round": round},
         )
         return bid
+
+    def _signature_problems(self, agent_id: str, proposal: BidProposal) -> list[BidRejection]:
+        key = self.bid_keys.get(agent_id)
+        if key is None:
+            if self.require_signatures:
+                return [BidRejection(R.BAD_SIGNATURE, "no signing key registered for agent")]
+            return []
+        ok = verify_proposal(
+            proposal,
+            key,
+            agent_id=agent_id,
+            auction_id=self.auction.auction_id,
+            task_id=self.auction.task_id,
+        )
+        return [] if ok else [BidRejection(R.BAD_SIGNATURE, "signature missing or invalid")]
 
     def expire_stale(self) -> None:
         """Drop bids whose ``valid_until`` has passed (called when the auction closes)."""

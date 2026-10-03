@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 import math
 from collections import deque
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Mapping
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FutureTimeout
 from dataclasses import dataclass, field
@@ -103,6 +103,8 @@ class Marketplace:
         bid_timeout: float | None = None,
         execution_timeout: float | None = None,
         max_workers: int = 16,
+        bid_keys: Mapping[str, bytes] | None = None,
+        require_signatures: bool = False,
     ) -> None:
         self.name = name
         self.mechanism = mechanism or FirstPriceReverseAuction()
@@ -124,6 +126,9 @@ class Marketplace:
         self.execution_timeout = execution_timeout
         self.max_workers = max_workers
         self._executor: ThreadPoolExecutor | None = None
+        # HMAC keys per agent: bids from these agents must be signed (see security.signing).
+        self.bid_keys = dict(bid_keys or {})
+        self.require_signatures = require_signatures
         self.log: EventLog | None = EventLog(max_events) if keep_events else None
         self._collecting: dict[str, list[Event]] = {}
         if self.log is not None:
@@ -437,6 +442,8 @@ class Marketplace:
             limits=self.limits,
             timeout=self.bid_timeout,
             executor=self._pool() if self.bid_timeout is not None else None,
+            bid_keys=self.bid_keys,
+            require_signatures=self.require_signatures,
         )
         pending = _Pending(
             intake, discovery, mechanism, policy, verifier, settlement, reopens_left, exclude
