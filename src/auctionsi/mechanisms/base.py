@@ -30,6 +30,7 @@ class Award:
     payment: float
     rank: int
     payment_rule: str
+    quantity: float | None = None
 
     @property
     def bid(self) -> Bid:
@@ -47,6 +48,7 @@ class Award:
             "payment": self.payment,
             "rank": self.rank,
             "payment_rule": self.payment_rule,
+            "quantity": self.quantity,
             "score": self.scored.score,
         }
 

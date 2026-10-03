@@ -80,6 +80,7 @@ def default_registry() -> PluginRegistry:
         m.OpenReverseAuction,
         m.ForwardAuction,
         m.BundleReverseAuction,
+        m.CapacityAuction,
     ):
         reg.mechanisms.register(cls.name, cls)
     for pcls in (

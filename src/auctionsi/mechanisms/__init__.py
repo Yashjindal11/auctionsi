@@ -2,6 +2,7 @@
 
 from auctionsi.mechanisms.base import AuctionMechanism, Award, MechanismOutcome
 from auctionsi.mechanisms.bundle import BundleReverseAuction
+from auctionsi.mechanisms.capacity import CapacityAuction
 from auctionsi.mechanisms.first_price import FirstPriceReverseAuction
 from auctionsi.mechanisms.forward import ForwardAuction
 from auctionsi.mechanisms.multi_winner import MultiWinnerReverseAuction
@@ -12,6 +13,7 @@ __all__ = [
     "AuctionMechanism",
     "Award",
     "BundleReverseAuction",
+    "CapacityAuction",
     "FirstPriceReverseAuction",
     "ForwardAuction",
     "MechanismOutcome",
