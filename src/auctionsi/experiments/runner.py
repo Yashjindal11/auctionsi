@@ -127,14 +127,18 @@ class ExperimentResult:
 
         out = Path(directory)
         out.mkdir(parents=True, exist_ok=True)
-        (out / "manifest.json").write_text(json.dumps(self.manifest, indent=2, default=str))
-        (out / "results.json").write_text(json.dumps(self.to_dict(), indent=2, default=str))
-        (out / "report.md").write_text(experiment_report(self))
+        (out / "manifest.json").write_text(
+            json.dumps(self.manifest, indent=2, default=str), encoding="utf-8"
+        )
+        (out / "results.json").write_text(
+            json.dumps(self.to_dict(), indent=2, default=str), encoding="utf-8"
+        )
+        (out / "report.md").write_text(experiment_report(self), encoding="utf-8")
         return out
 
     @classmethod
     def load(cls, directory: str | Path) -> ExperimentResult:
-        data = json.loads((Path(directory) / "results.json").read_text())
+        data = json.loads((Path(directory) / "results.json").read_text(encoding="utf-8"))
         manifest = data["manifest"]
         config = ExperimentConfig.model_validate(manifest["config"])
         runs = [ArmRun(**r) for r in data["runs"]]

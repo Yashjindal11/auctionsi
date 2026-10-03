@@ -455,7 +455,7 @@ def cmd_report(ctx: Context) -> int:
 
     result = ExperimentResult.load(ctx.args.results_dir)
     text = experiment_report(result)
-    (Path(ctx.args.results_dir) / "report.md").write_text(text)
+    (Path(ctx.args.results_dir) / "report.md").write_text(text, encoding="utf-8")
     print(text)
     return 0
 

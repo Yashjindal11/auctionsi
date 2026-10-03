@@ -13,7 +13,7 @@ BLOCK = re.compile(r"```python\n(.*?)```", re.DOTALL)
 CASES = [
     pytest.param(code, id=f"{path.name}:{i}")
     for path in FILES
-    for i, code in enumerate(BLOCK.findall(path.read_text()))
+    for i, code in enumerate(BLOCK.findall(path.read_text(encoding="utf-8")))
 ]
 
 

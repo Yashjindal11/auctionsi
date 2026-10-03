@@ -96,10 +96,10 @@ def test_run_experiment_is_reproducible_and_paired(tmp_path: Path) -> None:
     assert all(c.p_adjusted is not None or c.p_value is None for c in comparisons)
 
     out = first.save(tmp_path / "run")
-    manifest = json.loads((out / "manifest.json").read_text())
+    manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     for key in ("auctionsi_version", "python_version", "git_commit", "seed", "config"):
         assert key in manifest
-    report = (out / "report.md").read_text()
+    report = (out / "report.md").read_text(encoding="utf-8")
     for heading in (
         "## Hypothesis",
         "## Experimental setup",

@@ -147,7 +147,7 @@ def main() -> int:
     out_dir = Path(__file__).parent / "results"
     out_dir.mkdir(exist_ok=True)
     out = out_dir / f"{platform.machine()}-{results['date']}.json"
-    out.write_text(json.dumps(results, indent=2))
+    out.write_text(json.dumps(results, indent=2), encoding="utf-8")
 
     print(f"\nAuctionSI {__version__}, Python {results['python']}, {results['platform']}\n")
     print(
