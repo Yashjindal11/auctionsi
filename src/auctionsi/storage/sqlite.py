@@ -101,12 +101,22 @@ def _dumps(value: Any) -> str:
 
 
 class SQLiteStore:
-    """Implements :class:`~auctionsi.storage.base.MarketStore` on SQLite."""
+    """Implements :class:`~auctionsi.storage.base.MarketStore` on SQLite.
 
-    def __init__(self, path: str | Path = ":memory:", *, run_id: str = "default") -> None:
+    ``check_same_thread=False`` allows use from a server's worker threads; callers
+    must then serialise access themselves (the API does so with a lock).
+    """
+
+    def __init__(
+        self,
+        path: str | Path = ":memory:",
+        *,
+        run_id: str = "default",
+        check_same_thread: bool = True,
+    ) -> None:
         self.path = str(path)
         self.run_id = run_id
-        self.conn = sqlite3.connect(self.path)
+        self.conn = sqlite3.connect(self.path, check_same_thread=check_same_thread)
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("PRAGMA foreign_keys = ON")
         if self.path != ":memory:":

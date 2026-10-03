@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import uuid
 from collections.abc import Sequence
@@ -426,6 +427,25 @@ def cmd_calibration(ctx: Context) -> int:
     return 0
 
 
+def cmd_serve(ctx: Context) -> int:
+    try:
+        import uvicorn
+    except ImportError as exc:
+        raise ConfigurationError(
+            'serving needs the API extra: pip install "auctionsi[api]"'
+        ) from exc
+    from auctionsi.api import create_app
+
+    ctx.close()
+    app = create_app(ctx.db_path, config=ctx.config)
+    if ctx.args.host not in ("127.0.0.1", "localhost", "::1") and not os.environ.get(
+        "AUCTIONSI_API_KEY"
+    ):
+        print("warning: serving beyond localhost without AUCTIONSI_API_KEY set", file=sys.stderr)
+    uvicorn.run(app, host=ctx.args.host, port=ctx.args.port, log_level="info")
+    return 0
+
+
 def _print_experiment(result: Any) -> None:
     summary = result.summary()
     rows = []
@@ -582,6 +602,9 @@ def build_parser() -> argparse.ArgumentParser:
     p = add(sub, "calibration", cmd_calibration, "claimed vs delivered quality and latency")
     p.add_argument("--agent")
     json_flag(p)
+    p = add(sub, "serve", cmd_serve, "run the REST/WebSocket API and dashboard")
+    p.add_argument("--host", default="127.0.0.1")
+    p.add_argument("--port", type=int, default=8000)
     return parser
 
 
