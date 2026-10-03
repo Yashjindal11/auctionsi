@@ -94,6 +94,21 @@ class BidIntake:
         previous = auction.bids.get(agent_id)
         if not reasons and len(auction.bid_log) >= self.limits.max_bids_per_auction:
             reasons = [BidRejection(R.TOO_MANY_BIDS, "auction bid limit reached")]
+        limit = self.config.max_bids_per_operator
+        if not reasons and previous is None and limit is not None and agent is not None:
+            operator = agent.metadata.get("operator", agent_id)
+            same = sum(
+                1
+                for other in auction.bids
+                if other in self.agents
+                and self.agents[other].metadata.get("operator", other) == operator
+            )
+            if same >= limit:
+                reasons = [
+                    BidRejection(
+                        R.TOO_MANY_BIDS, f"operator {operator!r} already has {same} bid(s)"
+                    )
+                ]
         if not reasons and previous is not None:
             if not revision:
                 reasons = [BidRejection(R.DUPLICATE_BID, "agent already has a bid")]

@@ -14,13 +14,19 @@ R = RejectionCode
 
 @dataclass(frozen=True, slots=True)
 class BidValidationConfig:
-    """Which rules reject a bid. All on by default."""
+    """Which rules reject a bid. All price/deadline/quality rules are on by default.
+
+    ``max_bids_per_operator`` is a Sybil defence: it caps how many identities that
+    declare the same ``metadata["operator"]`` may bid in one auction. It is only as
+    good as the identity verification behind that field.
+    """
 
     enforce_budget: bool = True
     enforce_deadline: bool = True
     enforce_min_quality: bool = True
     allow_negative_prices: bool = False
     require_latency_estimate: bool = False
+    max_bids_per_operator: int | None = None
 
 
 def _num(value: object) -> bool:
