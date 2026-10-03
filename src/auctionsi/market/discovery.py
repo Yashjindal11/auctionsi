@@ -25,17 +25,19 @@ def find_agents(
     *,
     active_contracts: Mapping[str, int] | None = None,
     exclude: Iterable[str] = (),
+    presorted: bool = False,
 ) -> DiscoveryResult:
     """Filter agents by availability, capability, formats, constraints and capacity.
 
     Candidates are returned sorted by agent id so discovery order never depends on
-    registration order.
+    registration order (pass ``presorted=True`` if ``agents`` already is).
     """
     active = active_contracts or {}
     banned = set(exclude)
     candidates: list[Agent] = []
     excluded: dict[str, list[str]] = {}
-    for agent in sorted(agents, key=lambda a: a.agent_id):
+    ordered = agents if presorted else sorted(agents, key=lambda a: a.agent_id)
+    for agent in ordered:
         reasons: list[str] = []
         if agent.agent_id in banned:
             reasons.append("excluded for this auction")

@@ -95,8 +95,7 @@ class SimulatedAgent(Agent):
 
     # --------------------------------------------------------------- behaviour
 
-    def _proposal(self, task: Task, price: float) -> BidProposal:
-        inputs = self._inputs(task)
+    def _proposal(self, inputs: BidInputs, price: float) -> BidProposal:
         reported_quality = min(1.0, max(0.0, inputs.quality + self.quality_report_bias))
         confidence = min(1.0, max(0.0, self.reliability + self.quality_report_bias))
         return BidProposal(
@@ -108,12 +107,14 @@ class SimulatedAgent(Agent):
         )
 
     def bid(self, task: Task, context: BidContext) -> BidProposal | None:
-        price = self.strategy.price(self._inputs(task))
-        return None if price is None else self._proposal(task, price)
+        inputs = self._inputs(task)
+        price = self.strategy.price(inputs)
+        return None if price is None else self._proposal(inputs, price)
 
     def revise_bid(self, task: Task, view: OpenAuctionView) -> BidProposal | None:
-        price = self.strategy.revise(self._inputs(task), view)
-        return None if price is None else self._proposal(task, price)
+        inputs = self._inputs(task)
+        price = self.strategy.revise(inputs, view)
+        return None if price is None else self._proposal(inputs, price)
 
     def execute(self, task: Task, contract: Contract) -> ExecutionResult:
         expected = self.expected_latency(task)

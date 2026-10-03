@@ -35,7 +35,19 @@ class Observation:
     timestamp: float = 0.0
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        return {
+            "agent_id": self.agent_id,
+            "task_type": self.task_type,
+            "success": self.success,
+            "quality": self.quality,
+            "on_time": self.on_time,
+            "latency": self.latency,
+            "price": self.price,
+            "estimated_quality": self.estimated_quality,
+            "estimated_latency": self.estimated_latency,
+            "violation": self.violation,
+            "timestamp": self.timestamp,
+        }
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> Observation:
@@ -55,7 +67,15 @@ class AgentFeatures:
     latency_error: float | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        return {
+            "agent_id": self.agent_id,
+            "observations": self.observations,
+            "success_estimate": self.success_estimate,
+            "avg_quality": self.avg_quality,
+            "quality_bias": self.quality_bias,
+            "on_time_rate": self.on_time_rate,
+            "latency_error": self.latency_error,
+        }
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> AgentFeatures:

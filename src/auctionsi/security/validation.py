@@ -86,6 +86,8 @@ def check_mapping(
     """A JSON-serialisable mapping with string keys and a bounded encoded size."""
     if not isinstance(value, Mapping):
         raise ValidationError(f"{field} must be a mapping")
+    if not value:
+        return {}
     if not all(isinstance(key, str) for key in value):
         raise ValidationError(f"{field} keys must be strings")
     check_json_size(value, field, max_bytes or limits.max_mapping_bytes)

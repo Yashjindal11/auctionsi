@@ -121,6 +121,7 @@ class Agent(ABC):
         if not caps:
             raise ValidationError(f"agent {agent_id} must declare at least one capability")
         self._capabilities = caps
+        self._capability_index = {c.name: c for c in caps}
         self.cost_model = cost_model or CostModel()
         if isinstance(max_concurrent_tasks, bool) or not isinstance(max_concurrent_tasks, int):
             raise ValidationError("max_concurrent_tasks must be an integer")
@@ -141,9 +142,10 @@ class Agent(ABC):
         if not caps:
             raise ValidationError("an agent must keep at least one capability")
         self._capabilities = caps
+        self._capability_index = {c.name: c for c in caps}
 
     def capability(self, name: str) -> Capability | None:
-        return next((c for c in self._capabilities if c.name == name), None)
+        return self._capability_index.get(name)
 
     @abstractmethod
     def bid(self, task: Task, context: BidContext) -> BidProposal | None:

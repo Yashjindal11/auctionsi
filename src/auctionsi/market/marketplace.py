@@ -120,6 +120,7 @@ class Marketplace:
         if store is not None:
             self.attach_store(store)
         self._agents: dict[str, Agent] = {}
+        self._sorted_agents: list[Agent] | None = None
         self._tasks: dict[str, Task] = {}
         self._busy: dict[str, list[float]] = {}
         self._pending: dict[str, _Pending] = {}
@@ -157,6 +158,7 @@ class Marketplace:
         if agent.agent_id in self._agents:
             raise ValidationError(f"agent {agent.agent_id} is already registered")
         self._agents[agent.agent_id] = agent
+        self._sorted_agents = None
         profile = agent.describe()
         self.bus.publish(
             E.AGENT_REGISTERED, self.clock.now(), agent_id=agent.agent_id, data=profile
@@ -167,6 +169,7 @@ class Marketplace:
     def unregister(self, agent_id: str) -> Agent:
         agent = self.get_agent(agent_id)
         del self._agents[agent_id]
+        self._sorted_agents = None
         self.bus.publish(E.AGENT_UNREGISTERED, self.clock.now(), agent_id=agent_id)
         return agent
 
@@ -196,8 +199,14 @@ class Marketplace:
         return counts
 
     def find_agents(self, task: Task, *, exclude: Iterable[str] = ()) -> DiscoveryResult:
+        if self._sorted_agents is None:
+            self._sorted_agents = sorted(self._agents.values(), key=lambda a: a.agent_id)
         return find_agents(
-            task, self._agents.values(), active_contracts=self.active_contracts(), exclude=exclude
+            task,
+            self._sorted_agents,
+            active_contracts=self.active_contracts(),
+            exclude=exclude,
+            presorted=True,
         )
 
     # ------------------------------------------------------------------- tasks
