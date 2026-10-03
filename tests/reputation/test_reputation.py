@@ -59,6 +59,31 @@ def test_profile_counts_and_rates() -> None:
     assert profile.violations == pytest.approx(1)
 
 
+def test_undelivered_work_does_not_count_toward_quality_or_calibration() -> None:
+    rep = MultiDimensionalReputation()
+    rep.record(obs(True, 0.8, est_q=0.9, est_l=12.0))
+    undelivered = Observation(
+        agent_id="a",
+        task_type="sql",
+        success=False,
+        quality=0.0,
+        on_time=False,
+        latency=3.0,
+        price=1.0,
+        estimated_quality=0.9,
+        estimated_latency=12.0,
+        violation=True,
+        delivered=False,
+    )
+    rep.record(undelivered)
+    profile = rep.profile("a")
+    assert profile is not None
+    assert profile.success_rate == pytest.approx(0.5)
+    assert profile.avg_quality == pytest.approx(0.8)
+    assert profile.quality_estimate_bias == pytest.approx(0.1)
+    assert profile.latency_estimate_error == pytest.approx(0.2)
+
+
 def test_newcomer_gets_prior_and_unknown_profile() -> None:
     rep = MultiDimensionalReputation(prior_successes=3, prior_failures=1)
     assert rep.profile("nobody") is None

@@ -680,6 +680,7 @@ class Marketplace:
             estimated_latency=bid.estimated_latency,
             violation=not verification.passed,
             timestamp=done,
+            delivered=execution.success,
         )
         self.reputation.record(observation)
         profile = self.reputation.profile(agent.agent_id, task.task_type)

@@ -20,10 +20,11 @@ def calibration_table(observations: Iterable[Observation]) -> list[dict[str, Any
     rows = []
     for agent_id in sorted(by_agent):
         history = by_agent[agent_id]
-        q = [(o.estimated_quality, o.quality) for o in history if o.estimated_quality is not None]
+        delivered = [o for o in history if o.delivered]
+        q = [(o.estimated_quality, o.quality) for o in delivered if o.estimated_quality is not None]
         lat = [
             abs(o.estimated_latency - o.latency) / o.latency
-            for o in history
+            for o in delivered
             if o.estimated_latency is not None and o.latency > 0
         ]
         rows.append(
@@ -45,7 +46,9 @@ def reliability_bins(observations: Iterable[Observation]) -> list[dict[str, Any]
     """Delivered quality grouped by claimed quality (a reliability diagram in a table)."""
     rows = []
     pairs = [
-        (o.estimated_quality, o.quality) for o in observations if o.estimated_quality is not None
+        (o.estimated_quality, o.quality)
+        for o in observations
+        if o.estimated_quality is not None and o.delivered
     ]
     for lo, hi in QUALITY_BINS:
         members = [(c, a) for c, a in pairs if lo <= c < hi]

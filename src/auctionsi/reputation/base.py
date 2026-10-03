@@ -33,6 +33,9 @@ class Observation:
     estimated_latency: float | None = None
     violation: bool = False
     timestamp: float = 0.0
+    #: False when execution itself failed (nothing was delivered to judge). Quality and
+    #: claim calibration only use delivered work, so they do not double-count reliability.
+    delivered: bool = True
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -47,6 +50,7 @@ class Observation:
             "estimated_latency": self.estimated_latency,
             "violation": self.violation,
             "timestamp": self.timestamp,
+            "delivered": self.delivered,
         }
 
     @classmethod
@@ -244,6 +248,7 @@ class _Accumulator:
     weight: float = 0.0
     successes: float = 0.0
     quality: float = 0.0
+    d_weight: float = 0.0
     on_time: float = 0.0
     violations: float = 0.0
     q_weight: float = 0.0
@@ -258,6 +263,7 @@ class _Accumulator:
             "weight",
             "successes",
             "quality",
+            "d_weight",
             "on_time",
             "violations",
             "q_weight",
@@ -277,9 +283,12 @@ class _Accumulator:
             self.failed += count
         self.weight += sign
         self.successes += sign * obs.success
-        self.quality += sign * obs.quality
         self.on_time += sign * obs.on_time
         self.violations += sign * obs.violation
+        if not obs.delivered:
+            return
+        self.quality += sign * obs.quality
+        self.d_weight += sign
         if obs.estimated_quality is not None:
             error = obs.estimated_quality - obs.quality
             self.q_weight += sign
@@ -346,7 +355,7 @@ class MultiDimensionalReputation(ReputationSystem):
                 (acc.successes + self.prior_successes)
                 / (w + self.prior_successes + self.prior_failures)
             ),
-            avg_quality=_clip(acc.quality / w) if w > 0 else None,
+            avg_quality=_clip(acc.quality / acc.d_weight) if acc.d_weight > 1e-12 else None,
             on_time_rate=_clip(acc.on_time / w) if w > 0 else None,
             quality_estimate_error=acc.q_abs / acc.q_weight if acc.q_weight > 1e-12 else None,
             quality_estimate_bias=acc.q_signed / acc.q_weight if acc.q_weight > 1e-12 else None,
