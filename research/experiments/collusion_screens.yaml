@@ -1,0 +1,22 @@
+name: collusion_screens
+description: >
+  A bid-rotation cartel of five agents (designated winner bids cost x1.6, others
+  cover at x2.2) against an otherwise competitive market. Measures buyer cost and
+  two simple screens from the procurement literature: the coefficient of variation
+  of bids per auction and the relative distance between the two lowest bids.
+hypothesis: >
+  The cartel raises average buyer cost; the screens move (higher relative distance
+  between the two lowest bids) when it is present.
+limitations:
+  - The cartel strategy is a simple rotation; real cartels adapt to screens.
+  - Screens are reported as market averages, not as a per-auction detector.
+seed: 31
+replications: 30
+environment:
+  agents: {count: 12, capabilities: [general], capabilities_per_agent: [1, 1]}
+  tasks: {count: 400, task_types: [general]}
+arms:
+  - {name: competitive}
+  - name: cartel
+    environment: {adversaries: {colluders: 5, winner_markup: 0.6, cover_markup: 1.2}}
+metrics: [average_cost, bid_cv, relative_distance, buyer_utility, hhi]

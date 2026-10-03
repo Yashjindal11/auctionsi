@@ -11,6 +11,23 @@ from auctionsi.simulation.adversarial import CollusiveStrategy
 ENV = {"agents": {"count": 6}, "tasks": {"count": 30}}
 
 
+def test_factor_levels_with_the_same_name_get_distinct_labels() -> None:
+    cfg = ExperimentConfig.from_mapping(
+        {
+            "factors": {
+                "environment.agents.reliability_distribution": [
+                    {"name": "uniform", "low": 0.9, "high": 1.0},
+                    {"name": "uniform", "low": 0.4, "high": 1.0},
+                ]
+            }
+        }
+    )
+    assert [a.name for a in cfg.resolved_arms()] == [
+        "agents.reliability_distribution=uniform(low=0.9,high=1.0)",
+        "agents.reliability_distribution=uniform(low=0.4,high=1.0)",
+    ]
+
+
 def test_factors_cross_with_arms() -> None:
     cfg = ExperimentConfig.from_mapping(
         {
@@ -36,8 +53,8 @@ def test_factors_cross_with_arms() -> None:
         }
     )
     assert [a.name for a in crossed.resolved_arms()] == [
-        "a|policy=weighted_score",
-        "b|policy=weighted_score",
+        "a|policy=weighted_score(price_weight=1)",
+        "b|policy=weighted_score(price_weight=1)",
     ]
 
 

@@ -1,0 +1,20 @@
+name: learning_bidders
+description: >
+  Every agent learns its markup with a UCB1 bandit (reward = realised profit
+  relative to cost). Arms change the payment rule.
+hypothesis: >
+  Under second-price (critical value) payment the bid does not set the price, so
+  learned winning markups are lower than under first price, while buyer cost stays
+  similar or lower.
+limitations:
+  - Markups are learned from a fixed grid of seven values; agents do not observe rivals' bids.
+  - Synthetic market; one learner population per run.
+seed: 23
+replications: 30
+environment:
+  agents: {count: 20, strategy: {name: bandit, algorithm: ucb1}}
+  tasks: {count: 600}
+arms:
+  - {name: first_price, mechanism: first_price_reverse}
+  - {name: second_price, mechanism: second_price_reverse}
+metrics: [average_winning_markup, average_cost, agent_utility, buyer_utility, completion_rate]

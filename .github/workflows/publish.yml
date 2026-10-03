@@ -23,6 +23,11 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build dashboard into the package
+        run: npm --prefix web ci && npm --prefix web run build
       - run: pip install build twine
       - run: python -m build
       - run: python -m twine check dist/*

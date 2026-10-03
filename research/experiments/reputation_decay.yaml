@@ -1,0 +1,26 @@
+name: reputation_decay
+description: >
+  The follow-up to the reputation experiment. Ten agents start reliable
+  (reliability 0.98) and drop to 0.3 when task 200 of 600 arrives. Risk-adjusted
+  selection uses full-history or decaying reputation.
+hypothesis: >
+  Decaying reputation notices the drop sooner, so it raises completion rate over
+  full history once agents change.
+limitations:
+  - One abrupt change at a fixed time; gradual drift is not tested.
+seed: 29
+replications: 30
+environment:
+  agents: {count: 30, reliability_distribution: {name: uniform, low: 0.85, high: 1.0}}
+  tasks: {count: 600}
+  changes:
+    - {at_task: 0, agents: 10, set: {reliability: 0.98}}
+    - {at_task: 200, agents: 10, set: {reliability: 0.3}}
+policy: {name: risk_adjusted_cost, newcomer_failure_probability: 0.2, min_observations: 3}
+arms:
+  - {name: full_history, reputation: {name: multi_dimensional}}
+  - name: decay_half_life_20
+    reputation: {name: multi_dimensional, decay: {name: exponential, half_life: 20}}
+  - name: decay_half_life_5
+    reputation: {name: multi_dimensional, decay: {name: exponential, half_life: 5}}
+metrics: [completion_rate, average_cost, buyer_utility, hhi]

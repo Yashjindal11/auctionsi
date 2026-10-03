@@ -257,7 +257,9 @@ class ExperimentConfig(_Strict):
 
 def _label(level: Any) -> str:
     if isinstance(level, Mapping):
-        return str(level.get("name", level))
+        params = ",".join(f"{k}={v}" for k, v in level.items() if k != "name")
+        name = str(level.get("name", ""))
+        return f"{name}({params})" if params else name
     return str(level)
 
 

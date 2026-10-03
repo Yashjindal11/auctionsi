@@ -1,0 +1,21 @@
+name: factorial
+description: >
+  A 2 x 2 x 2 factorial sweep: payment rule x selection policy x agent
+  reliability spread. Every combination is one arm.
+hypothesis: >
+  Risk-adjusted selection matters only when reliability varies; the payment rule
+  shifts cost but not completion.
+limitations:
+  - Main effects are read from arm means; interactions are not modelled formally.
+seed: 37
+replications: 20
+environment:
+  agents: {count: 25}
+  tasks: {count: 300}
+factors:
+  mechanism: [first_price_reverse, second_price_reverse]
+  policy: [lowest_price, risk_adjusted_cost]
+  environment.agents.reliability_distribution:
+    - {name: uniform, low: 0.95, high: 1.0}
+    - {name: uniform, low: 0.4, high: 1.0}
+metrics: [completion_rate, average_cost, buyer_utility]
