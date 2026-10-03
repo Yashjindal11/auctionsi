@@ -19,6 +19,10 @@ htmlcov/
 *.db
 auctionsi-results/
 
+# Node / dashboard build (shipped in wheels as hatch artifacts)
+node_modules/
+src/auctionsi/api/static/
+
 # OS / editors
 .DS_Store
 .idea/

@@ -69,9 +69,12 @@ path = "src/auctionsi/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/auctionsi"]
+# The built dashboard is git-ignored but must ship in wheels when present.
+artifacts = ["src/auctionsi/api/static/**"]
 
 [tool.hatch.build.targets.sdist]
 include = ["src/auctionsi", "tests", "docs", "README.md", "LICENSE", "NOTICE", "CHANGELOG.md"]
+artifacts = ["src/auctionsi/api/static/**"]
 
 [tool.ruff]
 line-length = 100
