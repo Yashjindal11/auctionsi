@@ -1,7 +1,7 @@
 """Run every experiment in research/experiments and write reports to research/results.
 
-    python research/run_all.py               # all experiments
-    python research/run_all.py mechanisms    # one experiment
+python research/run_all.py               # all experiments
+python research/run_all.py mechanisms    # one experiment
 """
 
 from __future__ import annotations
@@ -25,7 +25,9 @@ def main(argv: list[str]) -> int:
         start = time.perf_counter()
         result = run_experiment(config)
         out = result.save(ROOT / "results" / config.name)
-        print(f"{config.name}: {len(result.runs)} runs in {time.perf_counter() - start:.1f}s -> {out}")
+        print(
+            f"{config.name}: {len(result.runs)} runs in {time.perf_counter() - start:.1f}s -> {out}"
+        )
     return 0
 
 
