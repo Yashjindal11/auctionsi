@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
+from concurrent.futures import Executor, wait
 from dataclasses import fields
 from typing import Any
 
@@ -36,6 +37,8 @@ class BidIntake:
         config: BidValidationConfig,
         sealed: bool,
         limits: Limits = DEFAULT_LIMITS,
+        timeout: float | None = None,
+        executor: Executor | None = None,
     ) -> None:
         self.auction = auction
         self.agents = agents
@@ -45,6 +48,8 @@ class BidIntake:
         self.config = config
         self.sealed = sealed
         self.limits = limits
+        self.timeout = timeout
+        self.executor = executor
         self._revisions: dict[str, int] = {}
 
     def context(self, round: int = 0) -> BidContext:
@@ -66,6 +71,34 @@ class BidIntake:
         if proposal is None:
             return None
         return self.submit(agent.agent_id, proposal)
+
+    def solicit_all(self, agents: Sequence[Agent], round: int = 0) -> list[Bid]:
+        """Ask every agent for a bid. With a timeout, agents are asked concurrently and
+        replies arriving after the deadline are rejected; accepted bids are still
+        recorded in agent order so outcomes do not depend on thread timing."""
+        if self.timeout is None or self.executor is None:
+            return [b for agent in agents if (b := self.solicit(agent, round)) is not None]
+        context = self.context(round)
+        futures = {
+            a.agent_id: self.executor.submit(a.bid, self.auction.task, context) for a in agents
+        }
+        wait(futures.values(), timeout=self.timeout)
+        bids = []
+        for agent in agents:
+            future = futures[agent.agent_id]
+            if not future.done():
+                future.cancel()
+                message = f"no bid within the {self.timeout}s bidding window"
+                self._reject(agent.agent_id, None, [BidRejection(R.TIMEOUT, message)])
+                continue
+            exc = future.exception()
+            if exc is not None:
+                self._reject(agent.agent_id, None, [_agent_error(exc)])
+                continue
+            proposal = future.result()
+            if proposal is not None and (bid := self.submit(agent.agent_id, proposal)) is not None:
+                bids.append(bid)
+        return bids
 
     def solicit_revision(self, agent: Agent, view: OpenAuctionView) -> Bid | None:
         try:
@@ -182,7 +215,7 @@ class BidIntake:
         )
 
 
-def _agent_error(exc: Exception) -> BidRejection:
+def _agent_error(exc: BaseException) -> BidRejection:
     return BidRejection(R.AGENT_ERROR, f"{type(exc).__name__}: {exc}"[:300])
 
 

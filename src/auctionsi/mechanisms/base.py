@@ -82,10 +82,9 @@ class AuctionMechanism(ABC):
     direction: Literal["reverse", "forward"] = "reverse"
 
     def collect_bids(self, auction: Auction, bidders: Sequence[Agent], intake: BidIntake) -> None:
-        """Sealed collection: each eligible agent is asked once, in agent-id order,
-        and is never shown another agent's bid."""
-        for agent in bidders:
-            intake.solicit(agent)
+        """Sealed collection: each eligible agent is asked once and is never shown
+        another agent's bid. Bids are recorded in agent-id order."""
+        intake.solicit_all(bidders)
 
     @abstractmethod
     def determine_winners(

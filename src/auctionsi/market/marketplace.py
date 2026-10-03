@@ -11,6 +11,8 @@ import json
 import math
 from collections import deque
 from collections.abc import Callable, Iterable
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FutureTimeout
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -98,6 +100,9 @@ class Marketplace:
         store: MarketStore | None = None,
         plugins: PluginRegistry | None = None,
         retain_results: bool = True,
+        bid_timeout: float | None = None,
+        execution_timeout: float | None = None,
+        max_workers: int = 16,
     ) -> None:
         self.name = name
         self.mechanism = mechanism or FirstPriceReverseAuction()
@@ -115,6 +120,10 @@ class Marketplace:
         self.bidding_window = bidding_window
         self.plugins = plugins or default_registry()
         self.retain_results = retain_results
+        self._bid_timeout = bid_timeout
+        self.execution_timeout = execution_timeout
+        self.max_workers = max_workers
+        self._executor: ThreadPoolExecutor | None = None
         self.log: EventLog | None = EventLog(max_events) if keep_events else None
         self._collecting: dict[str, list[Event]] = {}
         if self.log is not None:
@@ -125,6 +134,8 @@ class Marketplace:
             self.attach_store(store)
         self._agents: dict[str, Agent] = {}
         self._sorted_agents: list[Agent] | None = None
+        self._by_capability: dict[str, list[Agent]] = {}
+        self._index_epoch = -1
         self._task_ids: set[str] = set()
         self._busy: dict[str, list[float]] = {}
         self._pending: dict[str, _Pending] = {}
@@ -203,15 +214,46 @@ class Marketplace:
         return counts
 
     def find_agents(self, task: Task, *, exclude: Iterable[str] = ()) -> DiscoveryResult:
-        if self._sorted_agents is None:
+        if self._sorted_agents is None or self._index_epoch != Agent.capability_epoch:
             self._sorted_agents = sorted(self._agents.values(), key=lambda a: a.agent_id)
-        return find_agents(
+            self._by_capability = {}
+            for agent in self._sorted_agents:
+                for cap in agent.capabilities:
+                    self._by_capability.setdefault(cap.name, []).append(agent)
+            self._index_epoch = Agent.capability_epoch
+        capable = self._by_capability.get(task.task_type, [])
+        found = find_agents(
             task,
-            self._sorted_agents,
+            capable,
             active_contracts=self.active_contracts(),
             exclude=exclude,
             presorted=True,
         )
+        return DiscoveryResult(
+            found.candidates, found.excluded, len(self._sorted_agents) - len(capable)
+        )
+
+    @property
+    def bid_timeout(self) -> float | None:
+        """Bidding deadline in real seconds; simulated clocks never wait."""
+        if self._bid_timeout is not None:
+            return self._bid_timeout
+        if self.bidding_window is not None and not getattr(self.clock, "simulated", False):
+            return self.bidding_window
+        return None
+
+    def _pool(self) -> ThreadPoolExecutor:
+        if self._executor is None:
+            self._executor = ThreadPoolExecutor(
+                max_workers=self.max_workers, thread_name_prefix="auctionsi"
+            )
+        return self._executor
+
+    def close(self) -> None:
+        """Release worker threads (only created when timeouts are used)."""
+        if self._executor is not None:
+            self._executor.shutdown(wait=False, cancel_futures=True)
+            self._executor = None
 
     # ------------------------------------------------------------------- tasks
 
@@ -393,6 +435,8 @@ class Marketplace:
             config=self.validation,
             sealed=mechanism.sealed,
             limits=self.limits,
+            timeout=self.bid_timeout,
+            executor=self._pool() if self.bid_timeout is not None else None,
         )
         pending = _Pending(
             intake, discovery, mechanism, policy, verifier, settlement, reopens_left, exclude
@@ -646,7 +690,19 @@ class Marketplace:
 
     def _execute(self, agent: Agent, task: Task, contract: Contract) -> ExecutionResult:
         try:
-            result = agent.execute(task, contract)
+            if self.execution_timeout is None:
+                result = agent.execute(task, contract)
+            else:
+                future = self._pool().submit(agent.execute, task, contract)
+                try:
+                    result = future.result(timeout=self.execution_timeout)
+                except FutureTimeout:
+                    # Python cannot kill the thread; the late result is simply discarded.
+                    future.cancel()
+                    return ExecutionResult.failure(
+                        f"execution timed out after {self.execution_timeout}s",
+                        latency=self.execution_timeout,
+                    )
         except Exception as exc:
             return ExecutionResult.failure(f"{type(exc).__name__}: {exc}"[:300])
         if not isinstance(result, ExecutionResult):

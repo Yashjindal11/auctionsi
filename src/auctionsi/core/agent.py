@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from auctionsi.core.capability import Capability, as_capability
 from auctionsi.errors import ValidationError
@@ -102,6 +102,9 @@ class Agent(ABC):
     failures instead of propagating.
     """
 
+    #: Bumped whenever any agent's capabilities change, so marketplaces can re-index.
+    capability_epoch: ClassVar[int] = 0
+
     def __init__(
         self,
         agent_id: str,
@@ -143,6 +146,7 @@ class Agent(ABC):
             raise ValidationError("an agent must keep at least one capability")
         self._capabilities = caps
         self._capability_index = {c.name: c for c in caps}
+        Agent.capability_epoch += 1
 
     def capability(self, name: str) -> Capability | None:
         return self._capability_index.get(name)

@@ -128,6 +128,8 @@ class RejectionCode(StrEnum):
     DUPLICATE_BID = "duplicate_bid"
     NOT_IMPROVING = "not_improving"
     TOO_MANY_BIDS = "too_many_bids"
+    TIMEOUT = "timeout"
+    BAD_SIGNATURE = "bad_signature"
     AGENT_ERROR = "agent_error"
 
 

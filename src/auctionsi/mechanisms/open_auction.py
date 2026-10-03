@@ -36,8 +36,7 @@ class OpenReverseAuction(FirstPriceReverseAuction):
             raise ValidationError("max_rounds must be >= 0")
 
     def collect_bids(self, auction: Auction, bidders: Sequence[Agent], intake: BidIntake) -> None:
-        for agent in bidders:
-            intake.solicit(agent, round=0)
+        intake.solicit_all(bidders, round=0)
         for round_no in range(1, self.max_rounds + 1):
             changed = False
             for agent in bidders:
