@@ -127,6 +127,8 @@ def record_for(result: AuctionResult, agents: dict[str, Agent]) -> TaskRecord:
         winner_true_cost=winner.expected_cost(task) if isinstance(winner, SimulatedAgent) else None,
         min_true_cost=min(true_costs) if true_costs else None,
         bidders=tuple(sorted(first.auction.bids)),
+        bid_prices=tuple(b.price for b in first.auction.bids.values()),
+        verification_cost=sum(c.verification.cost for c in contracts),
     )
 
 

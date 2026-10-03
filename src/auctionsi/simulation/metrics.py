@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections import Counter, defaultdict
 from collections.abc import Iterable, Sequence
 from dataclasses import asdict, dataclass, field
-from statistics import fmean, median
+from statistics import fmean, median, pstdev, stdev
 from typing import Any
 
 from auctionsi.statistics.concentration import gini, hhi, shares, top_share
@@ -40,6 +40,8 @@ class TaskRecord:
     winner_true_cost: float | None
     min_true_cost: float | None
     bidders: tuple[str, ...]
+    bid_prices: tuple[float, ...] = ()
+    verification_cost: float = 0.0
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -58,7 +60,7 @@ class MarketMetrics:
     - ``agent_utilization`` = each agent's share of all contracts executed.
     - ``hhi`` / ``top_agent_share`` = concentration of *successful* wins.
     - ``revenue_gini`` = Gini of revenue across *all* agents (zeros included).
-    - ``buyer_utility`` = sum(value of successful tasks) - total_cost.
+    - ``buyer_utility`` = sum(value of successful tasks) - total_cost - verification cost.
     - ``agent_utility`` = sum(agent revenue) - sum(agent execution cost).
     - ``total_surplus`` = buyer_utility + agent_utility
       (= value delivered - real resources consumed; payments cancel out).
@@ -69,6 +71,16 @@ class MarketMetrics:
     - ``quality_adjusted_cost`` = total_cost / sum(quality of successful tasks).
     - ``participation_rate`` = agents that bid at least once / agents.
     - ``opportunity_rate`` = agents that won at least once / agents.
+    - ``average_winning_markup`` = mean over awarded tasks of
+      (awarded bid price / awarded agent's true expected cost) - 1: how far winning
+      bids sit above true cost (bid shading).
+    - ``total_verification_cost`` = sum of verifier-reported costs.
+    - ``bid_cv`` = mean coefficient of variation (sd / mean) of the valid bids in each
+      auction with at least 3 bids. A classic collusion screen: unusually low or
+      high dispersion is worth a look, never proof.
+    - ``relative_distance`` = mean over auctions with at least 3 bids of
+      (second-lowest - lowest) / sd(losing bids). Cover bidding tends to leave the
+      designated winner far below a tight cluster of covers, raising it.
     """
 
     total_tasks: int
@@ -94,6 +106,10 @@ class MarketMetrics:
     quality_adjusted_cost: float | None
     participation_rate: float
     opportunity_rate: float
+    average_winning_markup: float | None = None
+    total_verification_cost: float = 0.0
+    bid_cv: float | None = None
+    relative_distance: float | None = None
     agent_utilization: dict[str, float] = field(default_factory=dict)
     agent_wins: dict[str, int] = field(default_factory=dict)
     agent_revenue: dict[str, float] = field(default_factory=dict)
@@ -123,6 +139,10 @@ class MarketMetrics:
         "quality_adjusted_cost",
         "participation_rate",
         "opportunity_rate",
+        "average_winning_markup",
+        "total_verification_cost",
+        "bid_cv",
+        "relative_distance",
     )
 
     def scalars(self) -> dict[str, float | None]:
@@ -161,8 +181,25 @@ def compute_metrics(records: Sequence[TaskRecord], agent_ids: Iterable[str]) -> 
         if r.min_true_cost is not None and r.winner_true_cost
     ]
     value = sum(r.value for r in successes)
+    verification = sum(r.verification_cost for r in records)
     agent_utility = sum(revenue.values()) - sum(costs.values())
-    buyer_utility = value - total_cost
+    buyer_utility = value - total_cost - verification
+    markups = [
+        r.awarded_price / r.winner_true_cost - 1
+        for r in awarded
+        if r.awarded_price is not None and r.winner_true_cost
+    ]
+    cvs, distances = [], []
+    for r in records:
+        if len(r.bid_prices) < 3:
+            continue
+        prices = sorted(r.bid_prices)
+        mean = fmean(prices)
+        if mean > 0:
+            cvs.append(pstdev(prices) / mean)
+        losing_sd = stdev(prices[1:])
+        if losing_sd > 0:
+            distances.append((prices[1] - prices[0]) / losing_sd)
     win_counts = {a: float(wins.get(a, 0)) for a in agents} or dict(wins)
     return MarketMetrics(
         total_tasks=n,
@@ -190,6 +227,10 @@ def compute_metrics(records: Sequence[TaskRecord], agent_ids: Iterable[str]) -> 
         quality_adjusted_cost=total_cost / sum(qualities) if sum(qualities) > 0 else None,
         participation_rate=len(bidders & set(agents)) / len(agents) if agents else 0.0,
         opportunity_rate=sum(1 for a in agents if wins.get(a)) / len(agents) if agents else 0.0,
+        average_winning_markup=fmean(markups) if markups else None,
+        total_verification_cost=verification,
+        bid_cv=fmean(cvs) if cvs else None,
+        relative_distance=fmean(distances) if distances else None,
         agent_utilization=shares({a: float(c) for a, c in contracts.items()}),
         agent_wins=dict(wins),
         agent_revenue=dict(revenue),
