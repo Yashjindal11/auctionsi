@@ -1,0 +1,156 @@
+{
+  "auctionsi_version": "0.1.0",
+  "python_version": "3.12.15",
+  "implementation": "CPython",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "git_commit": "4cdec6d83de3d2823b91590873730666f37fb1dd",
+  "created_at": "2026-10-03T12:35:44+00:00",
+  "seed": 19,
+  "replications": 30,
+  "agent_generation": {
+    "count": 30,
+    "capabilities": [
+      "research",
+      "data_analysis",
+      "sql",
+      "optimization"
+    ],
+    "capability_distribution": "mixed",
+    "capabilities_per_agent": [
+      1,
+      3
+    ],
+    "cost_distribution": "lognormal",
+    "variable_cost_ratio": 0.01,
+    "quality_distribution": "beta",
+    "quality_spread": 0.05,
+    "latency_distribution": "lognormal",
+    "reliability_distribution": "beta",
+    "capacity_distribution": 3,
+    "strategy": "cost_plus",
+    "quality_report_bias": 0.0
+  },
+  "task_generation": {
+    "count": 400,
+    "task_types": [
+      "research",
+      "data_analysis",
+      "sql",
+      "optimization"
+    ],
+    "arrival_rate": 1.0,
+    "budget_distribution": "lognormal",
+    "deadline_distribution": "uniform",
+    "complexity_distribution": "lognormal",
+    "min_quality": null,
+    "value_multiplier": 1.5
+  },
+  "dependencies": {
+    "pydantic": "2.13.5",
+    "pyyaml": "6.0.3",
+    "scipy": "1.18.1"
+  },
+  "config": {
+    "name": "concentration",
+    "description": "Does weighting reputation in winner selection concentrate work on a few agents? Agents can each run up to three tasks at once, so capacity does not force spreading.\n",
+    "hypothesis": "Giving reputation weight in selection raises concentration (HHI, top-agent share, revenue Gini) relative to price-only selection.\n",
+    "limitations": [],
+    "seed": 19,
+    "replications": 30,
+    "confidence": 0.95,
+    "alpha": 0.05,
+    "environment": {
+      "agents": {
+        "count": 30,
+        "capabilities": [
+          "research",
+          "data_analysis",
+          "sql",
+          "optimization"
+        ],
+        "capability_distribution": "mixed",
+        "capabilities_per_agent": [
+          1,
+          3
+        ],
+        "cost_distribution": "lognormal",
+        "variable_cost_ratio": 0.01,
+        "quality_distribution": "beta",
+        "quality_spread": 0.05,
+        "latency_distribution": "lognormal",
+        "reliability_distribution": "beta",
+        "capacity_distribution": 3,
+        "strategy": "cost_plus",
+        "quality_report_bias": 0.0
+      },
+      "tasks": {
+        "count": 400,
+        "task_types": [
+          "research",
+          "data_analysis",
+          "sql",
+          "optimization"
+        ],
+        "arrival_rate": 1.0,
+        "budget_distribution": "lognormal",
+        "deadline_distribution": "uniform",
+        "complexity_distribution": "lognormal",
+        "min_quality": null,
+        "value_multiplier": 1.5
+      }
+    },
+    "mechanism": "first_price_reverse",
+    "policy": "lowest_price",
+    "reputation": "multi_dimensional",
+    "settlement": "pay_on_pass",
+    "recovery": {},
+    "validation": {},
+    "arms": [
+      {
+        "name": "price_only",
+        "mechanism": null,
+        "policy": "lowest_price",
+        "reputation": null,
+        "settlement": null,
+        "recovery": null,
+        "validation": null,
+        "environment": {}
+      },
+      {
+        "name": "reputation_weighted",
+        "mechanism": null,
+        "policy": {
+          "name": "weighted_score",
+          "price_weight": 0.5,
+          "quality_weight": 0.0,
+          "latency_weight": 0.0,
+          "reputation_weight": 0.5
+        },
+        "reputation": null,
+        "settlement": null,
+        "recovery": null,
+        "validation": null,
+        "environment": {}
+      },
+      {
+        "name": "reputation_adjusted",
+        "mechanism": null,
+        "policy": "reputation_adjusted_cost",
+        "reputation": null,
+        "settlement": null,
+        "recovery": null,
+        "validation": null,
+        "environment": {}
+      }
+    ],
+    "baseline": null,
+    "metrics": [
+      "hhi",
+      "top_agent_share",
+      "revenue_gini",
+      "opportunity_rate",
+      "average_cost",
+      "completion_rate"
+    ]
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "auctionsi_version": "0.1.0",
+  "python_version": "3.12.15",
+  "implementation": "CPython",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "git_commit": "4cdec6d83de3d2823b91590873730666f37fb1dd",
+  "created_at": "2026-10-03T12:52:58+00:00",
+  "seed": 11,
+  "replications": 30,
+  "agent_generation": {
+    "count": 30,
+    "capabilities": [
+      "research",
+      "data_analysis",
+      "sql",
+      "optimization"
+    ],
+    "capability_distribution": "mixed",
+    "capabilities_per_agent": [
+      1,
+      3
+    ],
+    "cost_distribution": "lognormal",
+    "variable_cost_ratio": 0.01,
+    "quality_distribution": "beta",
+    "quality_spread": 0.05,
+    "latency_distribution": "lognormal",
+    "reliability_distribution": {
+      "name": "uniform",
+      "low": 0.4,
+      "high": 1.0
+    },
+    "capacity_distribution": 1,
+    "strategy": "cost_plus",
+    "quality_report_bias": 0.0
+  },
+  "task_generation": {
+    "count": 400,
+    "task_types": [
+      "research",
+      "data_analysis",
+      "sql",
+      "optimization"
+    ],
+    "arrival_rate": 1.0,
+    "budget_distribution": "lognormal",
+    "deadline_distribution": "uniform",
+    "complexity_distribution": "lognormal",
+    "min_quality": null,
+    "value_multiplier": 1.5
+  },
+  "dependencies": {
+    "pydantic": "2.13.5",
+    "pyyaml": "6.0.3",
+    "scipy": "1.18.1"
+  },
+  "config": {
+    "name": "reliability",
+    "description": "Agents' reliability is drawn uniformly from [0.4, 1.0]. Three selection policies decide between cheap-but-flaky and pricier-but-reliable bidders.\n",
+    "hypothesis": "Lowest-price selection awards many tasks to unreliable agents; risk-adjusted and reputation-adjusted selection raise completion rate and buyer utility.\n",
+    "limitations": [],
+    "seed": 11,
+    "replications": 30,
+    "confidence": 0.95,
+    "alpha": 0.05,
+    "environment": {
+      "agents": {
+        "count": 30,
+        "capabilities": [
+          "research",
+          "data_analysis",
+          "sql",
+          "optimization"
+        ],
+        "capability_distribution": "mixed",
+        "capabilities_per_agent": [
+          1,
+          3
+        ],
+        "cost_distribution": "lognormal",
+        "variable_cost_ratio": 0.01,
+        "quality_distribution": "beta",
+        "quality_spread": 0.05,
+        "latency_distribution": "lognormal",
+        "reliability_distribution": {
+          "name": "uniform",
+          "low": 0.4,
+          "high": 1.0
+        },
+        "capacity_distribution": 1,
+        "strategy": "cost_plus",
+        "quality_report_bias": 0.0
+      },
+      "tasks": {
+        "count": 400,
+        "task_types": [
+          "research",
+          "data_analysis",
+          "sql",
+          "optimization"
+        ],
+        "arrival_rate": 1.0,
+        "budget_distribution": "lognormal",
+        "deadline_distribution": "uniform",
+        "complexity_distribution": "lognormal",
+        "min_quality": null,
+        "value_multiplier": 1.5
+      }
+    },
+    "mechanism": "first_price_reverse",
+    "policy": "lowest_price",
+    "reputation": "multi_dimensional",
+    "settlement": {
+      "name": "pay_on_pass",
+      "penalty_rate": 0.0
+    },
+    "recovery": {},
+    "validation": {},
+    "arms": [
+      {
+        "name": "lowest_price",
+        "mechanism": null,
+        "policy": "lowest_price",
+        "reputation": null,
+        "settlement": null,
+        "recovery": null,
+        "validation": null,
+        "environment": {}
+      },
+      {
+        "name": "risk_adjusted",
+        "mechanism": null,
+        "policy": {
+          "name": "risk_adjusted_cost"
+        },
+        "reputation": null,
+        "settlement": null,
+        "recovery": null,
+        "validation": null,
+        "environment": {}
+      },
+      {
+        "name": "reputation_adjusted",
+        "mechanism": null,
+        "policy": {
+          "name": "reputation_adjusted_cost"
+        },
+        "reputation": null,
+        "settlement": null,
+        "recovery": null,
+        "validation": null,
+        "environment": {}
+      }
+    ],
+    "baseline": null,
+    "metrics": [
+      "completion_rate",
+      "total_cost",
+      "average_cost",
+      "buyer_utility",
+      "total_surplus",
+      "hhi"
+    ]
+  }
+}

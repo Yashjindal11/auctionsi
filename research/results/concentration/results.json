@@ -1,0 +1,2258 @@
+{
+  "manifest": {
+    "auctionsi_version": "0.1.0",
+    "python_version": "3.12.15",
+    "implementation": "CPython",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "git_commit": "4cdec6d83de3d2823b91590873730666f37fb1dd",
+    "created_at": "2026-10-03T12:35:44+00:00",
+    "seed": 19,
+    "replications": 30,
+    "agent_generation": {
+      "count": 30,
+      "capabilities": [
+        "research",
+        "data_analysis",
+        "sql",
+        "optimization"
+      ],
+      "capability_distribution": "mixed",
+      "capabilities_per_agent": [
+        1,
+        3
+      ],
+      "cost_distribution": "lognormal",
+      "variable_cost_ratio": 0.01,
+      "quality_distribution": "beta",
+      "quality_spread": 0.05,
+      "latency_distribution": "lognormal",
+      "reliability_distribution": "beta",
+      "capacity_distribution": 3,
+      "strategy": "cost_plus",
+      "quality_report_bias": 0.0
+    },
+    "task_generation": {
+      "count": 400,
+      "task_types": [
+        "research",
+        "data_analysis",
+        "sql",
+        "optimization"
+      ],
+      "arrival_rate": 1.0,
+      "budget_distribution": "lognormal",
+      "deadline_distribution": "uniform",
+      "complexity_distribution": "lognormal",
+      "min_quality": null,
+      "value_multiplier": 1.5
+    },
+    "dependencies": {
+      "pydantic": "2.13.5",
+      "pyyaml": "6.0.3",
+      "scipy": "1.18.1"
+    },
+    "config": {
+      "name": "concentration",
+      "description": "Does weighting reputation in winner selection concentrate work on a few agents? Agents can each run up to three tasks at once, so capacity does not force spreading.\n",
+      "hypothesis": "Giving reputation weight in selection raises concentration (HHI, top-agent share, revenue Gini) relative to price-only selection.\n",
+      "limitations": [],
+      "seed": 19,
+      "replications": 30,
+      "confidence": 0.95,
+      "alpha": 0.05,
+      "environment": {
+        "agents": {
+          "count": 30,
+          "capabilities": [
+            "research",
+            "data_analysis",
+            "sql",
+            "optimization"
+          ],
+          "capability_distribution": "mixed",
+          "capabilities_per_agent": [
+            1,
+            3
+          ],
+          "cost_distribution": "lognormal",
+          "variable_cost_ratio": 0.01,
+          "quality_distribution": "beta",
+          "quality_spread": 0.05,
+          "latency_distribution": "lognormal",
+          "reliability_distribution": "beta",
+          "capacity_distribution": 3,
+          "strategy": "cost_plus",
+          "quality_report_bias": 0.0
+        },
+        "tasks": {
+          "count": 400,
+          "task_types": [
+            "research",
+            "data_analysis",
+            "sql",
+            "optimization"
+          ],
+          "arrival_rate": 1.0,
+          "budget_distribution": "lognormal",
+          "deadline_distribution": "uniform",
+          "complexity_distribution": "lognormal",
+          "min_quality": null,
+          "value_multiplier": 1.5
+        }
+      },
+      "mechanism": "first_price_reverse",
+      "policy": "lowest_price",
+      "reputation": "multi_dimensional",
+      "settlement": "pay_on_pass",
+      "recovery": {},
+      "validation": {},
+      "arms": [
+        {
+          "name": "price_only",
+          "mechanism": null,
+          "policy": "lowest_price",
+          "reputation": null,
+          "settlement": null,
+          "recovery": null,
+          "validation": null,
+          "environment": {}
+        },
+        {
+          "name": "reputation_weighted",
+          "mechanism": null,
+          "policy": {
+            "name": "weighted_score",
+            "price_weight": 0.5,
+            "quality_weight": 0.0,
+            "latency_weight": 0.0,
+            "reputation_weight": 0.5
+          },
+          "reputation": null,
+          "settlement": null,
+          "recovery": null,
+          "validation": null,
+          "environment": {}
+        },
+        {
+          "name": "reputation_adjusted",
+          "mechanism": null,
+          "policy": "reputation_adjusted_cost",
+          "reputation": null,
+          "settlement": null,
+          "recovery": null,
+          "validation": null,
+          "environment": {}
+        }
+      ],
+      "baseline": null,
+      "metrics": [
+        "hhi",
+        "top_agent_share",
+        "revenue_gini",
+        "opportunity_rate",
+        "average_cost",
+        "completion_rate"
+      ]
+    }
+  },
+  "summary": {
+    "price_only": {
+      "hhi": {
+        "n": 30,
+        "mean": 0.20561484451929174,
+        "median": 0.2085835570013429,
+        "variance": 0.00196509824455831,
+        "sd": 0.044329428651385866,
+        "ci_low": 0.1890619638218839,
+        "ci_high": 0.22216772521669959,
+        "confidence": 0.95,
+        "min": 0.12572065047894854,
+        "max": 0.28285657607617537,
+        "q05": 0.14080394350111924,
+        "q25": 0.16696804011427335,
+        "q75": 0.2377796562570582,
+        "q95": 0.26558500647944067
+      },
+      "top_agent_share": {
+        "n": 30,
+        "mean": 0.2973128817021596,
+        "median": 0.3029100529100529,
+        "variance": 0.005290160953675864,
+        "sd": 0.07273349265418143,
+        "ci_low": 0.27015374919723806,
+        "ci_high": 0.3244720142070811,
+        "confidence": 0.95,
+        "min": 0.16298342541436464,
+        "max": 0.4323607427055703,
+        "q05": 0.182573788361563,
+        "q25": 0.24003642258621416,
+        "q75": 0.34973640930903194,
+        "q95": 0.4066689810027475
+      },
+      "revenue_gini": {
+        "n": 30,
+        "mean": 0.8324969120874711,
+        "median": 0.8325039770210034,
+        "variance": 0.0011004287644079671,
+        "sd": 0.03317271114045349,
+        "ci_low": 0.820110018174722,
+        "ci_high": 0.8448838060002203,
+        "confidence": 0.95,
+        "min": 0.7537862401147355,
+        "max": 0.8857857307329717,
+        "q05": 0.7789356989413878,
+        "q25": 0.8107141331364733,
+        "q75": 0.8614548820739774,
+        "q95": 0.8768182847192926
+      },
+      "opportunity_rate": {
+        "n": 30,
+        "mean": 0.29888888888888887,
+        "median": 0.3,
+        "variance": 0.002795657726692209,
+        "sd": 0.05287397967518814,
+        "ci_low": 0.27914542040335055,
+        "ci_high": 0.3186323573744272,
+        "confidence": 0.95,
+        "min": 0.16666666666666666,
+        "max": 0.4,
+        "q05": 0.23333333333333334,
+        "q25": 0.26666666666666666,
+        "q75": 0.3333333333333333,
+        "q95": 0.36666666666666664
+      },
+      "average_cost": {
+        "n": 30,
+        "mean": 0.02219978013589054,
+        "median": 0.022009456896966116,
+        "variance": 6.887882241760005e-06,
+        "sd": 0.0026244775178614135,
+        "ci_low": 0.021219784124937423,
+        "ci_high": 0.023179776146843658,
+        "confidence": 0.95,
+        "min": 0.017769062777881345,
+        "max": 0.029229776901338784,
+        "q05": 0.01869573168649097,
+        "q25": 0.020397892656210493,
+        "q75": 0.023791570072830184,
+        "q95": 0.02630649270194877
+      },
+      "completion_rate": {
+        "n": 30,
+        "mean": 0.8978333333333333,
+        "median": 0.90125,
+        "variance": 0.001815833333333334,
+        "sd": 0.042612595946895024,
+        "ci_low": 0.8819215285035693,
+        "ci_high": 0.9137451381630972,
+        "confidence": 0.95,
+        "min": 0.7975,
+        "max": 0.9625,
+        "q05": 0.823125,
+        "q25": 0.8781249999999999,
+        "q75": 0.9343750000000001,
+        "q95": 0.9525
+      }
+    },
+    "reputation_weighted": {
+      "hhi": {
+        "n": 30,
+        "mean": 0.19746570246032397,
+        "median": 0.1961512885364886,
+        "variance": 0.001997808595123022,
+        "sd": 0.04469685218360485,
+        "ci_low": 0.18077562356119622,
+        "ci_high": 0.2141557813594517,
+        "confidence": 0.95,
+        "min": 0.12579348201173268,
+        "max": 0.29506133333333334,
+        "q05": 0.1384538179761946,
+        "q25": 0.1558814438749851,
+        "q75": 0.24200332058577184,
+        "q95": 0.2515443350024717
+      },
+      "top_agent_share": {
+        "n": 30,
+        "mean": 0.3001104257509428,
+        "median": 0.2933629410313348,
+        "variance": 0.005290563290171208,
+        "sd": 0.07273625842845649,
+        "ci_low": 0.2729502604889341,
+        "ci_high": 0.32727059101295153,
+        "confidence": 0.95,
+        "min": 0.19895287958115182,
+        "max": 0.45866666666666667,
+        "q05": 0.20419629253428137,
+        "q25": 0.24105138306434531,
+        "q75": 0.35719472935539415,
+        "q95": 0.404209502639622
+      },
+      "revenue_gini": {
+        "n": 30,
+        "mean": 0.8277227652098471,
+        "median": 0.8297180216439684,
+        "variance": 0.0013581488913584415,
+        "sd": 0.03685307166788735,
+        "ci_low": 0.8139616020906719,
+        "ci_high": 0.8414839283290223,
+        "confidence": 0.95,
+        "min": 0.7553362710430149,
+        "max": 0.8859340891163754,
+        "q05": 0.773382359364601,
+        "q25": 0.7944029019996628,
+        "q75": 0.8608934943436082,
+        "q95": 0.878072131109463
+      },
+      "opportunity_rate": {
+        "n": 30,
+        "mean": 0.2922222222222222,
+        "median": 0.3,
+        "variance": 0.0025810983397190285,
+        "sd": 0.050804511017418806,
+        "ci_low": 0.27325150603332354,
+        "ci_high": 0.3111929384111209,
+        "confidence": 0.95,
+        "min": 0.2,
+        "max": 0.36666666666666664,
+        "q05": 0.21500000000000002,
+        "q25": 0.24166666666666667,
+        "q75": 0.3333333333333333,
+        "q95": 0.36666666666666664
+      },
+      "average_cost": {
+        "n": 30,
+        "mean": 0.022960989746674643,
+        "median": 0.022803744420449985,
+        "variance": 7.0633259609626884e-06,
+        "sd": 0.0026576918483832337,
+        "ci_low": 0.021968591300876365,
+        "ci_high": 0.023953388192472922,
+        "confidence": 0.95,
+        "min": 0.01803561907636542,
+        "max": 0.030588018871496873,
+        "q05": 0.01956508207300364,
+        "q25": 0.02097845039371758,
+        "q75": 0.024189673145454046,
+        "q95": 0.027140170466552888
+      },
+      "completion_rate": {
+        "n": 30,
+        "mean": 0.91125,
+        "median": 0.9137500000000001,
+        "variance": 0.0010947198275862062,
+        "sd": 0.033086550554359793,
+        "ci_low": 0.8988952789788449,
+        "ci_high": 0.9236047210211551,
+        "confidence": 0.95,
+        "min": 0.81,
+        "max": 0.9675,
+        "q05": 0.870375,
+        "q25": 0.889375,
+        "q75": 0.935,
+        "q95": 0.9604999999999999
+      }
+    },
+    "reputation_adjusted": {
+      "hhi": {
+        "n": 30,
+        "mean": 0.2014865900757986,
+        "median": 0.1980066118667425,
+        "variance": 0.0019200882081888248,
+        "sd": 0.043818811122494236,
+        "ci_low": 0.1851243770972152,
+        "ci_high": 0.21784880305438203,
+        "confidence": 0.95,
+        "min": 0.13072043688300777,
+        "max": 0.2890626684587685,
+        "q05": 0.14152789177572236,
+        "q25": 0.1664116999936748,
+        "q75": 0.23420970406391722,
+        "q95": 0.26939000312576666
+      },
+      "top_agent_share": {
+        "n": 30,
+        "mean": 0.30065578893797634,
+        "median": 0.28690207422040354,
+        "variance": 0.00555413243624888,
+        "sd": 0.07452605206401906,
+        "ci_low": 0.27282730374891795,
+        "ci_high": 0.32848427412703474,
+        "confidence": 0.95,
+        "min": 0.18888888888888888,
+        "max": 0.45308310991957107,
+        "q05": 0.1980392156862745,
+        "q25": 0.23813265635074146,
+        "q75": 0.3486666666666667,
+        "q95": 0.42401115836291986
+      },
+      "revenue_gini": {
+        "n": 30,
+        "mean": 0.829377997997291,
+        "median": 0.823890754490036,
+        "variance": 0.0011162305961910871,
+        "sd": 0.033410037356924445,
+        "ci_low": 0.816902485018898,
+        "ci_high": 0.841853510975684,
+        "confidence": 0.95,
+        "min": 0.7696530304931686,
+        "max": 0.882988509692272,
+        "q05": 0.7727483707836776,
+        "q25": 0.8101797448652276,
+        "q75": 0.861122332065822,
+        "q95": 0.8770930550877329
+      },
+      "opportunity_rate": {
+        "n": 30,
+        "mean": 0.29888888888888887,
+        "median": 0.3,
+        "variance": 0.0031787994891443157,
+        "sd": 0.056380843281599785,
+        "ci_low": 0.2778359360119428,
+        "ci_high": 0.31994184176583496,
+        "confidence": 0.95,
+        "min": 0.2,
+        "max": 0.4,
+        "q05": 0.21500000000000002,
+        "q25": 0.26666666666666666,
+        "q75": 0.3333333333333333,
+        "q95": 0.36666666666666664
+      },
+      "average_cost": {
+        "n": 30,
+        "mean": 0.022627604541655164,
+        "median": 0.02235599635738594,
+        "variance": 7.750577585709277e-06,
+        "sd": 0.0027839859169380286,
+        "ci_low": 0.02158804711562238,
+        "ci_high": 0.02366716196768795,
+        "confidence": 0.95,
+        "min": 0.018018951425017294,
+        "max": 0.030136054768420496,
+        "q05": 0.018752193735933034,
+        "q25": 0.02072899498395825,
+        "q75": 0.024507752940735126,
+        "q95": 0.026813046691375342
+      },
+      "completion_rate": {
+        "n": 30,
+        "mean": 0.9055,
+        "median": 0.905,
+        "variance": 0.0013402586206896542,
+        "sd": 0.03660954275444661,
+        "ci_low": 0.8918297720715815,
+        "ci_high": 0.9191702279284184,
+        "confidence": 0.95,
+        "min": 0.8,
+        "max": 0.965,
+        "q05": 0.8422499999999999,
+        "q25": 0.8925,
+        "q75": 0.9325,
+        "q95": 0.9554999999999999
+      }
+    }
+  },
+  "comparisons": [
+    {
+      "metric": "hhi",
+      "baseline": "price_only",
+      "treatment": "reputation_weighted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": -0.00814914205896778,
+      "ci_low": -0.01572966669347139,
+      "ci_high": -0.00056861742446417,
+      "statistic": -2.198642930476094,
+      "p_value": 0.036032901431436774,
+      "effect_size": -0.4014154429736731,
+      "p_adjusted": 0.2882632114514942,
+      "relative_diff": -0.03963304341191762
+    },
+    {
+      "metric": "top_agent_share",
+      "baseline": "price_only",
+      "treatment": "reputation_weighted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 0.0027975440487832174,
+      "ci_low": -0.011791646078618628,
+      "ci_high": 0.017386734176185064,
+      "statistic": 0.39218215430593784,
+      "p_value": 0.6977911483641999,
+      "effect_size": 0.07160233752144465,
+      "p_adjusted": 1.0,
+      "relative_diff": 0.009409427646615478
+    },
+    {
+      "metric": "revenue_gini",
+      "baseline": "price_only",
+      "treatment": "reputation_weighted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": -0.004774146877623927,
+      "ci_low": -0.01053901044348729,
+      "ci_high": 0.0009907166882394368,
+      "statistic": -1.6937480997521976,
+      "p_value": 0.10102924265038064,
+      "effect_size": -0.30923468032192963,
+      "p_adjusted": 0.7072046985526645,
+      "relative_diff": -0.0057347322354059415
+    },
+    {
+      "metric": "opportunity_rate",
+      "baseline": "price_only",
+      "treatment": "reputation_weighted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": -0.006666666666666666,
+      "ci_low": -0.022812895692584725,
+      "ci_high": 0.009479562359251395,
+      "statistic": -0.844461221192756,
+      "p_value": 0.4053245659687644,
+      "effect_size": -0.15417681992854404,
+      "p_adjusted": 1.0,
+      "relative_diff": -0.022304832713754646
+    },
+    {
+      "metric": "average_cost",
+      "baseline": "price_only",
+      "treatment": "reputation_weighted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 0.0007612096107841024,
+      "ci_low": 0.0005451442463416967,
+      "ci_high": 0.0009772749752265083,
+      "statistic": 7.205451294193603,
+      "p_value": 6.22177964658157e-08,
+      "effect_size": 1.315529403611543,
+      "p_adjusted": 7.466135575897883e-07,
+      "relative_diff": 0.03428906079810446
+    },
+    {
+      "metric": "completion_rate",
+      "baseline": "price_only",
+      "treatment": "reputation_weighted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 0.013416666666666662,
+      "ci_low": 0.007035695730920476,
+      "ci_high": 0.01979763760241285,
+      "statistic": 4.300311761578586,
+      "p_value": 0.00017606164142290942,
+      "effect_size": 0.785125918707123,
+      "p_adjusted": 0.0017606164142290942,
+      "relative_diff": 0.014943382216446997
+    },
+    {
+      "metric": "hhi",
+      "baseline": "price_only",
+      "treatment": "reputation_adjusted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": -0.004128254443493128,
+      "ci_low": -0.01091247374132064,
+      "ci_high": 0.002655964854334383,
+      "statistic": -1.2445394211832073,
+      "p_value": 0.22326566225742442,
+      "effect_size": -0.22722077156215512,
+      "p_adjusted": 1.0,
+      "relative_diff": -0.02007760895447311
+    },
+    {
+      "metric": "top_agent_share",
+      "baseline": "price_only",
+      "treatment": "reputation_adjusted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 0.003342907235816747,
+      "ci_low": -0.008581979213254045,
+      "ci_high": 0.015267793684887539,
+      "statistic": 0.5733398803244004,
+      "p_value": 0.5708342975320029,
+      "effect_size": 0.1046770618569955,
+      "p_adjusted": 1.0,
+      "relative_diff": 0.011243734939024896
+    },
+    {
+      "metric": "revenue_gini",
+      "baseline": "price_only",
+      "treatment": "reputation_adjusted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": -0.0031189140901801693,
+      "ci_low": -0.00862055240710423,
+      "ci_high": 0.002382724226743892,
+      "statistic": -1.1594538173982045,
+      "p_value": 0.25572904954499487,
+      "effect_size": -0.21168633672482415,
+      "p_adjusted": 1.0,
+      "relative_diff": -0.0037464572479428758
+    },
+    {
+      "metric": "opportunity_rate",
+      "baseline": "price_only",
+      "treatment": "reputation_adjusted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 9.251858538542971e-19,
+      "ci_low": -0.01461810890634859,
+      "ci_high": 0.014618108906348593,
+      "statistic": 1.2944338730181992e-16,
+      "p_value": 0.9999999999999999,
+      "effect_size": 2.3633021048361516e-17,
+      "p_adjusted": 1.0,
+      "relative_diff": 3.095417354902853e-18
+    },
+    {
+      "metric": "average_cost",
+      "baseline": "price_only",
+      "treatment": "reputation_adjusted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 0.0004278244057646196,
+      "ci_low": 0.00025651112348581864,
+      "ci_high": 0.0005991376880434205,
+      "statistic": 5.107596706212228,
+      "p_value": 1.8808725899146263e-05,
+      "effect_size": 0.932515310210508,
+      "p_adjusted": 0.0002068959848906089,
+      "relative_diff": 0.019271560490500213
+    },
+    {
+      "metric": "completion_rate",
+      "baseline": "price_only",
+      "treatment": "reputation_adjusted",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 0.007666666666666647,
+      "ci_low": 0.0027334609860663293,
+      "ci_high": 0.012599872347266965,
+      "statistic": 3.178479661749935,
+      "p_value": 0.0035057482877997414,
+      "effect_size": 0.5803083364372765,
+      "p_adjusted": 0.03155173459019767,
+      "relative_diff": 0.008539075552255408
+    }
+  ],
+  "runs": [
+    {
+      "arm": "price_only",
+      "replication": 0,
+      "seed": 14443886545735820060,
+      "metrics": {
+        "hhi": 0.20935706690692446,
+        "top_agent_share": 0.2962962962962963,
+        "revenue_gini": 0.8291246505293768,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.02292011857390901,
+        "completion_rate": 0.8775
+      },
+      "performance": {
+        "wall_seconds": 0.18322274999809451,
+        "auctions_per_second": 2183.135009185049,
+        "mean_auction_ms": 0.43552143277338473
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 0,
+      "seed": 14443886545735820060,
+      "metrics": {
+        "hhi": 0.17264430267696346,
+        "top_agent_share": 0.26243093922651933,
+        "revenue_gini": 0.8045181896350138,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.024151665887819935,
+        "completion_rate": 0.905
+      },
+      "performance": {
+        "wall_seconds": 0.19797654199646786,
+        "auctions_per_second": 2020.441391521711,
+        "mean_auction_ms": 0.472243045369396
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 0,
+      "seed": 14443886545735820060,
+      "metrics": {
+        "hhi": 0.1906642561743003,
+        "top_agent_share": 0.2646239554317549,
+        "revenue_gini": 0.8162747216325139,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.023656628892199553,
+        "completion_rate": 0.8975
+      },
+      "performance": {
+        "wall_seconds": 0.18507099999987986,
+        "auctions_per_second": 2161.332677730491,
+        "mean_auction_ms": 0.4404378778417595
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 1,
+      "seed": 10347238611602226047,
+      "metrics": {
+        "hhi": 0.16180090897613938,
+        "top_agent_share": 0.2050561797752809,
+        "revenue_gini": 0.81160067059099,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.0187526218305276,
+        "completion_rate": 0.89
+      },
+      "performance": {
+        "wall_seconds": 0.20076291699660942,
+        "auctions_per_second": 1992.3998215604497,
+        "mean_auction_ms": 0.4778621727382415
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 1,
+      "seed": 10347238611602226047,
+      "metrics": {
+        "hhi": 0.1417977106398949,
+        "top_agent_share": 0.2191780821917808,
+        "revenue_gini": 0.7861101968248303,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.0203040968952671,
+        "completion_rate": 0.9125
+      },
+      "performance": {
+        "wall_seconds": 0.2144157919974532,
+        "auctions_per_second": 1865.53423268726,
+        "mean_auction_ms": 0.5124946778596495
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 1,
+      "seed": 10347238611602226047,
+      "metrics": {
+        "hhi": 0.14808276251677144,
+        "top_agent_share": 0.20728291316526612,
+        "revenue_gini": 0.774029811202334,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.01914442099963291,
+        "completion_rate": 0.8925
+      },
+      "performance": {
+        "wall_seconds": 0.20177629200043157,
+        "auctions_per_second": 1982.3934518488647,
+        "mean_auction_ms": 0.48097196500748396
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 2,
+      "seed": 8224528109880435894,
+      "metrics": {
+        "hhi": 0.26233294990133643,
+        "top_agent_share": 0.3302752293577982,
+        "revenue_gini": 0.8798639190266606,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.02082102458109919,
+        "completion_rate": 0.8175
+      },
+      "performance": {
+        "wall_seconds": 0.18734649999532849,
+        "auctions_per_second": 2135.08125323918,
+        "mean_auction_ms": 0.44598281499929726
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 2,
+      "seed": 8224528109880435894,
+      "metrics": {
+        "hhi": 0.2432346145767696,
+        "top_agent_share": 0.3826086956521739,
+        "revenue_gini": 0.872146536294826,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.02272076306885889,
+        "completion_rate": 0.8625
+      },
+      "performance": {
+        "wall_seconds": 0.21758216600574087,
+        "auctions_per_second": 1838.3859639923157,
+        "mean_auction_ms": 0.5215097050313489
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 2,
+      "seed": 8224528109880435894,
+      "metrics": {
+        "hhi": 0.22920209750566894,
+        "top_agent_share": 0.34226190476190477,
+        "revenue_gini": 0.8672537866136965,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.02206212726539852,
+        "completion_rate": 0.84
+      },
+      "performance": {
+        "wall_seconds": 0.19121066700608935,
+        "auctions_per_second": 2091.933500693565,
+        "mean_auction_ms": 0.45530647941632196
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 3,
+      "seed": 14850816194702025928,
+      "metrics": {
+        "hhi": 0.25296667121879696,
+        "top_agent_share": 0.3646112600536193,
+        "revenue_gini": 0.8719288425527891,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.02464033671200171,
+        "completion_rate": 0.9325
+      },
+      "performance": {
+        "wall_seconds": 0.21037416699982714,
+        "auctions_per_second": 1901.3741359238688,
+        "mean_auction_ms": 0.5018701051085372
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 3,
+      "seed": 14850816194702025928,
+      "metrics": {
+        "hhi": 0.29506133333333334,
+        "top_agent_share": 0.45866666666666667,
+        "revenue_gini": 0.8859340891163754,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.024868449367711966,
+        "completion_rate": 0.9375
+      },
+      "performance": {
+        "wall_seconds": 0.2220532089995686,
+        "auctions_per_second": 1801.3700491073612,
+        "mean_auction_ms": 0.5317375947561231
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 3,
+      "seed": 14850816194702025928,
+      "metrics": {
+        "hhi": 0.2890626684587685,
+        "top_agent_share": 0.45308310991957107,
+        "revenue_gini": 0.882988509692272,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.024895822085177217,
+        "completion_rate": 0.9325
+      },
+      "performance": {
+        "wall_seconds": 0.2134059160016477,
+        "auctions_per_second": 1874.3622833629017,
+        "mean_auction_ms": 0.5098346947488608
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 4,
+      "seed": 16665234372879149795,
+      "metrics": {
+        "hhi": 0.2594281890304572,
+        "top_agent_share": 0.34718100890207715,
+        "revenue_gini": 0.8730958427880651,
+        "opportunity_rate": 0.16666666666666666,
+        "average_cost": 0.01864918520500645,
+        "completion_rate": 0.8425
+      },
+      "performance": {
+        "wall_seconds": 0.2114632500015432,
+        "auctions_per_second": 1891.5816341472143,
+        "mean_auction_ms": 0.5048806319973664
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 4,
+      "seed": 16665234372879149795,
+      "metrics": {
+        "hhi": 0.24234891528925623,
+        "top_agent_share": 0.3522727272727273,
+        "revenue_gini": 0.8760064781634223,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.020860171889799536,
+        "completion_rate": 0.88
+      },
+      "performance": {
+        "wall_seconds": 0.22776370801148005,
+        "auctions_per_second": 1756.206041305925,
+        "mean_auction_ms": 0.5455203131350572
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 4,
+      "seed": 16665234372879149795,
+      "metrics": {
+        "hhi": 0.26993102482406084,
+        "top_agent_share": 0.363905325443787,
+        "revenue_gini": 0.8785928726867822,
+        "opportunity_rate": 0.2,
+        "average_cost": 0.01857135993477739,
+        "completion_rate": 0.845
+      },
+      "performance": {
+        "wall_seconds": 0.22021254200080875,
+        "auctions_per_second": 1816.4269680812774,
+        "mean_auction_ms": 0.5256344779627398
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 5,
+      "seed": 7654248362284605836,
+      "metrics": {
+        "hhi": 0.1694643827389974,
+        "top_agent_share": 0.25935828877005346,
+        "revenue_gini": 0.8092084670578461,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.02109231965787207,
+        "completion_rate": 0.935
+      },
+      "performance": {
+        "wall_seconds": 0.18853966699680313,
+        "auctions_per_second": 2121.569462657332,
+        "mean_auction_ms": 0.4484512348790304
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 5,
+      "seed": 7654248362284605836,
+      "metrics": {
+        "hhi": 0.13852416326306843,
+        "top_agent_share": 0.19895287958115182,
+        "revenue_gini": 0.7732664916530343,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.022280915617974396,
+        "completion_rate": 0.955
+      },
+      "performance": {
+        "wall_seconds": 0.19886245900124777,
+        "auctions_per_second": 2011.4404800631082,
+        "mean_auction_ms": 0.47490636232396355
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 5,
+      "seed": 7654248362284605836,
+      "metrics": {
+        "hhi": 0.16944884563150747,
+        "top_agent_share": 0.23670212765957446,
+        "revenue_gini": 0.8119616057135703,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.02102127881356789,
+        "completion_rate": 0.94
+      },
+      "performance": {
+        "wall_seconds": 0.1892328749963781,
+        "auctions_per_second": 2113.79761580886,
+        "mean_auction_ms": 0.45066467002470745
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 6,
+      "seed": 7509258544990036415,
+      "metrics": {
+        "hhi": 0.18214240626183562,
+        "top_agent_share": 0.27247191011235955,
+        "revenue_gini": 0.8123350599103984,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.022583759173881213,
+        "completion_rate": 0.89
+      },
+      "performance": {
+        "wall_seconds": 0.1846698750014184,
+        "auctions_per_second": 2166.02735013996,
+        "mean_auction_ms": 0.43893364745599683
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 6,
+      "seed": 7509258544990036415,
+      "metrics": {
+        "hhi": 0.15327420944190628,
+        "top_agent_share": 0.24043715846994534,
+        "revenue_gini": 0.7868458429219454,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.023101634824257245,
+        "completion_rate": 0.915
+      },
+      "performance": {
+        "wall_seconds": 0.1957215830043424,
+        "auctions_per_second": 2043.7194194935842,
+        "mean_auction_ms": 0.4670057253315463
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 6,
+      "seed": 7509258544990036415,
+      "metrics": {
+        "hhi": 0.15356419188124673,
+        "top_agent_share": 0.24242424242424243,
+        "revenue_gini": 0.7851679791165511,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.022976464994345875,
+        "completion_rate": 0.9075
+      },
+      "performance": {
+        "wall_seconds": 0.18519370901049115,
+        "auctions_per_second": 2159.900582677677,
+        "mean_auction_ms": 0.44082208012696356
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 7,
+      "seed": 4721487362867775468,
+      "metrics": {
+        "hhi": 0.20781004709576137,
+        "top_agent_share": 0.34065934065934067,
+        "revenue_gini": 0.8133267391549246,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.020102150429339712,
+        "completion_rate": 0.91
+      },
+      "performance": {
+        "wall_seconds": 0.20338129099400248,
+        "auctions_per_second": 1966.7492424944614,
+        "mean_auction_ms": 0.48518518520722864
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 7,
+      "seed": 4721487362867775468,
+      "metrics": {
+        "hhi": 0.1953272684310019,
+        "top_agent_share": 0.33695652173913043,
+        "revenue_gini": 0.7933652487208069,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.020452865413233077,
+        "completion_rate": 0.92
+      },
+      "performance": {
+        "wall_seconds": 0.22156141699815635,
+        "auctions_per_second": 1805.3684861716174,
+        "mean_auction_ms": 0.5304009428800782
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 7,
+      "seed": 4721487362867775468,
+      "metrics": {
+        "hhi": 0.20376571212199956,
+        "top_agent_share": 0.33787465940054495,
+        "revenue_gini": 0.8050229723907079,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.019992888425988207,
+        "completion_rate": 0.9175
+      },
+      "performance": {
+        "wall_seconds": 0.2131131659989478,
+        "auctions_per_second": 1876.937063578582,
+        "mean_auction_ms": 0.5089063624836854
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 8,
+      "seed": 18077667585351174740,
+      "metrics": {
+        "hhi": 0.13453496535514786,
+        "top_agent_share": 0.16298342541436464,
+        "revenue_gini": 0.7692401480356956,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.023747732264761283,
+        "completion_rate": 0.905
+      },
+      "performance": {
+        "wall_seconds": 0.2004247500008205,
+        "auctions_per_second": 1995.7615015029955,
+        "mean_auction_ms": 0.47759524757566396
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 8,
+      "seed": 18077667585351174740,
+      "metrics": {
+        "hhi": 0.13839626274147968,
+        "top_agent_share": 0.215633423180593,
+        "revenue_gini": 0.7735239754565157,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.024117187084739058,
+        "completion_rate": 0.9275
+      },
+      "performance": {
+        "wall_seconds": 0.21311208300176077,
+        "auctions_per_second": 1876.9466018343744,
+        "mean_auction_ms": 0.5095638448983664
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 8,
+      "seed": 18077667585351174740,
+      "metrics": {
+        "hhi": 0.13905367179205427,
+        "top_agent_share": 0.22070844686648503,
+        "revenue_gini": 0.7716999195320497,
+        "opportunity_rate": 0.4,
+        "average_cost": 0.023924391553121527,
+        "completion_rate": 0.9175
+      },
+      "performance": {
+        "wall_seconds": 0.20244366599945351,
+        "auctions_per_second": 1975.8583111268088,
+        "mean_auction_ms": 0.4828751028253464
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 9,
+      "seed": 8347872289348261459,
+      "metrics": {
+        "hhi": 0.24897804107536112,
+        "top_agent_share": 0.4323607427055703,
+        "revenue_gini": 0.843480090328359,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.0221024121537349,
+        "completion_rate": 0.9425
+      },
+      "performance": {
+        "wall_seconds": 0.18484233299386688,
+        "auctions_per_second": 2164.0064455000797,
+        "mean_auction_ms": 0.43983491508697625
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 9,
+      "seed": 8347872289348261459,
+      "metrics": {
+        "hhi": 0.2103468764146673,
+        "top_agent_share": 0.3776595744680851,
+        "revenue_gini": 0.829705805496028,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.02335963976508969,
+        "completion_rate": 0.94
+      },
+      "performance": {
+        "wall_seconds": 0.19711933299549855,
+        "auctions_per_second": 2029.2276456167517,
+        "mean_auction_ms": 0.47062499997991836
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 9,
+      "seed": 8347872289348261459,
+      "metrics": {
+        "hhi": 0.22251616696061138,
+        "top_agent_share": 0.4021164021164021,
+        "revenue_gini": 0.8292105699948109,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.02313410029330254,
+        "completion_rate": 0.945
+      },
+      "performance": {
+        "wall_seconds": 0.18917845899704844,
+        "auctions_per_second": 2114.4056364590683,
+        "mean_auction_ms": 0.45056719700369285
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 10,
+      "seed": 18056478402582283514,
+      "metrics": {
+        "hhi": 0.15322115891916463,
+        "top_agent_share": 0.21082621082621084,
+        "revenue_gini": 0.8043350772611908,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.022065503661954207,
+        "completion_rate": 0.8775
+      },
+      "performance": {
+        "wall_seconds": 0.1916715830011526,
+        "auctions_per_second": 2086.902991757493,
+        "mean_auction_ms": 0.4563539427908836
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 10,
+      "seed": 18056478402582283514,
+      "metrics": {
+        "hhi": 0.17758457961495078,
+        "top_agent_share": 0.27146814404432135,
+        "revenue_gini": 0.8340893104763116,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.023131411704955154,
+        "completion_rate": 0.9025
+      },
+      "performance": {
+        "wall_seconds": 0.21384524999302812,
+        "auctions_per_second": 1870.5115031221922,
+        "mean_auction_ms": 0.5108918599580647
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 10,
+      "seed": 18056478402582283514,
+      "metrics": {
+        "hhi": 0.1562962962962963,
+        "top_agent_share": 0.18888888888888888,
+        "revenue_gini": 0.8095857912491133,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.022207691878783343,
+        "completion_rate": 0.9
+      },
+      "performance": {
+        "wall_seconds": 0.2596262500010198,
+        "auctions_per_second": 1540.6762605800793,
+        "mean_auction_ms": 0.6186433271795977
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 11,
+      "seed": 2280923071490610597,
+      "metrics": {
+        "hhi": 0.23839363273912495,
+        "top_agent_share": 0.335149863760218,
+        "revenue_gini": 0.8652259279117573,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.021953410131978022,
+        "completion_rate": 0.9175
+      },
+      "performance": {
+        "wall_seconds": 0.2593913330056239,
+        "auctions_per_second": 1542.0715694896696,
+        "mean_auction_ms": 0.61724266026431
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 11,
+      "seed": 2280923071490610597,
+      "metrics": {
+        "hhi": 0.2534115075614367,
+        "top_agent_share": 0.33695652173913043,
+        "revenue_gini": 0.8797622107925873,
+        "opportunity_rate": 0.2,
+        "average_cost": 0.02230663355167807,
+        "completion_rate": 0.92
+      },
+      "performance": {
+        "wall_seconds": 0.260947208997095,
+        "auctions_per_second": 1532.8770962423016,
+        "mean_auction_ms": 0.6234021721684257
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 11,
+      "seed": 2280923071490610597,
+      "metrics": {
+        "hhi": 0.25016890763165517,
+        "top_agent_share": 0.3242506811989101,
+        "revenue_gini": 0.8752599446888949,
+        "opportunity_rate": 0.2,
+        "average_cost": 0.02211939440008856,
+        "completion_rate": 0.9175
+      },
+      "performance": {
+        "wall_seconds": 0.19751841700053774,
+        "auctions_per_second": 2025.1276112592125,
+        "mean_auction_ms": 0.4707335526836687
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 12,
+      "seed": 12866153938179819202,
+      "metrics": {
+        "hhi": 0.16613592590603202,
+        "top_agent_share": 0.2631578947368421,
+        "revenue_gini": 0.8134939369893874,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.026904292871342265,
+        "completion_rate": 0.9025
+      },
+      "performance": {
+        "wall_seconds": 0.20560574998671655,
+        "auctions_per_second": 1945.4708831141277,
+        "mean_auction_ms": 0.49021740753232734
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 12,
+      "seed": 12866153938179819202,
+      "metrics": {
+        "hhi": 0.16370314717422157,
+        "top_agent_share": 0.2369146005509642,
+        "revenue_gini": 0.815635059487466,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.02798295837200682,
+        "completion_rate": 0.9075
+      },
+      "performance": {
+        "wall_seconds": 0.22292454200214706,
+        "auctions_per_second": 1794.329132214377,
+        "mean_auction_ms": 0.5333254252036568
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 12,
+      "seed": 12866153938179819202,
+      "metrics": {
+        "hhi": 0.1671789267581905,
+        "top_agent_share": 0.23140495867768596,
+        "revenue_gini": 0.8229695177277416,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.027630089614298324,
+        "completion_rate": 0.9075
+      },
+      "performance": {
+        "wall_seconds": 0.2123079580051126,
+        "auctions_per_second": 1884.0556131690907,
+        "mean_auction_ms": 0.5069097074010642
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 13,
+      "seed": 4167191908974332711,
+      "metrics": {
+        "hhi": 0.2682457800433442,
+        "top_agent_share": 0.430939226519337,
+        "revenue_gini": 0.8667781303740676,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.018878982123034994,
+        "completion_rate": 0.905
+      },
+      "performance": {
+        "wall_seconds": 0.2028031249938067,
+        "auctions_per_second": 1972.35619526186,
+        "mean_auction_ms": 0.4830174929156783
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 13,
+      "seed": 4167191908974332711,
+      "metrics": {
+        "hhi": 0.2446325659171668,
+        "top_agent_share": 0.3907103825136612,
+        "revenue_gini": 0.8614307596229878,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.019441494124855685,
+        "completion_rate": 0.915
+      },
+      "performance": {
+        "wall_seconds": 0.2141857089882251,
+        "auctions_per_second": 1867.5382306762124,
+        "mean_auction_ms": 0.5119500042928848
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 13,
+      "seed": 4167191908974332711,
+      "metrics": {
+        "hhi": 0.2687287543834071,
+        "top_agent_share": 0.43213296398891965,
+        "revenue_gini": 0.8675596162678259,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.018973212826234376,
+        "completion_rate": 0.9025
+      },
+      "performance": {
+        "wall_seconds": 0.21514679100073408,
+        "auctions_per_second": 1859.1957525345344,
+        "mean_auction_ms": 0.5129206548735965
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 14,
+      "seed": 15443132658291083584,
+      "metrics": {
+        "hhi": 0.23593772681085787,
+        "top_agent_share": 0.35542168674698793,
+        "revenue_gini": 0.8524619451344264,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.0216871225092397,
+        "completion_rate": 0.83
+      },
+      "performance": {
+        "wall_seconds": 0.19365241700143088,
+        "auctions_per_second": 2065.5564551876696,
+        "mean_auction_ms": 0.4611574925365858
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 14,
+      "seed": 15443132658291083584,
+      "metrics": {
+        "hhi": 0.24427846404289955,
+        "top_agent_share": 0.4152542372881356,
+        "revenue_gini": 0.8475824912872469,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.022738223960366444,
+        "completion_rate": 0.885
+      },
+      "performance": {
+        "wall_seconds": 0.20855275000212714,
+        "auctions_per_second": 1917.979983461835,
+        "mean_auction_ms": 0.4983169724800973
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 14,
+      "seed": 15443132658291083584,
+      "metrics": {
+        "hhi": 0.24330886728823645,
+        "top_agent_share": 0.4140845070422535,
+        "revenue_gini": 0.8499756603915729,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.022504300835988537,
+        "completion_rate": 0.8875
+      },
+      "performance": {
+        "wall_seconds": 0.19571912499668542,
+        "auctions_per_second": 2043.7450862646874,
+        "mean_auction_ms": 0.46655699276016094
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 15,
+      "seed": 16321532547856201377,
+      "metrics": {
+        "hhi": 0.23495095656152593,
+        "top_agent_share": 0.3770053475935829,
+        "revenue_gini": 0.8542004982941804,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.017769062777881345,
+        "completion_rate": 0.935
+      },
+      "performance": {
+        "wall_seconds": 0.20783133299846668,
+        "auctions_per_second": 1924.6376098783483,
+        "mean_auction_ms": 0.4955410179536557
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 15,
+      "seed": 16321532547856201377,
+      "metrics": {
+        "hhi": 0.24390063799621925,
+        "top_agent_share": 0.3695652173913043,
+        "revenue_gini": 0.8654130568040048,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.01803561907636542,
+        "completion_rate": 0.92
+      },
+      "performance": {
+        "wall_seconds": 0.229040125006577,
+        "auctions_per_second": 1746.4188861602909,
+        "mean_auction_ms": 0.5481516520740115
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 15,
+      "seed": 16321532547856201377,
+      "metrics": {
+        "hhi": 0.24982924625994232,
+        "top_agent_share": 0.3821138211382114,
+        "revenue_gini": 0.8672405582204363,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.018018951425017294,
+        "completion_rate": 0.9225
+      },
+      "performance": {
+        "wall_seconds": 0.21249550000356976,
+        "auctions_per_second": 1882.3928035806891,
+        "mean_auction_ms": 0.5073103298855131
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 16,
+      "seed": 17832053542609626577,
+      "metrics": {
+        "hhi": 0.20303807797628853,
+        "top_agent_share": 0.35014005602240894,
+        "revenue_gini": 0.8345643872898625,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.02394884406829708,
+        "completion_rate": 0.8925
+      },
+      "performance": {
+        "wall_seconds": 0.21470808300364297,
+        "auctions_per_second": 1862.9946036694537,
+        "mean_auction_ms": 0.5119871827628231
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 16,
+      "seed": 17832053542609626577,
+      "metrics": {
+        "hhi": 0.2121404483237453,
+        "top_agent_share": 0.37183098591549296,
+        "revenue_gini": 0.8314201940810444,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.025003898473977597,
+        "completion_rate": 0.8875
+      },
+      "performance": {
+        "wall_seconds": 0.2288343339896528,
+        "auctions_per_second": 1747.9894429569595,
+        "mean_auction_ms": 0.5476835570880212
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 16,
+      "seed": 17832053542609626577,
+      "metrics": {
+        "hhi": 0.1951133394534284,
+        "top_agent_share": 0.35014005602240894,
+        "revenue_gini": 0.8218047239093806,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.024702206736606325,
+        "completion_rate": 0.8925
+      },
+      "performance": {
+        "wall_seconds": 0.21495637499901932,
+        "auctions_per_second": 1860.842694252845,
+        "mean_auction_ms": 0.5133693725292687
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 17,
+      "seed": 5586935387236213740,
+      "metrics": {
+        "hhi": 0.14880875516528927,
+        "top_agent_share": 0.21022727272727273,
+        "revenue_gini": 0.7943938195653661,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.023806182675519816,
+        "completion_rate": 0.88
+      },
+      "performance": {
+        "wall_seconds": 0.19905145799566526,
+        "auctions_per_second": 2009.5306210151487,
+        "mean_auction_ms": 0.4743893751583528
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 17,
+      "seed": 5586935387236213740,
+      "metrics": {
+        "hhi": 0.14035059400826447,
+        "top_agent_share": 0.20454545454545456,
+        "revenue_gini": 0.788538875610233,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.024202342231332084,
+        "completion_rate": 0.88
+      },
+      "performance": {
+        "wall_seconds": 0.2179215420037508,
+        "auctions_per_second": 1835.5229883290533,
+        "mean_auction_ms": 0.5209510295026121
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 17,
+      "seed": 5586935387236213740,
+      "metrics": {
+        "hhi": 0.16615595773883624,
+        "top_agent_share": 0.2457627118644068,
+        "revenue_gini": 0.8248119912523304,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.025269887068067477,
+        "completion_rate": 0.885
+      },
+      "performance": {
+        "wall_seconds": 0.21031174999370705,
+        "auctions_per_second": 1901.938431932447,
+        "mean_auction_ms": 0.5013647876330651
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 18,
+      "seed": 16179458639083833428,
+      "metrics": {
+        "hhi": 0.26079735851652397,
+        "top_agent_share": 0.36990595611285265,
+        "revenue_gini": 0.8671892589973662,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.01981196074303733,
+        "completion_rate": 0.7975
+      },
+      "performance": {
+        "wall_seconds": 0.21173279100912623,
+        "auctions_per_second": 1889.173604587109,
+        "mean_auction_ms": 0.5053905555178062
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 18,
+      "seed": 16179458639083833428,
+      "metrics": {
+        "hhi": 0.2269661636945588,
+        "top_agent_share": 0.33024691358024694,
+        "revenue_gini": 0.8446003649235929,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.020667082903478184,
+        "completion_rate": 0.81
+      },
+      "performance": {
+        "wall_seconds": 0.2305751250096364,
+        "auctions_per_second": 1734.7925106113803,
+        "mean_auction_ms": 0.5520766872359673
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 18,
+      "seed": 16179458639083833428,
+      "metrics": {
+        "hhi": 0.23587890625,
+        "top_agent_share": 0.334375,
+        "revenue_gini": 0.8494432462400898,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.020631567040755035,
+        "completion_rate": 0.8
+      },
+      "performance": {
+        "wall_seconds": 0.21760437500779517,
+        "auctions_per_second": 1838.19833579022,
+        "mean_auction_ms": 0.5198326049139723
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 19,
+      "seed": 167268426338858328,
+      "metrics": {
+        "hhi": 0.28285657607617537,
+        "top_agent_share": 0.35774647887323946,
+        "revenue_gini": 0.8857857307329717,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.02209898290921652,
+        "completion_rate": 0.8875
+      },
+      "performance": {
+        "wall_seconds": 0.21868291600549128,
+        "auctions_per_second": 1829.1323680262053,
+        "mean_auction_ms": 0.5221312874709838
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 19,
+      "seed": 167268426338858328,
+      "metrics": {
+        "hhi": 0.24096653647531863,
+        "top_agent_share": 0.3573407202216066,
+        "revenue_gini": 0.86767083129458,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.022869264880533525,
+        "completion_rate": 0.9025
+      },
+      "performance": {
+        "wall_seconds": 0.2319707079877844,
+        "auctions_per_second": 1724.3556458907046,
+        "mean_auction_ms": 0.5555454374916735
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 19,
+      "seed": 167268426338858328,
+      "metrics": {
+        "hhi": 0.22597279026404035,
+        "top_agent_share": 0.3462603878116344,
+        "revenue_gini": 0.8567546649723929,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.023151368629247267,
+        "completion_rate": 0.9025
+      },
+      "performance": {
+        "wall_seconds": 0.21947866599657573,
+        "auctions_per_second": 1822.5005978769743,
+        "mean_auction_ms": 0.5244342500009225
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 20,
+      "seed": 7436641802753028215,
+      "metrics": {
+        "hhi": 0.23109655384787658,
+        "top_agent_share": 0.30952380952380953,
+        "revenue_gini": 0.8638730100005763,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.020256848681247594,
+        "completion_rate": 0.945
+      },
+      "performance": {
+        "wall_seconds": 0.19753729099466,
+        "auctions_per_second": 2024.9341174310887,
+        "mean_auction_ms": 0.4704511350064422
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 20,
+      "seed": 7436641802753028215,
+      "metrics": {
+        "hhi": 0.21329190112258894,
+        "top_agent_share": 0.30952380952380953,
+        "revenue_gini": 0.8592816985054696,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.0203831577187824,
+        "completion_rate": 0.945
+      },
+      "performance": {
+        "wall_seconds": 0.21574562499881722,
+        "auctions_per_second": 1854.0352788252042,
+        "mean_auction_ms": 0.5158978074905463
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 20,
+      "seed": 7436641802753028215,
+      "metrics": {
+        "hhi": 0.22540088888888887,
+        "top_agent_share": 0.34933333333333333,
+        "revenue_gini": 0.8630745497932275,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.020220429092624635,
+        "completion_rate": 0.9375
+      },
+      "performance": {
+        "wall_seconds": 0.2057378330064239,
+        "auctions_per_second": 1944.2218971340606,
+        "mean_auction_ms": 0.4903943825775059
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 21,
+      "seed": 1063327494447337757,
+      "metrics": {
+        "hhi": 0.21317452600875061,
+        "top_agent_share": 0.3235294117647059,
+        "revenue_gini": 0.8438972860935123,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.02130872246628484,
+        "completion_rate": 0.935
+      },
+      "performance": {
+        "wall_seconds": 0.18587800000386778,
+        "auctions_per_second": 2151.949127877838,
+        "mean_auction_ms": 0.4418438375068945
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 21,
+      "seed": 1063327494447337757,
+      "metrics": {
+        "hhi": 0.18213841104572204,
+        "top_agent_share": 0.26063829787234044,
+        "revenue_gini": 0.8213032034702064,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.021664837162014845,
+        "completion_rate": 0.94
+      },
+      "performance": {
+        "wall_seconds": 0.22048204200109467,
+        "auctions_per_second": 1814.206709850837,
+        "mean_auction_ms": 0.5256816572000389
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 21,
+      "seed": 1063327494447337757,
+      "metrics": {
+        "hhi": 0.20089988428005662,
+        "top_agent_share": 0.29222520107238603,
+        "revenue_gini": 0.8371106461068962,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.021446929813692228,
+        "completion_rate": 0.9325
+      },
+      "performance": {
+        "wall_seconds": 0.19391933400765993,
+        "auctions_per_second": 2062.713354740584,
+        "mean_auction_ms": 0.461711862408265
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 22,
+      "seed": 6022361475665185481,
+      "metrics": {
+        "hhi": 0.12572065047894854,
+        "top_agent_share": 0.16417910447761194,
+        "revenue_gini": 0.7537862401147355,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.029229776901338784,
+        "completion_rate": 0.8375
+      },
+      "performance": {
+        "wall_seconds": 0.18974354199599475,
+        "auctions_per_second": 2108.1086385983217,
+        "mean_auction_ms": 0.4516075723586255
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 22,
+      "seed": 6022361475665185481,
+      "metrics": {
+        "hhi": 0.12579348201173268,
+        "top_agent_share": 0.21246458923512748,
+        "revenue_gini": 0.7553362710430149,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.030588018871496873,
+        "completion_rate": 0.8825
+      },
+      "performance": {
+        "wall_seconds": 0.20970295800361782,
+        "auctions_per_second": 1907.4599796207888,
+        "mean_auction_ms": 0.5001647021344979
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 22,
+      "seed": 6022361475665185481,
+      "metrics": {
+        "hhi": 0.13072043688300777,
+        "top_agent_share": 0.21739130434782608,
+        "revenue_gini": 0.7696530304931686,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.030136054768420496,
+        "completion_rate": 0.8625
+      },
+      "performance": {
+        "wall_seconds": 0.20872862498799805,
+        "auctions_per_second": 1916.363891263118,
+        "mean_auction_ms": 0.49679793512041215
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 23,
+      "seed": 14595469635287211576,
+      "metrics": {
+        "hhi": 0.18081302829272328,
+        "top_agent_share": 0.2335958005249344,
+        "revenue_gini": 0.8104186206516344,
+        "opportunity_rate": 0.4,
+        "average_cost": 0.023442693980937887,
+        "completion_rate": 0.9525
+      },
+      "performance": {
+        "wall_seconds": 0.2095219999901019,
+        "auctions_per_second": 1909.1073969267977,
+        "mean_auction_ms": 0.4990170923338155
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 23,
+      "seed": 14595469635287211576,
+      "metrics": {
+        "hhi": 0.18652057501886238,
+        "top_agent_share": 0.24289405684754523,
+        "revenue_gini": 0.8237771358173485,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.02359602142077084,
+        "completion_rate": 0.9675
+      },
+      "performance": {
+        "wall_seconds": 0.22310974998981692,
+        "auctions_per_second": 1792.8396227339085,
+        "mean_auction_ms": 0.5331860574369784
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 23,
+      "seed": 14595469635287211576,
+      "metrics": {
+        "hhi": 0.18556043836805555,
+        "top_agent_share": 0.23177083333333334,
+        "revenue_gini": 0.8157998978167744,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.023321756822888687,
+        "completion_rate": 0.96
+      },
+      "performance": {
+        "wall_seconds": 0.22265179199166596,
+        "auctions_per_second": 1796.5271980158702,
+        "mean_auction_ms": 0.5323606149249827
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 24,
+      "seed": 15424557446823862743,
+      "metrics": {
+        "hhi": 0.1484660279017509,
+        "top_agent_share": 0.20949720670391062,
+        "revenue_gini": 0.7907858167150117,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.021348615203293467,
+        "completion_rate": 0.895
+      },
+      "performance": {
+        "wall_seconds": 0.20786650000081863,
+        "auctions_per_second": 1924.31199831827,
+        "mean_auction_ms": 0.49511856250319397
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 24,
+      "seed": 15424557446823862743,
+      "metrics": {
+        "hhi": 0.1439093661246528,
+        "top_agent_share": 0.20391061452513967,
+        "revenue_gini": 0.7839475395136235,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.021552771398824194,
+        "completion_rate": 0.895
+      },
+      "performance": {
+        "wall_seconds": 0.21193354099523276,
+        "auctions_per_second": 1887.384121086325,
+        "mean_auction_ms": 0.5060825697000837
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 24,
+      "seed": 15424557446823862743,
+      "metrics": {
+        "hhi": 0.14455193842242778,
+        "top_agent_share": 0.19047619047619047,
+        "revenue_gini": 0.7868238862116506,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.021391804041706396,
+        "completion_rate": 0.8925
+      },
+      "performance": {
+        "wall_seconds": 0.20272279100026935,
+        "auctions_per_second": 1973.1377909031874,
+        "mean_auction_ms": 0.48299666745151626
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 25,
+      "seed": 4096673956707378120,
+      "metrics": {
+        "hhi": 0.1595191682910981,
+        "top_agent_share": 0.2222222222222222,
+        "revenue_gini": 0.8059365929923796,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.024739181705229287,
+        "completion_rate": 0.855
+      },
+      "performance": {
+        "wall_seconds": 0.20926512499863748,
+        "auctions_per_second": 1911.450844963318,
+        "mean_auction_ms": 0.4990885532970424
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 25,
+      "seed": 4096673956707378120,
+      "metrics": {
+        "hhi": 0.14994904059899364,
+        "top_agent_share": 0.24362606232294617,
+        "revenue_gini": 0.7975158618362306,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.026110096359886984,
+        "completion_rate": 0.8825
+      },
+      "performance": {
+        "wall_seconds": 0.23682945800828747,
+        "auctions_per_second": 1688.9790795619801,
+        "mean_auction_ms": 0.5666029517669813
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 25,
+      "seed": 4096673956707378120,
+      "metrics": {
+        "hhi": 0.15695273437820706,
+        "top_agent_share": 0.25501432664756446,
+        "revenue_gini": 0.801277071435069,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.025814438674469486,
+        "completion_rate": 0.8725
+      },
+      "performance": {
+        "wall_seconds": 0.2231287920003524,
+        "auctions_per_second": 1792.6866201981152,
+        "mean_auction_ms": 0.5325385323158116
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 26,
+      "seed": 4110881950707643508,
+      "metrics": {
+        "hhi": 0.2332870932731494,
+        "top_agent_share": 0.3485254691689008,
+        "revenue_gini": 0.8450134066668018,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.025433883527669662,
+        "completion_rate": 0.9325
+      },
+      "performance": {
+        "wall_seconds": 0.2207849999977043,
+        "auctions_per_second": 1811.7172815370573,
+        "mean_auction_ms": 0.5265231952216709
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 26,
+      "seed": 4110881950707643508,
+      "metrics": {
+        "hhi": 0.24926223520818117,
+        "top_agent_share": 0.3567567567567568,
+        "revenue_gini": 0.8661470101404474,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.025992505812341343,
+        "completion_rate": 0.925
+      },
+      "performance": {
+        "wall_seconds": 0.23037945799296722,
+        "auctions_per_second": 1736.265913136278,
+        "mean_auction_ms": 0.5511606521758949
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 26,
+      "seed": 4110881950707643508,
+      "metrics": {
+        "hhi": 0.252608,
+        "top_agent_share": 0.3466666666666667,
+        "revenue_gini": 0.862578221096965,
+        "opportunity_rate": 0.23333333333333334,
+        "average_cost": 0.02540088501101305,
+        "completion_rate": 0.9375
+      },
+      "performance": {
+        "wall_seconds": 0.246700374991633,
+        "auctions_per_second": 1621.4000485956549,
+        "mean_auction_ms": 0.588588874816196
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 27,
+      "seed": 7815582966398152458,
+      "metrics": {
+        "hhi": 0.19169753086419755,
+        "top_agent_share": 0.2777777777777778,
+        "revenue_gini": 0.8271814710376739,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.025575848050467843,
+        "completion_rate": 0.9
+      },
+      "performance": {
+        "wall_seconds": 0.2082414169999538,
+        "auctions_per_second": 1920.8474748329663,
+        "mean_auction_ms": 0.49567382004170213
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 27,
+      "seed": 7815582966398152458,
+      "metrics": {
+        "hhi": 0.1969753086419753,
+        "top_agent_share": 0.31666666666666665,
+        "revenue_gini": 0.8297302377919087,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.025296544646721354,
+        "completion_rate": 0.9
+      },
+      "performance": {
+        "wall_seconds": 0.21617045800667256,
+        "auctions_per_second": 1850.3916015557184,
+        "mean_auction_ms": 0.5154914797094534
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 27,
+      "seed": 7815582966398152458,
+      "metrics": {
+        "hhi": 0.17841330253758028,
+        "top_agent_share": 0.25761772853185594,
+        "revenue_gini": 0.8132060580364568,
+        "opportunity_rate": 0.36666666666666664,
+        "average_cost": 0.02555996452810736,
+        "completion_rate": 0.9025
+      },
+      "performance": {
+        "wall_seconds": 0.19861512500210665,
+        "auctions_per_second": 2013.9453125523917,
+        "mean_auction_ms": 0.47351377965242136
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 28,
+      "seed": 13012890859957394310,
+      "metrics": {
+        "hhi": 0.21743443486886974,
+        "top_agent_share": 0.28083989501312334,
+        "revenue_gini": 0.85193820907398,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.020979373652443453,
+        "completion_rate": 0.9525
+      },
+      "performance": {
+        "wall_seconds": 0.20990412500395905,
+        "auctions_per_second": 1905.6319164402105,
+        "mean_auction_ms": 0.5008535172237316
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 28,
+      "seed": 13012890859957394310,
+      "metrics": {
+        "hhi": 0.21393351800554017,
+        "top_agent_share": 0.25,
+        "revenue_gini": 0.8551705694762897,
+        "opportunity_rate": 0.2,
+        "average_cost": 0.0213332859054717,
+        "completion_rate": 0.95
+      },
+      "performance": {
+        "wall_seconds": 0.23020029200415593,
+        "auctions_per_second": 1737.6172572047763,
+        "mean_auction_ms": 0.5510414598029456
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 28,
+      "seed": 13012890859957394310,
+      "metrics": {
+        "hhi": 0.2123268698060942,
+        "top_agent_share": 0.28157894736842104,
+        "revenue_gini": 0.8425255243314786,
+        "opportunity_rate": 0.26666666666666666,
+        "average_cost": 0.02123717769227009,
+        "completion_rate": 0.95
+      },
+      "performance": {
+        "wall_seconds": 0.21672349999425933,
+        "auctions_per_second": 1845.6697128396108,
+        "mean_auction_ms": 0.5170663803073694
+      }
+    },
+    {
+      "arm": "price_only",
+      "replication": 29,
+      "seed": 7903668894606655714,
+      "metrics": {
+        "hhi": 0.1860347444763029,
+        "top_agent_share": 0.2779220779220779,
+        "revenue_gini": 0.8304435667521444,
+        "opportunity_rate": 0.3333333333333333,
+        "average_cost": 0.01934245485416902,
+        "completion_rate": 0.9625
+      },
+      "performance": {
+        "wall_seconds": 0.18973800000094343,
+        "auctions_per_second": 2108.1702136525687,
+        "mean_auction_ms": 0.45142490253056167
+      }
+    },
+    {
+      "arm": "reputation_weighted",
+      "replication": 29,
+      "seed": 7903668894606655714,
+      "metrics": {
+        "hhi": 0.18330693441434667,
+        "top_agent_share": 0.2772020725388601,
+        "revenue_gini": 0.8219074200380221,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.019716134009628915,
+        "completion_rate": 0.965
+      },
+      "performance": {
+        "wall_seconds": 0.20370874999207444,
+        "auctions_per_second": 1963.5877202896907,
+        "mean_auction_ms": 0.4856362625287147
+      }
+    },
+    {
+      "arm": "reputation_adjusted",
+      "replication": 29,
+      "seed": 7903668894606655714,
+      "metrics": {
+        "hhi": 0.18323981851861793,
+        "top_agent_share": 0.2772020725388601,
+        "revenue_gini": 0.8216825911019725,
+        "opportunity_rate": 0.3,
+        "average_cost": 0.019710542091864246,
+        "completion_rate": 0.965
+      },
+      "performance": {
+        "wall_seconds": 0.19174408400431275,
+        "auctions_per_second": 2086.1139058194,
+        "mean_auction_ms": 0.4565205176186282
+      }
+    }
+  ]
+}
