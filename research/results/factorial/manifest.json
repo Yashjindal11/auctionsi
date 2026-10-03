@@ -4,11 +4,11 @@
   "implementation": "CPython",
   "platform": "macOS-26.6.2-arm64-arm-64bit",
   "git_commit": "0162c05e54894a8575355e5fb4d3f5d47dd18a08+dirty",
-  "created_at": "2026-10-03T19:24:41+00:00",
-  "seed": 2026,
-  "replications": 30,
+  "created_at": "2026-10-03T19:21:23+00:00",
+  "seed": 37,
+  "replications": 20,
   "agent_generation": {
-    "count": 40,
+    "count": 25,
     "capabilities": [
       "research",
       "data_analysis",
@@ -25,17 +25,13 @@
     "quality_distribution": "beta",
     "quality_spread": 0.05,
     "latency_distribution": "lognormal",
-    "reliability_distribution": {
-      "name": "uniform",
-      "low": 0.6,
-      "high": 1.0
-    },
+    "reliability_distribution": "beta",
     "capacity_distribution": 1,
     "strategy": "cost_plus",
     "quality_report_bias": 0.0
   },
   "task_generation": {
-    "count": 400,
+    "count": 300,
     "task_types": [
       "research",
       "data_analysis",
@@ -46,7 +42,7 @@
     "budget_distribution": "lognormal",
     "deadline_distribution": "uniform",
     "complexity_distribution": "lognormal",
-    "min_quality": 0.6,
+    "min_quality": null,
     "value_multiplier": 1.5
   },
   "dependencies": {
@@ -55,19 +51,19 @@
     "scipy": "1.18.1"
   },
   "config": {
-    "name": "mechanisms",
-    "description": "Four market designs on the same synthetic market: pay-as-bid and second-price reverse auctions with lowest-price selection, and pay-as-bid with quality-weighted and risk-adjusted selection.\n",
-    "hypothesis": "With bidders whose strategy does not react to the mechanism (cost-plus 20%), second-price payments raise buyer cost relative to first-price without changing allocation, while risk-adjusted selection raises completion rate at some cost.\n",
+    "name": "factorial",
+    "description": "A 2 x 2 x 2 factorial sweep: payment rule x selection policy x agent reliability spread. Every combination is one arm.\n",
+    "hypothesis": "Risk-adjusted selection matters only when reliability varies; the payment rule shifts cost but not completion.\n",
     "limitations": [
-      "Bidders use a fixed cost-plus strategy in every arm, so the classic incentive argument for second-price auctions (bidders shading less) is deliberately not modelled here."
+      "Main effects are read from arm means; interactions are not modelled formally."
     ],
-    "seed": 2026,
-    "replications": 30,
+    "seed": 37,
+    "replications": 20,
     "confidence": 0.95,
     "alpha": 0.05,
     "environment": {
       "agents": {
-        "count": 40,
+        "count": 25,
         "capabilities": [
           "research",
           "data_analysis",
@@ -84,17 +80,13 @@
         "quality_distribution": "beta",
         "quality_spread": 0.05,
         "latency_distribution": "lognormal",
-        "reliability_distribution": {
-          "name": "uniform",
-          "low": 0.6,
-          "high": 1.0
-        },
+        "reliability_distribution": "beta",
         "capacity_distribution": 1,
         "strategy": "cost_plus",
         "quality_report_bias": 0.0
       },
       "tasks": {
-        "count": 400,
+        "count": 300,
         "task_types": [
           "research",
           "data_analysis",
@@ -105,7 +97,7 @@
         "budget_distribution": "lognormal",
         "deadline_distribution": "uniform",
         "complexity_distribution": "lognormal",
-        "min_quality": 0.6,
+        "min_quality": null,
         "value_multiplier": 1.5
       },
       "adversaries": {
@@ -124,63 +116,33 @@
     "settlement": "pay_on_pass",
     "recovery": {},
     "validation": {},
-    "arms": [
-      {
-        "name": "first_price",
-        "mechanism": "first_price_reverse",
-        "policy": "lowest_price",
-        "reputation": null,
-        "settlement": null,
-        "recovery": null,
-        "validation": null,
-        "environment": {}
-      },
-      {
-        "name": "second_price",
-        "mechanism": "second_price_reverse",
-        "policy": "lowest_price",
-        "reputation": null,
-        "settlement": null,
-        "recovery": null,
-        "validation": null,
-        "environment": {}
-      },
-      {
-        "name": "quality_weighted",
-        "mechanism": "first_price_reverse",
-        "policy": {
-          "name": "weighted_score",
-          "price_weight": 0.5,
-          "quality_weight": 0.5,
-          "latency_weight": 0.0
+    "arms": [],
+    "factors": {
+      "mechanism": [
+        "first_price_reverse",
+        "second_price_reverse"
+      ],
+      "policy": [
+        "lowest_price",
+        "risk_adjusted_cost"
+      ],
+      "environment.agents.reliability_distribution": [
+        {
+          "name": "uniform",
+          "low": 0.95,
+          "high": 1.0
         },
-        "reputation": null,
-        "settlement": null,
-        "recovery": null,
-        "validation": null,
-        "environment": {}
-      },
-      {
-        "name": "risk_adjusted",
-        "mechanism": "first_price_reverse",
-        "policy": {
-          "name": "risk_adjusted_cost"
-        },
-        "reputation": null,
-        "settlement": null,
-        "recovery": null,
-        "validation": null,
-        "environment": {}
-      }
-    ],
-    "factors": {},
+        {
+          "name": "uniform",
+          "low": 0.4,
+          "high": 1.0
+        }
+      ]
+    },
     "baseline": null,
     "metrics": [
-      "total_cost",
-      "average_cost",
-      "average_quality",
       "completion_rate",
-      "cost_efficiency",
+      "average_cost",
       "buyer_utility"
     ]
   }

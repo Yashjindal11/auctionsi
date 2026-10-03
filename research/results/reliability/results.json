@@ -1,11 +1,11 @@
 {
   "manifest": {
-    "auctionsi_version": "0.1.0",
+    "auctionsi_version": "0.1.1",
     "python_version": "3.12.15",
     "implementation": "CPython",
     "platform": "macOS-26.6.2-arm64-arm-64bit",
-    "git_commit": "4cdec6d83de3d2823b91590873730666f37fb1dd",
-    "created_at": "2026-10-03T12:52:58+00:00",
+    "git_commit": "0162c05e54894a8575355e5fb4d3f5d47dd18a08+dirty",
+    "created_at": "2026-10-03T19:25:12+00:00",
     "seed": 11,
     "replications": 30,
     "agent_generation": {
@@ -106,7 +106,16 @@
           "complexity_distribution": "lognormal",
           "min_quality": null,
           "value_multiplier": 1.5
-        }
+        },
+        "adversaries": {
+          "colluders": 0,
+          "winner_markup": 0.6,
+          "cover_markup": 1.2,
+          "sybil_copies": 0,
+          "overstaters": 0,
+          "overstate_quality": 0.2
+        },
+        "changes": []
       },
       "mechanism": "first_price_reverse",
       "policy": "lowest_price",
@@ -153,6 +162,7 @@
           "environment": {}
         }
       ],
+      "factors": {},
       "baseline": null,
       "metrics": [
         "completion_rate",
@@ -656,9 +666,9 @@
         "hhi": 0.0677177375552326
       },
       "performance": {
-        "wall_seconds": 0.17075274999660905,
-        "auctions_per_second": 2342.5684213457384,
-        "mean_auction_ms": 0.40576439550932264
+        "wall_seconds": 0.17839133300003596,
+        "auctions_per_second": 2242.2613995485945,
+        "mean_auction_ms": 0.4219233474577777
       }
     },
     {
@@ -674,9 +684,9 @@
         "hhi": 0.06651026061394086
       },
       "performance": {
-        "wall_seconds": 0.17633158300304785,
-        "auctions_per_second": 2268.4535191468567,
-        "mean_auction_ms": 0.4197624872904271
+        "wall_seconds": 0.18710070800443646,
+        "auctions_per_second": 2137.8860842713398,
+        "mean_auction_ms": 0.4436306996649364
       }
     },
     {
@@ -692,9 +702,9 @@
         "hhi": 0.06871596130414998
       },
       "performance": {
-        "wall_seconds": 0.17203158300253563,
-        "auctions_per_second": 2325.1544455886583,
-        "mean_auction_ms": 0.4090266676575993
+        "wall_seconds": 0.18030320800608024,
+        "auctions_per_second": 2218.4852084634626,
+        "mean_auction_ms": 0.4273800097871572
       }
     },
     {
@@ -710,9 +720,9 @@
         "hhi": 0.06659395862251305
       },
       "performance": {
-        "wall_seconds": 0.14657616699696518,
-        "auctions_per_second": 2728.9566113997366,
-        "mean_auction_ms": 0.34703440021985443
+        "wall_seconds": 0.15532079100375995,
+        "auctions_per_second": 2575.3152389644792,
+        "mean_auction_ms": 0.36635127780755283
       }
     },
     {
@@ -728,9 +738,9 @@
         "hhi": 0.06389485053795116
       },
       "performance": {
-        "wall_seconds": 0.14826145800179802,
-        "auctions_per_second": 2697.936506162978,
-        "mean_auction_ms": 0.3513588676287327
+        "wall_seconds": 0.15550700000312645,
+        "auctions_per_second": 2572.2314750587307,
+        "mean_auction_ms": 0.3669295880536083
       }
     },
     {
@@ -746,9 +756,9 @@
         "hhi": 0.060524654658622154
       },
       "performance": {
-        "wall_seconds": 0.14415725000435486,
-        "auctions_per_second": 2774.7477146513015,
-        "mean_auction_ms": 0.3413412128065829
+        "wall_seconds": 0.15255454200087115,
+        "auctions_per_second": 2622.0130502421607,
+        "mean_auction_ms": 0.35966624313005013
       }
     },
     {
@@ -764,9 +774,9 @@
         "hhi": 0.08627218934911243
       },
       "performance": {
-        "wall_seconds": 0.14921358299034182,
-        "auctions_per_second": 2680.7210977963773,
-        "mean_auction_ms": 0.3532728126447182
+        "wall_seconds": 0.15728645799390506,
+        "auctions_per_second": 2543.1305727254676,
+        "mean_auction_ms": 0.3705128873116337
       }
     },
     {
@@ -782,9 +792,9 @@
         "hhi": 0.08837597257881635
       },
       "performance": {
-        "wall_seconds": 0.1570171249913983,
-        "auctions_per_second": 2547.492829345288,
-        "mean_auction_ms": 0.37281862503732555
+        "wall_seconds": 0.1676015830016695,
+        "auctions_per_second": 2386.6123030354406,
+        "mean_auction_ms": 0.396372217037424
       }
     },
     {
@@ -800,9 +810,9 @@
         "hhi": 0.08180147058823531
       },
       "performance": {
-        "wall_seconds": 0.15122070800862275,
-        "auctions_per_second": 2645.1403730842976,
-        "mean_auction_ms": 0.35849833497195505
+        "wall_seconds": 0.1641417919890955,
+        "auctions_per_second": 2436.9174672259783,
+        "mean_auction_ms": 0.3878907203034032
       }
     },
     {
@@ -818,9 +828,9 @@
         "hhi": 0.08499632539996607
       },
       "performance": {
-        "wall_seconds": 0.15054104098817334,
-        "auctions_per_second": 2657.0827288979917,
-        "mean_auction_ms": 0.3566725069686072
+        "wall_seconds": 0.16173570799583104,
+        "auctions_per_second": 2473.170612455665,
+        "mean_auction_ms": 0.38188542959687766
       }
     },
     {
@@ -836,9 +846,9 @@
         "hhi": 0.08998461064943059
       },
       "performance": {
-        "wall_seconds": 0.15861979201145004,
-        "auctions_per_second": 2521.7534011841713,
-        "mean_auction_ms": 0.3766092770092655
+        "wall_seconds": 0.18629716700525023,
+        "auctions_per_second": 2147.107261103585,
+        "mean_auction_ms": 0.4429575057292823
       }
     },
     {
@@ -854,9 +864,9 @@
         "hhi": 0.08559809561594921
       },
       "performance": {
-        "wall_seconds": 0.15760737500386313,
-        "auctions_per_second": 2537.952300710519,
-        "mean_auction_ms": 0.3737535697655403
+        "wall_seconds": 0.16354762499395292,
+        "auctions_per_second": 2445.7707656396096,
+        "mean_auction_ms": 0.38626132754870923
       }
     },
     {
@@ -872,9 +882,9 @@
         "hhi": 0.06604308390022676
       },
       "performance": {
-        "wall_seconds": 0.20536008299677633,
-        "auctions_per_second": 1947.798199936835,
-        "mean_auction_ms": 0.4828414774601697
+        "wall_seconds": 0.15478608300327323,
+        "auctions_per_second": 2584.2116567517332,
+        "mean_auction_ms": 0.364625400325167
       }
     },
     {
@@ -890,9 +900,9 @@
         "hhi": 0.06400854396582413
       },
       "performance": {
-        "wall_seconds": 0.15343770899926312,
-        "auctions_per_second": 2606.921092662567,
-        "mean_auction_ms": 0.36379815013788175
+        "wall_seconds": 0.16121083300095052,
+        "auctions_per_second": 2481.222834433475,
+        "mean_auction_ms": 0.38056978715758305
       }
     },
     {
@@ -908,9 +918,9 @@
         "hhi": 0.06140033830184042
       },
       "performance": {
-        "wall_seconds": 0.1498977500014007,
-        "auctions_per_second": 2668.4856843832695,
-        "mean_auction_ms": 0.354986585007282
+        "wall_seconds": 0.15561429200170096,
+        "auctions_per_second": 2570.457988496505,
+        "mean_auction_ms": 0.3668378021029639
       }
     },
     {
@@ -926,9 +936,9 @@
         "hhi": 0.08429456807066846
       },
       "performance": {
-        "wall_seconds": 0.15912908400059678,
-        "auctions_per_second": 2513.682539632415,
-        "mean_auction_ms": 0.37754081495222636
+        "wall_seconds": 0.16659391700522974,
+        "auctions_per_second": 2401.0480525975217,
+        "mean_auction_ms": 0.39361174502118956
       }
     },
     {
@@ -944,9 +954,9 @@
         "hhi": 0.0795940170940171
       },
       "performance": {
-        "wall_seconds": 0.162406874995213,
-        "auctions_per_second": 2462.9499213736494,
-        "mean_auction_ms": 0.3856475348584354
+        "wall_seconds": 0.16889524999714922,
+        "auctions_per_second": 2368.3318506988894,
+        "mean_auction_ms": 0.39952621980773984
       }
     },
     {
@@ -962,9 +972,9 @@
         "hhi": 0.08541586569268231
       },
       "performance": {
-        "wall_seconds": 0.1594384999916656,
-        "auctions_per_second": 2508.8043353450353,
-        "mean_auction_ms": 0.3783251198910875
+        "wall_seconds": 0.16517958299664315,
+        "auctions_per_second": 2421.6067914890486,
+        "mean_auction_ms": 0.39058457761711907
       }
     },
     {
@@ -980,9 +990,9 @@
         "hhi": 0.07166239236045953
       },
       "performance": {
-        "wall_seconds": 0.15961041700211354,
-        "auctions_per_second": 2506.10209228827,
-        "mean_auction_ms": 0.3781599778085365
+        "wall_seconds": 0.16654454200761393,
+        "auctions_per_second": 2401.759884642231,
+        "mean_auction_ms": 0.39362729468848556
       }
     },
     {
@@ -998,9 +1008,9 @@
         "hhi": 0.0749345724509961
       },
       "performance": {
-        "wall_seconds": 0.16241983299551066,
-        "auctions_per_second": 2462.753425014642,
-        "mean_auction_ms": 0.3858215848595137
+        "wall_seconds": 0.17086429201299325,
+        "auctions_per_second": 2341.0391679121717,
+        "mean_auction_ms": 0.40427019477647264
       }
     },
     {
@@ -1016,9 +1026,9 @@
         "hhi": 0.0748460174291108
       },
       "performance": {
-        "wall_seconds": 0.15976729099929798,
-        "auctions_per_second": 2503.641374264508,
-        "mean_auction_ms": 0.37928406534774695
+        "wall_seconds": 0.1690804170066258,
+        "auctions_per_second": 2365.7381918115634,
+        "mean_auction_ms": 0.39954101714101853
       }
     },
     {
@@ -1034,9 +1044,9 @@
         "hhi": 0.09069984266651128
       },
       "performance": {
-        "wall_seconds": 0.15735479100840166,
-        "auctions_per_second": 2542.026190855814,
-        "mean_auction_ms": 0.373212412596331
+        "wall_seconds": 0.16606254200451076,
+        "auctions_per_second": 2408.7310429653353,
+        "mean_auction_ms": 0.3921175721552572
       }
     },
     {
@@ -1052,9 +1062,9 @@
         "hhi": 0.08285108024691358
       },
       "performance": {
-        "wall_seconds": 0.15900054200028535,
-        "auctions_per_second": 2515.714694854827,
-        "mean_auction_ms": 0.3773434403410647
+        "wall_seconds": 0.1633791670028586,
+        "auctions_per_second": 2448.292565924279,
+        "mean_auction_ms": 0.38643801475700457
       }
     },
     {
@@ -1070,9 +1080,9 @@
         "hhi": 0.0837914737654321
       },
       "performance": {
-        "wall_seconds": 0.15720658400096,
-        "auctions_per_second": 2544.42269413829,
-        "mean_auction_ms": 0.37285573769622715
+        "wall_seconds": 0.16294570900208782,
+        "auctions_per_second": 2454.805360936966,
+        "mean_auction_ms": 0.3851515497080982
       }
     },
     {
@@ -1088,9 +1098,9 @@
         "hhi": 0.07099159970781593
       },
       "performance": {
-        "wall_seconds": 0.1449152499990305,
-        "auctions_per_second": 2760.233998855718,
-        "mean_auction_ms": 0.34266416245372966
+        "wall_seconds": 0.1478468330024043,
+        "auctions_per_second": 2705.502660266623,
+        "mean_auction_ms": 0.34812948062608484
       }
     },
     {
@@ -1106,9 +1116,9 @@
         "hhi": 0.0662754366287454
       },
       "performance": {
-        "wall_seconds": 0.14365745800023433,
-        "auctions_per_second": 2784.4012108257375,
-        "mean_auction_ms": 0.3400001950285514
+        "wall_seconds": 0.15024162500048988,
+        "auctions_per_second": 2662.3780193983907,
+        "mean_auction_ms": 0.3541712649166584
       }
     },
     {
@@ -1124,9 +1134,9 @@
         "hhi": 0.06923890616981389
       },
       "performance": {
-        "wall_seconds": 0.1426806669915095,
-        "auctions_per_second": 2803.463205171327,
-        "mean_auction_ms": 0.3375601101652137
+        "wall_seconds": 0.1485512499930337,
+        "auctions_per_second": 2692.673404086185,
+        "mean_auction_ms": 0.34956719293404603
       }
     },
     {
@@ -1142,9 +1152,9 @@
         "hhi": 0.06263533199560135
       },
       "performance": {
-        "wall_seconds": 0.15562287499778904,
-        "auctions_per_second": 2570.3162212218663,
-        "mean_auction_ms": 0.36873792538244743
+        "wall_seconds": 0.16043637500843033,
+        "auctions_per_second": 2493.2001859240554,
+        "mean_auction_ms": 0.3786937179393135
       }
     },
     {
@@ -1160,9 +1170,9 @@
         "hhi": 0.06691481994459833
       },
       "performance": {
-        "wall_seconds": 0.1563739999983227,
-        "auctions_per_second": 2557.969995039396,
-        "mean_auction_ms": 0.37094092076586094
+        "wall_seconds": 0.1624148340051761,
+        "auctions_per_second": 2462.8292264686374,
+        "mean_auction_ms": 0.38397088970668847
       }
     },
     {
@@ -1178,9 +1188,9 @@
         "hhi": 0.06321956463316313
       },
       "performance": {
-        "wall_seconds": 0.15449854100006633,
-        "auctions_per_second": 2589.021212827041,
-        "mean_auction_ms": 0.36628490739531117
+        "wall_seconds": 0.16112458301358856,
+        "auctions_per_second": 2482.5510329871,
+        "mean_auction_ms": 0.3804842924728291
       }
     },
     {
@@ -1196,9 +1206,9 @@
         "hhi": 0.06781888514183694
       },
       "performance": {
-        "wall_seconds": 0.14658283299650066,
-        "auctions_per_second": 2728.8325093945286,
-        "mean_auction_ms": 0.34696363007242326
+        "wall_seconds": 0.15462591699906625,
+        "auctions_per_second": 2586.8884580481777,
+        "mean_auction_ms": 0.36463487489527324
       }
     },
     {
@@ -1214,9 +1224,9 @@
         "hhi": 0.06967914261431993
       },
       "performance": {
-        "wall_seconds": 0.1633319999964442,
-        "auctions_per_second": 2448.9995837233864,
-        "mean_auction_ms": 0.38752367727283854
+        "wall_seconds": 0.1669202919874806,
+        "auctions_per_second": 2396.3533446850242,
+        "mean_auction_ms": 0.394496144799632
       }
     },
     {
@@ -1232,9 +1242,9 @@
         "hhi": 0.06876891364413841
       },
       "performance": {
-        "wall_seconds": 0.16344741599459667,
-        "auctions_per_second": 2447.2702585473935,
-        "mean_auction_ms": 0.38752577718696557
+        "wall_seconds": 0.1618673330085585,
+        "auctions_per_second": 2471.15951418592,
+        "mean_auction_ms": 0.38250715246249456
       }
     },
     {
@@ -1250,9 +1260,9 @@
         "hhi": 0.08755483444504537
       },
       "performance": {
-        "wall_seconds": 0.1641063330025645,
-        "auctions_per_second": 2437.4440198706357,
-        "mean_auction_ms": 0.3891384576127166
+        "wall_seconds": 0.16635087500617374,
+        "auctions_per_second": 2404.5560324534204,
+        "mean_auction_ms": 0.3932664652529638
       }
     },
     {
@@ -1268,9 +1278,9 @@
         "hhi": 0.08174921796836414
       },
       "performance": {
-        "wall_seconds": 0.17298899999877904,
-        "auctions_per_second": 2312.285752289586,
-        "mean_auction_ms": 0.41147345255012624
+        "wall_seconds": 0.17899929100531153,
+        "auctions_per_second": 2234.6457226365806,
+        "mean_auction_ms": 0.423982387437718
       }
     },
     {
@@ -1286,9 +1296,9 @@
         "hhi": 0.07837114051669818
       },
       "performance": {
-        "wall_seconds": 0.17075249999470543,
-        "auctions_per_second": 2342.571851143631,
-        "mean_auction_ms": 0.40587322997453157
+        "wall_seconds": 0.17599754199909512,
+        "auctions_per_second": 2272.7590138847313,
+        "mean_auction_ms": 0.4169126448323368
       }
     },
     {
@@ -1304,9 +1314,9 @@
         "hhi": 0.061475729975472196
       },
       "performance": {
-        "wall_seconds": 0.15063958300743252,
-        "auctions_per_second": 2655.3445781927326,
-        "mean_auction_ms": 0.3566924075494171
+        "wall_seconds": 0.1544415420066798,
+        "auctions_per_second": 2589.976730371544,
+        "mean_auction_ms": 0.36393634480191395
       }
     },
     {
@@ -1322,9 +1332,9 @@
         "hhi": 0.057525951557093426
       },
       "performance": {
-        "wall_seconds": 0.16099574998952448,
-        "auctions_per_second": 2484.5376354719106,
-        "mean_auction_ms": 0.38190854527783813
+        "wall_seconds": 0.164988207994611,
+        "auctions_per_second": 2424.4156892295305,
+        "mean_auction_ms": 0.3900732121473993
       }
     },
     {
@@ -1340,9 +1350,9 @@
         "hhi": 0.060397638672310086
       },
       "performance": {
-        "wall_seconds": 0.15673741699720267,
-        "auctions_per_second": 2552.0389940274367,
-        "mean_auction_ms": 0.3714429102547001
+        "wall_seconds": 0.1586265829973854,
+        "auctions_per_second": 2521.6454420290515,
+        "mean_auction_ms": 0.37473651966138277
       }
     },
     {
@@ -1358,9 +1368,9 @@
         "hhi": 0.07637043376424486
       },
       "performance": {
-        "wall_seconds": 0.1588319590082392,
-        "auctions_per_second": 2518.3848546453455,
-        "mean_auction_ms": 0.3766746719702496
+        "wall_seconds": 0.16612312500365078,
+        "auctions_per_second": 2407.852609269236,
+        "mean_auction_ms": 0.39233311286807293
       }
     },
     {
@@ -1376,9 +1386,9 @@
         "hhi": 0.08744780816852889
       },
       "performance": {
-        "wall_seconds": 0.17396020899468567,
-        "auctions_per_second": 2299.3764051652734,
-        "mean_auction_ms": 0.41362135005329037
+        "wall_seconds": 0.17848741701163817,
+        "auctions_per_second": 2241.054337034404,
+        "mean_auction_ms": 0.4229477520129876
       }
     },
     {
@@ -1394,9 +1404,9 @@
         "hhi": 0.08245791609752262
       },
       "performance": {
-        "wall_seconds": 0.16795033299422357,
-        "auctions_per_second": 2381.656486586171,
-        "mean_auction_ms": 0.3989727274165489
+        "wall_seconds": 0.17031804200087208,
+        "auctions_per_second": 2348.5474310346513,
+        "mean_auction_ms": 0.4027185373342945
       }
     },
     {
@@ -1412,9 +1422,9 @@
         "hhi": 0.07345734016484741
       },
       "performance": {
-        "wall_seconds": 0.18639833299675956,
-        "auctions_per_second": 2145.941938262687,
-        "mean_auction_ms": 0.44425136267818743
+        "wall_seconds": 0.17545508399780374,
+        "auctions_per_second": 2279.785748499639,
+        "mean_auction_ms": 0.4153214520556503
       }
     },
     {
@@ -1430,9 +1440,9 @@
         "hhi": 0.06994893845740392
       },
       "performance": {
-        "wall_seconds": 0.18535254200105555,
-        "auctions_per_second": 2158.049712626666,
-        "mean_auction_ms": 0.4413830396879348
+        "wall_seconds": 0.18764158299018163,
+        "auctions_per_second": 2131.723649021497,
+        "mean_auction_ms": 0.44520997456857003
       }
     },
     {
@@ -1448,9 +1458,9 @@
         "hhi": 0.07533244906982281
       },
       "performance": {
-        "wall_seconds": 0.17769645800581202,
-        "auctions_per_second": 2251.029674361416,
-        "mean_auction_ms": 0.4227717449248303
+        "wall_seconds": 0.18750445899786428,
+        "auctions_per_second": 2133.2826010530025,
+        "mean_auction_ms": 0.4446352124432451
       }
     },
     {
@@ -1466,9 +1476,9 @@
         "hhi": 0.06568174823022468
       },
       "performance": {
-        "wall_seconds": 0.15356024999346118,
-        "auctions_per_second": 2604.840771078665,
-        "mean_auction_ms": 0.3637658471780014
+        "wall_seconds": 0.1639413329976378,
+        "auctions_per_second": 2439.897203994087,
+        "mean_auction_ms": 0.38692782731232
       }
     },
     {
@@ -1484,9 +1494,9 @@
         "hhi": 0.0711424451209742
       },
       "performance": {
-        "wall_seconds": 0.16167712499736808,
-        "auctions_per_second": 2474.066755000199,
-        "mean_auction_ms": 0.3837098874646472
+        "wall_seconds": 0.16932887499569915,
+        "auctions_per_second": 2362.2669199813663,
+        "mean_auction_ms": 0.40048615275736665
       }
     },
     {
@@ -1502,9 +1512,9 @@
         "hhi": 0.06995069869040206
       },
       "performance": {
-        "wall_seconds": 0.15856112499022856,
-        "auctions_per_second": 2522.6864404793437,
-        "mean_auction_ms": 0.37599948005663464
+        "wall_seconds": 0.1631956660130527,
+        "auctions_per_second": 2451.0454828378056,
+        "mean_auction_ms": 0.38574090460315347
       }
     },
     {
@@ -1520,9 +1530,9 @@
         "hhi": 0.06952293013234842
       },
       "performance": {
-        "wall_seconds": 0.16451408300781623,
-        "auctions_per_second": 2431.4027874500907,
-        "mean_auction_ms": 0.3904316800253582
+        "wall_seconds": 0.16736645800119732,
+        "auctions_per_second": 2389.965138636909,
+        "mean_auction_ms": 0.39589771746250335
       }
     },
     {
@@ -1538,9 +1548,9 @@
         "hhi": 0.0746888384983623
       },
       "performance": {
-        "wall_seconds": 0.16942204200313427,
-        "auctions_per_second": 2360.967883934489,
-        "mean_auction_ms": 0.4026835076001589
+        "wall_seconds": 0.17633674999524374,
+        "auctions_per_second": 2268.3870492724236,
+        "mean_auction_ms": 0.41763587287277915
       }
     },
     {
@@ -1556,9 +1566,9 @@
         "hhi": 0.0694437076255451
       },
       "performance": {
-        "wall_seconds": 0.16840812499867752,
-        "auctions_per_second": 2375.1823138173477,
-        "mean_auction_ms": 0.40002784262469504
+        "wall_seconds": 0.17375250000623055,
+        "auctions_per_second": 2302.1251491958765,
+        "mean_auction_ms": 0.4111683225710294
       }
     },
     {
@@ -1574,9 +1584,9 @@
         "hhi": 0.1009003571248931
       },
       "performance": {
-        "wall_seconds": 0.15224866599601228,
-        "auctions_per_second": 2627.2808197247314,
-        "mean_auction_ms": 0.3603836546972161
+        "wall_seconds": 0.15766070800600573,
+        "auctions_per_second": 2537.0937696459087,
+        "mean_auction_ms": 0.371617300042999
       }
     },
     {
@@ -1592,9 +1602,9 @@
         "hhi": 0.08797260400758944
       },
       "performance": {
-        "wall_seconds": 0.15569933300139382,
-        "auctions_per_second": 2569.054036965073,
-        "mean_auction_ms": 0.36911840998072876
+        "wall_seconds": 0.1619442500086734,
+        "auctions_per_second": 2469.985812886699,
+        "mean_auction_ms": 0.3829312500965898
       }
     },
     {
@@ -1610,9 +1620,9 @@
         "hhi": 0.10156975891241625
       },
       "performance": {
-        "wall_seconds": 0.1560082079959102,
-        "auctions_per_second": 2563.967660025209,
-        "mean_auction_ms": 0.36991028289776295
+        "wall_seconds": 0.16255379100039136,
+        "auctions_per_second": 2460.723908918476,
+        "mean_auction_ms": 0.38415886476286687
       }
     },
     {
@@ -1628,9 +1638,9 @@
         "hhi": 0.0766194465155037
       },
       "performance": {
-        "wall_seconds": 0.16296058300940786,
-        "auctions_per_second": 2454.5813018900876,
-        "mean_auction_ms": 0.3863054322573589
+        "wall_seconds": 0.16705391700088512,
+        "auctions_per_second": 2394.436521939684,
+        "mean_auction_ms": 0.3940120475817821
       }
     },
     {
@@ -1646,9 +1656,9 @@
         "hhi": 0.07420508944318469
       },
       "performance": {
-        "wall_seconds": 0.16458399999828544,
-        "auctions_per_second": 2430.3699023244485,
-        "mean_auction_ms": 0.390568259608699
+        "wall_seconds": 0.18616429199755657,
+        "auctions_per_second": 2148.6397617285816,
+        "mean_auction_ms": 0.4424737277076929
       }
     },
     {
@@ -1664,9 +1674,9 @@
         "hhi": 0.07783558792924038
       },
       "performance": {
-        "wall_seconds": 0.1639723749976838,
-        "auctions_per_second": 2439.435301255167,
-        "mean_auction_ms": 0.3891915524218348
+        "wall_seconds": 0.16921879099390935,
+        "auctions_per_second": 2363.8036748199975,
+        "mean_auction_ms": 0.400358405240695
       }
     },
     {
@@ -1682,9 +1692,9 @@
         "hhi": 0.09004115226337449
       },
       "performance": {
-        "wall_seconds": 0.16452241700608283,
-        "auctions_per_second": 2431.2796230389135,
-        "mean_auction_ms": 0.3904912447615061
+        "wall_seconds": 0.19436024999595247,
+        "auctions_per_second": 2058.033985901592,
+        "mean_auction_ms": 0.45855812495574355
       }
     },
     {
@@ -1700,9 +1710,9 @@
         "hhi": 0.09743752750745757
       },
       "performance": {
-        "wall_seconds": 0.16825062500720378,
-        "auctions_per_second": 2377.405730188959,
-        "mean_auction_ms": 0.399737680418184
+        "wall_seconds": 0.17425612499937415,
+        "auctions_per_second": 2295.47167998506,
+        "mean_auction_ms": 0.41246670010878006
       }
     },
     {
@@ -1718,9 +1728,9 @@
         "hhi": 0.0953061224489796
       },
       "performance": {
-        "wall_seconds": 0.16485420799290296,
-        "auctions_per_second": 2426.38634991483,
-        "mean_auction_ms": 0.391437402140582
+        "wall_seconds": 0.17187466700852383,
+        "auctions_per_second": 2327.2772361511697,
+        "mean_auction_ms": 0.4064000326980022
       }
     },
     {
@@ -1736,9 +1746,9 @@
         "hhi": 0.06514177693761815
       },
       "performance": {
-        "wall_seconds": 0.15114308400370646,
-        "auctions_per_second": 2646.498863224141,
-        "mean_auction_ms": 0.35741939005674794
+        "wall_seconds": 0.15517033298965544,
+        "auctions_per_second": 2577.812345267483,
+        "mean_auction_ms": 0.36593488199287094
       }
     },
     {
@@ -1754,9 +1764,9 @@
         "hhi": 0.06571930280957336
       },
       "performance": {
-        "wall_seconds": 0.1574876250087982,
-        "auctions_per_second": 2539.8821017057917,
-        "mean_auction_ms": 0.37353366999013815
+        "wall_seconds": 0.16207704199769069,
+        "auctions_per_second": 2467.9621189390864,
+        "mean_auction_ms": 0.3832375844649505
       }
     },
     {
@@ -1772,9 +1782,9 @@
         "hhi": 0.062151720700030264
       },
       "performance": {
-        "wall_seconds": 0.15425404100096785,
-        "auctions_per_second": 2593.1249347139646,
-        "mean_auction_ms": 0.3656389774187119
+        "wall_seconds": 0.1598545830056537,
+        "auctions_per_second": 2502.2742074642483,
+        "mean_auction_ms": 0.37785217951750383
       }
     },
     {
@@ -1790,9 +1800,9 @@
         "hhi": 0.07940946930280957
       },
       "performance": {
-        "wall_seconds": 0.1529995000018971,
-        "auctions_per_second": 2614.387628685324,
-        "mean_auction_ms": 0.362445415048569
+        "wall_seconds": 0.159115375005058,
+        "auctions_per_second": 2513.8991124351414,
+        "mean_auction_ms": 0.375483134703245
       }
     },
     {
@@ -1808,9 +1818,9 @@
         "hhi": 0.07848049228555645
       },
       "performance": {
-        "wall_seconds": 0.16420658299466595,
-        "auctions_per_second": 2435.9559324914126,
-        "mean_auction_ms": 0.38972501992248
+        "wall_seconds": 0.17031979099556338,
+        "auctions_per_second": 2348.523314066417,
+        "mean_auction_ms": 0.4026095777589944
       }
     },
     {
@@ -1826,9 +1836,9 @@
         "hhi": 0.08102542715270628
       },
       "performance": {
-        "wall_seconds": 0.16017808399919886,
-        "auctions_per_second": 2497.220531130842,
-        "mean_auction_ms": 0.3799508304655319
+        "wall_seconds": 0.167359958999441,
+        "auctions_per_second": 2390.057946903154,
+        "mean_auction_ms": 0.3955673825839767
       }
     },
     {
@@ -1844,9 +1854,9 @@
         "hhi": 0.06922519538326175
       },
       "performance": {
-        "wall_seconds": 0.1463328329991782,
-        "auctions_per_second": 2733.494539822422,
-        "mean_auction_ms": 0.3460619497127482
+        "wall_seconds": 0.15088029199978337,
+        "auctions_per_second": 2651.1083369362404,
+        "mean_auction_ms": 0.3554424825051683
       }
     },
     {
@@ -1862,9 +1872,9 @@
         "hhi": 0.06910686728395062
       },
       "performance": {
-        "wall_seconds": 0.15118491699104197,
-        "auctions_per_second": 2645.766574874006,
-        "mean_auction_ms": 0.3580914676422253
+        "wall_seconds": 0.1564220000000205,
+        "auctions_per_second": 2557.1850506958585,
+        "mean_auction_ms": 0.36925253032677574
       }
     },
     {
@@ -1880,9 +1890,9 @@
         "hhi": 0.069256561452191
       },
       "performance": {
-        "wall_seconds": 0.15278420799586456,
-        "auctions_per_second": 2618.0716269499976,
-        "mean_auction_ms": 0.36175480963720474
+        "wall_seconds": 0.15660716700949706,
+        "auctions_per_second": 2554.161521712113,
+        "mean_auction_ms": 0.36972448222513776
       }
     },
     {
@@ -1898,9 +1908,9 @@
         "hhi": 0.06925596093076701
       },
       "performance": {
-        "wall_seconds": 0.1416672089981148,
-        "auctions_per_second": 2823.5186027087107,
-        "mean_auction_ms": 0.3346647777289036
+        "wall_seconds": 0.14717424999980722,
+        "auctions_per_second": 2717.866746394318,
+        "mean_auction_ms": 0.34622323255462106
       }
     },
     {
@@ -1916,9 +1926,9 @@
         "hhi": 0.07152431342907534
       },
       "performance": {
-        "wall_seconds": 0.15406433399766684,
-        "auctions_per_second": 2596.317977177363,
-        "mean_auction_ms": 0.36508974495518487
+        "wall_seconds": 0.1591719170100987,
+        "auctions_per_second": 2513.006110082986,
+        "mean_auction_ms": 0.37562278339464683
       }
     },
     {
@@ -1934,9 +1944,9 @@
         "hhi": 0.0672840790842872
       },
       "performance": {
-        "wall_seconds": 0.14888133299245965,
-        "auctions_per_second": 2686.7035105083232,
-        "mean_auction_ms": 0.35230033037805697
+        "wall_seconds": 0.15265141600684728,
+        "auctions_per_second": 2620.3490964149178,
+        "mean_auction_ms": 0.3596553095121635
       }
     },
     {
@@ -1952,9 +1962,9 @@
         "hhi": 0.0828791495878564
       },
       "performance": {
-        "wall_seconds": 0.18127274999278598,
-        "auctions_per_second": 2206.619583009132,
-        "mean_auction_ms": 0.4313745500985533
+        "wall_seconds": 0.1887260000075912,
+        "auctions_per_second": 2119.474794060758,
+        "mean_auction_ms": 0.44753666203178
       }
     },
     {
@@ -1970,9 +1980,9 @@
         "hhi": 0.09290414201183432
       },
       "performance": {
-        "wall_seconds": 0.1918681670067599,
-        "auctions_per_second": 2084.764795745962,
-        "mean_auction_ms": 0.457074252772145
+        "wall_seconds": 0.19568424999306444,
+        "auctions_per_second": 2044.1093241493736,
+        "mean_auction_ms": 0.46504355224897154
       }
     },
     {
@@ -1988,9 +1998,9 @@
         "hhi": 0.08888473973329664
       },
       "performance": {
-        "wall_seconds": 0.18445616599638015,
-        "auctions_per_second": 2168.5368870122225,
-        "mean_auction_ms": 0.43943247972492827
+        "wall_seconds": 0.19507287499436643,
+        "auctions_per_second": 2050.515736806318,
+        "mean_auction_ms": 0.46265299712104024
       }
     },
     {
@@ -2006,9 +2016,9 @@
         "hhi": 0.08000775182242363
       },
       "performance": {
-        "wall_seconds": 0.16536195900698658,
-        "auctions_per_second": 2418.9360261697184,
-        "mean_auction_ms": 0.3925319554764428
+        "wall_seconds": 0.17193312500603497,
+        "auctions_per_second": 2326.4859519418364,
+        "mean_auction_ms": 0.4065930097567616
       }
     },
     {
@@ -2024,9 +2034,9 @@
         "hhi": 0.07834727476157494
       },
       "performance": {
-        "wall_seconds": 0.16803712499677204,
-        "auctions_per_second": 2380.4263492825407,
-        "mean_auction_ms": 0.39937158770044334
+        "wall_seconds": 0.17481733400200028,
+        "auctions_per_second": 2288.102620278051,
+        "mean_auction_ms": 0.41393342278752243
       }
     },
     {
@@ -2042,9 +2052,9 @@
         "hhi": 0.08258542387543252
       },
       "performance": {
-        "wall_seconds": 0.16904479199729394,
-        "auctions_per_second": 2366.2367546135533,
-        "mean_auction_ms": 0.4017334449963528
+        "wall_seconds": 0.17566962499404326,
+        "auctions_per_second": 2277.001502186639,
+        "mean_auction_ms": 0.41616460232035024
       }
     },
     {
@@ -2060,9 +2070,9 @@
         "hhi": 0.08328035600762873
       },
       "performance": {
-        "wall_seconds": 0.1559573339909548,
-        "auctions_per_second": 2564.8040381557125,
-        "mean_auction_ms": 0.3691361525852699
+        "wall_seconds": 0.15899545900174417,
+        "auctions_per_second": 2515.7951208884024,
+        "mean_auction_ms": 0.3747055245185038
       }
     },
     {
@@ -2078,9 +2088,9 @@
         "hhi": 0.08266091199099268
       },
       "performance": {
-        "wall_seconds": 0.15586141700623557,
-        "auctions_per_second": 2566.3824164000584,
-        "mean_auction_ms": 0.3695900901220739
+        "wall_seconds": 0.16377216699765995,
+        "auctions_per_second": 2442.4174591627366,
+        "mean_auction_ms": 0.3868788599356776
       }
     },
     {
@@ -2096,9 +2106,9 @@
         "hhi": 0.08284023668639053
       },
       "performance": {
-        "wall_seconds": 0.15471337499911897,
-        "auctions_per_second": 2585.426114595961,
-        "mean_auction_ms": 0.3666935330693377
+        "wall_seconds": 0.16219941699819174,
+        "auctions_per_second": 2466.1001093762216,
+        "mean_auction_ms": 0.3829419802787015
       }
     },
     {
@@ -2114,9 +2124,9 @@
         "hhi": 0.07589642495604454
       },
       "performance": {
-        "wall_seconds": 0.15004670800408348,
-        "auctions_per_second": 2665.8365606336,
-        "mean_auction_ms": 0.3553320997161791
+        "wall_seconds": 0.1556427080067806,
+        "auctions_per_second": 2569.9886947647683,
+        "mean_auction_ms": 0.3671954773744801
       }
     },
     {
@@ -2132,9 +2142,9 @@
         "hhi": 0.07716899636091555
       },
       "performance": {
-        "wall_seconds": 0.1583189160010079,
-        "auctions_per_second": 2526.545848744022,
-        "mean_auction_ms": 0.3755608377105091
+        "wall_seconds": 0.1642756249930244,
+        "auctions_per_second": 2434.9321453927514,
+        "mean_auction_ms": 0.3881043831643183
       }
     },
     {
@@ -2150,9 +2160,9 @@
         "hhi": 0.07767596834652228
       },
       "performance": {
-        "wall_seconds": 0.15392362499551382,
-        "auctions_per_second": 2598.6913965394083,
-        "mean_auction_ms": 0.3648413281189278
+        "wall_seconds": 0.16090287499537226,
+        "auctions_per_second": 2485.971739234022,
+        "mean_auction_ms": 0.3794655151068582
       }
     },
     {
@@ -2168,9 +2178,9 @@
         "hhi": 0.0629618527544996
       },
       "performance": {
-        "wall_seconds": 0.14584537499467842,
-        "auctions_per_second": 2742.6306800239304,
-        "mean_auction_ms": 0.34489301731809974
+        "wall_seconds": 0.15132233299664222,
+        "auctions_per_second": 2643.3639508378174,
+        "mean_auction_ms": 0.35641539754578844
       }
     },
     {
@@ -2186,9 +2196,9 @@
         "hhi": 0.06483409690406775
       },
       "performance": {
-        "wall_seconds": 0.15890262500033714,
-        "auctions_per_second": 2517.264897286318,
-        "mean_auction_ms": 0.3766901277049328
+        "wall_seconds": 0.16418287499982398,
+        "auctions_per_second": 2436.3076843454523,
+        "mean_auction_ms": 0.38813569764897693
       }
     },
     {
@@ -2204,9 +2214,9 @@
         "hhi": 0.06312096029547554
       },
       "performance": {
-        "wall_seconds": 0.15102012499119155,
-        "auctions_per_second": 2648.653615028663,
-        "mean_auction_ms": 0.35782793023827253
+        "wall_seconds": 0.15669674999662675,
+        "auctions_per_second": 2552.7013164511127,
+        "mean_auction_ms": 0.3695500003959751
       }
     },
     {
@@ -2222,9 +2232,9 @@
         "hhi": 0.06779296108205317
       },
       "performance": {
-        "wall_seconds": 0.1607644580071792,
-        "auctions_per_second": 2488.112142188402,
-        "mean_auction_ms": 0.3812890503468225
+        "wall_seconds": 0.1674277499987511,
+        "auctions_per_second": 2389.090219530417,
+        "mean_auction_ms": 0.39564707985846326
       }
     },
     {
@@ -2240,9 +2250,9 @@
         "hhi": 0.05864785318559557
       },
       "performance": {
-        "wall_seconds": 0.16493716699187644,
-        "auctions_per_second": 2425.1659422506086,
-        "mean_auction_ms": 0.39180898216727655
+        "wall_seconds": 0.17386620900651906,
+        "auctions_per_second": 2300.6195527332293,
+        "mean_auction_ms": 0.41170758471707813
       }
     },
     {
@@ -2258,9 +2268,9 @@
         "hhi": 0.0601660724338525
       },
       "performance": {
-        "wall_seconds": 0.16170966700883582,
-        "auctions_per_second": 2473.568880567567,
-        "mean_auction_ms": 0.3837758145891712
+        "wall_seconds": 0.167809541002498,
+        "auctions_per_second": 2383.6546933528984,
+        "mean_auction_ms": 0.39706128744001035
       }
     }
   ]

@@ -4,11 +4,11 @@
   "implementation": "CPython",
   "platform": "macOS-26.6.2-arm64-arm-64bit",
   "git_commit": "0162c05e54894a8575355e5fb4d3f5d47dd18a08+dirty",
-  "created_at": "2026-10-03T19:24:41+00:00",
-  "seed": 2026,
+  "created_at": "2026-10-03T19:26:00+00:00",
+  "seed": 29,
   "replications": 30,
   "agent_generation": {
-    "count": 40,
+    "count": 30,
     "capabilities": [
       "research",
       "data_analysis",
@@ -27,7 +27,7 @@
     "latency_distribution": "lognormal",
     "reliability_distribution": {
       "name": "uniform",
-      "low": 0.6,
+      "low": 0.85,
       "high": 1.0
     },
     "capacity_distribution": 1,
@@ -35,7 +35,7 @@
     "quality_report_bias": 0.0
   },
   "task_generation": {
-    "count": 400,
+    "count": 600,
     "task_types": [
       "research",
       "data_analysis",
@@ -46,7 +46,7 @@
     "budget_distribution": "lognormal",
     "deadline_distribution": "uniform",
     "complexity_distribution": "lognormal",
-    "min_quality": 0.6,
+    "min_quality": null,
     "value_multiplier": 1.5
   },
   "dependencies": {
@@ -55,19 +55,19 @@
     "scipy": "1.18.1"
   },
   "config": {
-    "name": "mechanisms",
-    "description": "Four market designs on the same synthetic market: pay-as-bid and second-price reverse auctions with lowest-price selection, and pay-as-bid with quality-weighted and risk-adjusted selection.\n",
-    "hypothesis": "With bidders whose strategy does not react to the mechanism (cost-plus 20%), second-price payments raise buyer cost relative to first-price without changing allocation, while risk-adjusted selection raises completion rate at some cost.\n",
+    "name": "reputation_decay",
+    "description": "The follow-up to the reputation experiment. Ten agents start reliable (reliability 0.98) and drop to 0.3 when task 200 of 600 arrives. Risk-adjusted selection uses full-history or decaying reputation.\n",
+    "hypothesis": "Decaying reputation notices the drop sooner, so it raises completion rate over full history once agents change.\n",
     "limitations": [
-      "Bidders use a fixed cost-plus strategy in every arm, so the classic incentive argument for second-price auctions (bidders shading less) is deliberately not modelled here."
+      "One abrupt change at a fixed time; gradual drift is not tested."
     ],
-    "seed": 2026,
+    "seed": 29,
     "replications": 30,
     "confidence": 0.95,
     "alpha": 0.05,
     "environment": {
       "agents": {
-        "count": 40,
+        "count": 30,
         "capabilities": [
           "research",
           "data_analysis",
@@ -86,7 +86,7 @@
         "latency_distribution": "lognormal",
         "reliability_distribution": {
           "name": "uniform",
-          "low": 0.6,
+          "low": 0.85,
           "high": 1.0
         },
         "capacity_distribution": 1,
@@ -94,7 +94,7 @@
         "quality_report_bias": 0.0
       },
       "tasks": {
-        "count": 400,
+        "count": 600,
         "task_types": [
           "research",
           "data_analysis",
@@ -105,7 +105,7 @@
         "budget_distribution": "lognormal",
         "deadline_distribution": "uniform",
         "complexity_distribution": "lognormal",
-        "min_quality": 0.6,
+        "min_quality": null,
         "value_multiplier": 1.5
       },
       "adversaries": {
@@ -116,57 +116,77 @@
         "overstaters": 0,
         "overstate_quality": 0.2
       },
-      "changes": []
+      "changes": [
+        {
+          "at": null,
+          "at_task": 0,
+          "agents": 10,
+          "set": {
+            "reliability": 0.98
+          },
+          "leave": false
+        },
+        {
+          "at": null,
+          "at_task": 200,
+          "agents": 10,
+          "set": {
+            "reliability": 0.3
+          },
+          "leave": false
+        }
+      ]
     },
     "mechanism": "first_price_reverse",
-    "policy": "lowest_price",
+    "policy": {
+      "name": "risk_adjusted_cost",
+      "newcomer_failure_probability": 0.2,
+      "min_observations": 3
+    },
     "reputation": "multi_dimensional",
     "settlement": "pay_on_pass",
     "recovery": {},
     "validation": {},
     "arms": [
       {
-        "name": "first_price",
-        "mechanism": "first_price_reverse",
-        "policy": "lowest_price",
-        "reputation": null,
-        "settlement": null,
-        "recovery": null,
-        "validation": null,
-        "environment": {}
-      },
-      {
-        "name": "second_price",
-        "mechanism": "second_price_reverse",
-        "policy": "lowest_price",
-        "reputation": null,
-        "settlement": null,
-        "recovery": null,
-        "validation": null,
-        "environment": {}
-      },
-      {
-        "name": "quality_weighted",
-        "mechanism": "first_price_reverse",
-        "policy": {
-          "name": "weighted_score",
-          "price_weight": 0.5,
-          "quality_weight": 0.5,
-          "latency_weight": 0.0
+        "name": "full_history",
+        "mechanism": null,
+        "policy": null,
+        "reputation": {
+          "name": "multi_dimensional"
         },
-        "reputation": null,
         "settlement": null,
         "recovery": null,
         "validation": null,
         "environment": {}
       },
       {
-        "name": "risk_adjusted",
-        "mechanism": "first_price_reverse",
-        "policy": {
-          "name": "risk_adjusted_cost"
+        "name": "decay_half_life_20",
+        "mechanism": null,
+        "policy": null,
+        "reputation": {
+          "name": "multi_dimensional",
+          "decay": {
+            "name": "exponential",
+            "half_life": 20
+          }
         },
-        "reputation": null,
+        "settlement": null,
+        "recovery": null,
+        "validation": null,
+        "environment": {}
+      },
+      {
+        "name": "decay_half_life_5",
+        "mechanism": null,
+        "policy": null,
+        "reputation": {
+          "name": "multi_dimensional",
+          "decay": {
+            "name": "exponential",
+            "half_life": 5
+          }
+        },
         "settlement": null,
         "recovery": null,
         "validation": null,
@@ -176,12 +196,10 @@
     "factors": {},
     "baseline": null,
     "metrics": [
-      "total_cost",
-      "average_cost",
-      "average_quality",
       "completion_rate",
-      "cost_efficiency",
-      "buyer_utility"
+      "average_cost",
+      "buyer_utility",
+      "hhi"
     ]
   }
 }

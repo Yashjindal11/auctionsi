@@ -4,11 +4,11 @@
   "implementation": "CPython",
   "platform": "macOS-26.6.2-arm64-arm-64bit",
   "git_commit": "0162c05e54894a8575355e5fb4d3f5d47dd18a08+dirty",
-  "created_at": "2026-10-03T19:24:41+00:00",
-  "seed": 2026,
+  "created_at": "2026-10-03T19:21:50+00:00",
+  "seed": 23,
   "replications": 30,
   "agent_generation": {
-    "count": 40,
+    "count": 20,
     "capabilities": [
       "research",
       "data_analysis",
@@ -25,17 +25,16 @@
     "quality_distribution": "beta",
     "quality_spread": 0.05,
     "latency_distribution": "lognormal",
-    "reliability_distribution": {
-      "name": "uniform",
-      "low": 0.6,
-      "high": 1.0
-    },
+    "reliability_distribution": "beta",
     "capacity_distribution": 1,
-    "strategy": "cost_plus",
+    "strategy": {
+      "name": "bandit",
+      "algorithm": "ucb1"
+    },
     "quality_report_bias": 0.0
   },
   "task_generation": {
-    "count": 400,
+    "count": 600,
     "task_types": [
       "research",
       "data_analysis",
@@ -46,7 +45,7 @@
     "budget_distribution": "lognormal",
     "deadline_distribution": "uniform",
     "complexity_distribution": "lognormal",
-    "min_quality": 0.6,
+    "min_quality": null,
     "value_multiplier": 1.5
   },
   "dependencies": {
@@ -55,19 +54,20 @@
     "scipy": "1.18.1"
   },
   "config": {
-    "name": "mechanisms",
-    "description": "Four market designs on the same synthetic market: pay-as-bid and second-price reverse auctions with lowest-price selection, and pay-as-bid with quality-weighted and risk-adjusted selection.\n",
-    "hypothesis": "With bidders whose strategy does not react to the mechanism (cost-plus 20%), second-price payments raise buyer cost relative to first-price without changing allocation, while risk-adjusted selection raises completion rate at some cost.\n",
+    "name": "learning_bidders",
+    "description": "Every agent learns its markup with a UCB1 bandit (reward = realised profit relative to cost). Arms change the payment rule.\n",
+    "hypothesis": "Under second-price (critical value) payment the bid does not set the price, so learned winning markups are lower than under first price, while buyer cost stays similar or lower.\n",
     "limitations": [
-      "Bidders use a fixed cost-plus strategy in every arm, so the classic incentive argument for second-price auctions (bidders shading less) is deliberately not modelled here."
+      "Markups are learned from a fixed grid of seven values; agents do not observe rivals' bids.",
+      "Synthetic market; one learner population per run."
     ],
-    "seed": 2026,
+    "seed": 23,
     "replications": 30,
     "confidence": 0.95,
     "alpha": 0.05,
     "environment": {
       "agents": {
-        "count": 40,
+        "count": 20,
         "capabilities": [
           "research",
           "data_analysis",
@@ -84,17 +84,16 @@
         "quality_distribution": "beta",
         "quality_spread": 0.05,
         "latency_distribution": "lognormal",
-        "reliability_distribution": {
-          "name": "uniform",
-          "low": 0.6,
-          "high": 1.0
-        },
+        "reliability_distribution": "beta",
         "capacity_distribution": 1,
-        "strategy": "cost_plus",
+        "strategy": {
+          "name": "bandit",
+          "algorithm": "ucb1"
+        },
         "quality_report_bias": 0.0
       },
       "tasks": {
-        "count": 400,
+        "count": 600,
         "task_types": [
           "research",
           "data_analysis",
@@ -105,7 +104,7 @@
         "budget_distribution": "lognormal",
         "deadline_distribution": "uniform",
         "complexity_distribution": "lognormal",
-        "min_quality": 0.6,
+        "min_quality": null,
         "value_multiplier": 1.5
       },
       "adversaries": {
@@ -128,7 +127,7 @@
       {
         "name": "first_price",
         "mechanism": "first_price_reverse",
-        "policy": "lowest_price",
+        "policy": null,
         "reputation": null,
         "settlement": null,
         "recovery": null,
@@ -138,34 +137,7 @@
       {
         "name": "second_price",
         "mechanism": "second_price_reverse",
-        "policy": "lowest_price",
-        "reputation": null,
-        "settlement": null,
-        "recovery": null,
-        "validation": null,
-        "environment": {}
-      },
-      {
-        "name": "quality_weighted",
-        "mechanism": "first_price_reverse",
-        "policy": {
-          "name": "weighted_score",
-          "price_weight": 0.5,
-          "quality_weight": 0.5,
-          "latency_weight": 0.0
-        },
-        "reputation": null,
-        "settlement": null,
-        "recovery": null,
-        "validation": null,
-        "environment": {}
-      },
-      {
-        "name": "risk_adjusted",
-        "mechanism": "first_price_reverse",
-        "policy": {
-          "name": "risk_adjusted_cost"
-        },
+        "policy": null,
         "reputation": null,
         "settlement": null,
         "recovery": null,
@@ -176,12 +148,11 @@
     "factors": {},
     "baseline": null,
     "metrics": [
-      "total_cost",
+      "average_winning_markup",
       "average_cost",
-      "average_quality",
-      "completion_rate",
-      "cost_efficiency",
-      "buyer_utility"
+      "agent_utility",
+      "buyer_utility",
+      "completion_rate"
     ]
   }
 }

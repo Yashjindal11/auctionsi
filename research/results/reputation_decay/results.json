@@ -1,0 +1,1971 @@
+{
+  "manifest": {
+    "auctionsi_version": "0.1.1",
+    "python_version": "3.12.15",
+    "implementation": "CPython",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "git_commit": "0162c05e54894a8575355e5fb4d3f5d47dd18a08+dirty",
+    "created_at": "2026-10-03T19:26:00+00:00",
+    "seed": 29,
+    "replications": 30,
+    "agent_generation": {
+      "count": 30,
+      "capabilities": [
+        "research",
+        "data_analysis",
+        "sql",
+        "optimization"
+      ],
+      "capability_distribution": "mixed",
+      "capabilities_per_agent": [
+        1,
+        3
+      ],
+      "cost_distribution": "lognormal",
+      "variable_cost_ratio": 0.01,
+      "quality_distribution": "beta",
+      "quality_spread": 0.05,
+      "latency_distribution": "lognormal",
+      "reliability_distribution": {
+        "name": "uniform",
+        "low": 0.85,
+        "high": 1.0
+      },
+      "capacity_distribution": 1,
+      "strategy": "cost_plus",
+      "quality_report_bias": 0.0
+    },
+    "task_generation": {
+      "count": 600,
+      "task_types": [
+        "research",
+        "data_analysis",
+        "sql",
+        "optimization"
+      ],
+      "arrival_rate": 1.0,
+      "budget_distribution": "lognormal",
+      "deadline_distribution": "uniform",
+      "complexity_distribution": "lognormal",
+      "min_quality": null,
+      "value_multiplier": 1.5
+    },
+    "dependencies": {
+      "pydantic": "2.13.5",
+      "pyyaml": "6.0.3",
+      "scipy": "1.18.1"
+    },
+    "config": {
+      "name": "reputation_decay",
+      "description": "The follow-up to the reputation experiment. Ten agents start reliable (reliability 0.98) and drop to 0.3 when task 200 of 600 arrives. Risk-adjusted selection uses full-history or decaying reputation.\n",
+      "hypothesis": "Decaying reputation notices the drop sooner, so it raises completion rate over full history once agents change.\n",
+      "limitations": [
+        "One abrupt change at a fixed time; gradual drift is not tested."
+      ],
+      "seed": 29,
+      "replications": 30,
+      "confidence": 0.95,
+      "alpha": 0.05,
+      "environment": {
+        "agents": {
+          "count": 30,
+          "capabilities": [
+            "research",
+            "data_analysis",
+            "sql",
+            "optimization"
+          ],
+          "capability_distribution": "mixed",
+          "capabilities_per_agent": [
+            1,
+            3
+          ],
+          "cost_distribution": "lognormal",
+          "variable_cost_ratio": 0.01,
+          "quality_distribution": "beta",
+          "quality_spread": 0.05,
+          "latency_distribution": "lognormal",
+          "reliability_distribution": {
+            "name": "uniform",
+            "low": 0.85,
+            "high": 1.0
+          },
+          "capacity_distribution": 1,
+          "strategy": "cost_plus",
+          "quality_report_bias": 0.0
+        },
+        "tasks": {
+          "count": 600,
+          "task_types": [
+            "research",
+            "data_analysis",
+            "sql",
+            "optimization"
+          ],
+          "arrival_rate": 1.0,
+          "budget_distribution": "lognormal",
+          "deadline_distribution": "uniform",
+          "complexity_distribution": "lognormal",
+          "min_quality": null,
+          "value_multiplier": 1.5
+        },
+        "adversaries": {
+          "colluders": 0,
+          "winner_markup": 0.6,
+          "cover_markup": 1.2,
+          "sybil_copies": 0,
+          "overstaters": 0,
+          "overstate_quality": 0.2
+        },
+        "changes": [
+          {
+            "at": null,
+            "at_task": 0,
+            "agents": 10,
+            "set": {
+              "reliability": 0.98
+            },
+            "leave": false
+          },
+          {
+            "at": null,
+            "at_task": 200,
+            "agents": 10,
+            "set": {
+              "reliability": 0.3
+            },
+            "leave": false
+          }
+        ]
+      },
+      "mechanism": "first_price_reverse",
+      "policy": {
+        "name": "risk_adjusted_cost",
+        "newcomer_failure_probability": 0.2,
+        "min_observations": 3
+      },
+      "reputation": "multi_dimensional",
+      "settlement": "pay_on_pass",
+      "recovery": {},
+      "validation": {},
+      "arms": [
+        {
+          "name": "full_history",
+          "mechanism": null,
+          "policy": null,
+          "reputation": {
+            "name": "multi_dimensional"
+          },
+          "settlement": null,
+          "recovery": null,
+          "validation": null,
+          "environment": {}
+        },
+        {
+          "name": "decay_half_life_20",
+          "mechanism": null,
+          "policy": null,
+          "reputation": {
+            "name": "multi_dimensional",
+            "decay": {
+              "name": "exponential",
+              "half_life": 20
+            }
+          },
+          "settlement": null,
+          "recovery": null,
+          "validation": null,
+          "environment": {}
+        },
+        {
+          "name": "decay_half_life_5",
+          "mechanism": null,
+          "policy": null,
+          "reputation": {
+            "name": "multi_dimensional",
+            "decay": {
+              "name": "exponential",
+              "half_life": 5
+            }
+          },
+          "settlement": null,
+          "recovery": null,
+          "validation": null,
+          "environment": {}
+        }
+      ],
+      "factors": {},
+      "baseline": null,
+      "metrics": [
+        "completion_rate",
+        "average_cost",
+        "buyer_utility",
+        "hhi"
+      ]
+    }
+  },
+  "summary": {
+    "full_history": {
+      "completion_rate": {
+        "n": 30,
+        "mean": 0.8410555555555556,
+        "median": 0.8475,
+        "variance": 0.0011294029374201797,
+        "sd": 0.033606590684271735,
+        "ci_low": 0.8285066483585309,
+        "ci_high": 0.8536044627525802,
+        "confidence": 0.95,
+        "min": 0.77,
+        "max": 0.9033333333333333,
+        "q05": 0.7834166666666667,
+        "q25": 0.8183333333333334,
+        "q75": 0.8566666666666667,
+        "q95": 0.8894166666666667
+      },
+      "average_cost": {
+        "n": 30,
+        "mean": 0.032078982759473386,
+        "median": 0.03161159580929157,
+        "variance": 1.0781848510327991e-05,
+        "sd": 0.003283572522471217,
+        "ci_low": 0.03085287662909236,
+        "ci_high": 0.033305088889854416,
+        "confidence": 0.95,
+        "min": 0.026572819822671144,
+        "max": 0.03888036451840544,
+        "q05": 0.02702267767611285,
+        "q25": 0.03022597889891989,
+        "q75": 0.03422721334522205,
+        "q95": 0.03794884972636121
+      },
+      "buyer_utility": {
+        "n": 30,
+        "mean": 79.52311075033602,
+        "median": 79.77086293129429,
+        "variance": 18.123638485666287,
+        "sd": 4.257186686729428,
+        "ci_low": 77.93345111618636,
+        "ci_high": 81.11277038448567,
+        "confidence": 0.95,
+        "min": 69.45996279891283,
+        "max": 86.79830134636052,
+        "q05": 71.95033476904968,
+        "q25": 77.53057306336962,
+        "q75": 83.08111294333634,
+        "q95": 84.71278476142932
+      },
+      "hhi": {
+        "n": 30,
+        "mean": 0.07040775489811645,
+        "median": 0.07089344256817608,
+        "variance": 0.00011011906954207066,
+        "sd": 0.010493763364116358,
+        "ci_low": 0.06648931926026808,
+        "ci_high": 0.07432619053596481,
+        "confidence": 0.95,
+        "min": 0.0526780508121616,
+        "max": 0.10096293922265602,
+        "q05": 0.05873305761698619,
+        "q25": 0.061365853364296424,
+        "q75": 0.07720386018534856,
+        "q95": 0.0851730749703395
+      }
+    },
+    "decay_half_life_20": {
+      "completion_rate": {
+        "n": 30,
+        "mean": 0.8485555555555556,
+        "median": 0.8541666666666667,
+        "variance": 0.0009859642401021716,
+        "sd": 0.03140006751747791,
+        "ci_low": 0.8368305776499106,
+        "ci_high": 0.8602805334612006,
+        "confidence": 0.95,
+        "min": 0.7883333333333333,
+        "max": 0.9033333333333333,
+        "q05": 0.7916666666666666,
+        "q25": 0.8316666666666667,
+        "q75": 0.87,
+        "q95": 0.892
+      },
+      "average_cost": {
+        "n": 30,
+        "mean": 0.03227833579609502,
+        "median": 0.03159482570341966,
+        "variance": 1.0532256031971523e-05,
+        "sd": 0.0032453437463497645,
+        "ci_low": 0.031066504525318495,
+        "ci_high": 0.033490167066871544,
+        "confidence": 0.95,
+        "min": 0.02689837289452019,
+        "max": 0.038848238587854175,
+        "q05": 0.027388392483371528,
+        "q25": 0.0304089813109414,
+        "q75": 0.034575780882219465,
+        "q95": 0.03784273417244059
+      },
+      "buyer_utility": {
+        "n": 30,
+        "mean": 80.12503369135864,
+        "median": 80.00591959920368,
+        "variance": 16.366089506930265,
+        "sd": 4.04550238004259,
+        "ci_low": 78.61441827638123,
+        "ci_high": 81.63564910633605,
+        "confidence": 0.95,
+        "min": 71.43234396763353,
+        "max": 86.52519043497377,
+        "q05": 72.00813331247363,
+        "q25": 78.04099732846193,
+        "q75": 83.7659132707291,
+        "q95": 84.92825435609308
+      },
+      "hhi": {
+        "n": 30,
+        "mean": 0.06957936921998191,
+        "median": 0.06962488518055207,
+        "variance": 9.787087840498309e-05,
+        "sd": 0.00989297116163709,
+        "ci_low": 0.06588527307745572,
+        "ci_high": 0.0732734653625081,
+        "confidence": 0.95,
+        "min": 0.052793314255983353,
+        "max": 0.09725880053315991,
+        "q05": 0.05890415039822581,
+        "q25": 0.06052109368010512,
+        "q75": 0.07627655719280964,
+        "q95": 0.08421985887485361
+      }
+    },
+    "decay_half_life_5": {
+      "completion_rate": {
+        "n": 30,
+        "mean": 0.8629444444444444,
+        "median": 0.8641666666666666,
+        "variance": 0.0007112420178799491,
+        "sd": 0.026669121055631906,
+        "ci_low": 0.8529860309803268,
+        "ci_high": 0.872902857908562,
+        "confidence": 0.95,
+        "min": 0.8033333333333333,
+        "max": 0.905,
+        "q05": 0.8165833333333333,
+        "q25": 0.85,
+        "q75": 0.8829166666666667,
+        "q95": 0.9
+      },
+      "average_cost": {
+        "n": 30,
+        "mean": 0.03293669261818257,
+        "median": 0.03222250574977953,
+        "variance": 9.804652705647277e-06,
+        "sd": 0.0031312382064683734,
+        "ci_low": 0.031767469056235856,
+        "ci_high": 0.034105916180129286,
+        "confidence": 0.95,
+        "min": 0.02750830302026606,
+        "max": 0.03887335752068473,
+        "q05": 0.028012392680587358,
+        "q25": 0.031339108961657355,
+        "q75": 0.03548619022800497,
+        "q95": 0.038280759187877
+      },
+      "buyer_utility": {
+        "n": 30,
+        "mean": 81.15611236421029,
+        "median": 81.66674821341681,
+        "variance": 12.11195963161159,
+        "sd": 3.480224077787462,
+        "ci_low": 79.85657533627115,
+        "ci_high": 82.45564939214943,
+        "confidence": 0.95,
+        "min": 73.65466771006092,
+        "max": 86.28689106791603,
+        "q05": 74.9253894382921,
+        "q25": 78.74350188059128,
+        "q75": 83.95090801908088,
+        "q95": 85.7614982040861
+      },
+      "hhi": {
+        "n": 30,
+        "mean": 0.06710680306498616,
+        "median": 0.06731321116088415,
+        "variance": 9.269322217494693e-05,
+        "sd": 0.009627731933064345,
+        "ci_low": 0.06351174887811802,
+        "ci_high": 0.07070185725185431,
+        "confidence": 0.95,
+        "min": 0.05131055254759941,
+        "max": 0.09217421124828533,
+        "q05": 0.056367726105347724,
+        "q25": 0.058576401147056124,
+        "q75": 0.07200396042279505,
+        "q95": 0.08303977604442145
+      }
+    }
+  },
+  "comparisons": [
+    {
+      "metric": "completion_rate",
+      "baseline": "full_history",
+      "treatment": "decay_half_life_20",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 0.007499999999999995,
+      "ci_low": 0.005526893708809336,
+      "ci_high": 0.009473106291190655,
+      "statistic": 7.774149007826085,
+      "p_value": 1.4234832267794212e-08,
+      "effect_size": 1.419358925664251,
+      "p_adjusted": 8.540899360676527e-08,
+      "relative_diff": 0.008917365744104625
+    },
+    {
+      "metric": "average_cost",
+      "baseline": "full_history",
+      "treatment": "decay_half_life_20",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 0.0001993530366216319,
+      "ci_low": 9.283857643775763e-05,
+      "ci_high": 0.00030586749680550616,
+      "statistic": 3.8278627995098744,
+      "p_value": 0.0006371232423691085,
+      "effect_size": 0.6988689341088111,
+      "p_adjusted": 0.001274246484738217,
+      "relative_diff": 0.006214443834343846
+    },
+    {
+      "metric": "buyer_utility",
+      "baseline": "full_history",
+      "treatment": "decay_half_life_20",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 0.6019229410226246,
+      "ci_low": 0.35715950259835455,
+      "ci_high": 0.8466863794468946,
+      "statistic": 5.029634528688242,
+      "p_value": 2.336044274779915e-05,
+      "effect_size": 0.9182814291231384,
+      "p_adjusted": 7.008132824339745e-05,
+      "relative_diff": 0.007569157385107463
+    },
+    {
+      "metric": "hhi",
+      "baseline": "full_history",
+      "treatment": "decay_half_life_20",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": -0.0008283856781345446,
+      "ci_low": -0.0014065941672505823,
+      "ci_high": -0.0002501771890185069,
+      "statistic": -2.93015231690755,
+      "p_value": 0.006541096677247074,
+      "effect_size": -0.5349701736320971,
+      "p_adjusted": 0.006541096677247074,
+      "relative_diff": -0.011765545987558617
+    },
+    {
+      "metric": "completion_rate",
+      "baseline": "full_history",
+      "treatment": "decay_half_life_5",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 0.021888888888888885,
+      "ci_low": 0.017221002210153418,
+      "ci_high": 0.02655677556762435,
+      "statistic": 9.590593660476854,
+      "p_value": 1.6890474253874704e-10,
+      "effect_size": 1.7509948292364053,
+      "p_adjusted": 1.3512379403099763e-09,
+      "relative_diff": 0.026025497060572028
+    },
+    {
+      "metric": "average_cost",
+      "baseline": "full_history",
+      "treatment": "decay_half_life_5",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 0.0008577098587091828,
+      "ci_low": 0.0006715571710605778,
+      "ci_high": 0.0010438625463577878,
+      "statistic": 9.423520280796872,
+      "p_value": 2.4940915740491527e-10,
+      "effect_size": 1.7204915429666212,
+      "p_adjusted": 1.7458641018344069e-09,
+      "relative_diff": 0.026737439436289128
+    },
+    {
+      "metric": "buyer_utility",
+      "baseline": "full_history",
+      "treatment": "decay_half_life_5",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": 1.6330016138742753,
+      "ci_low": 1.1138884267914313,
+      "ci_high": 2.1521148009571194,
+      "statistic": 6.433786290644183,
+      "p_value": 4.880813246170601e-07,
+      "effect_size": 1.1746432938511027,
+      "p_adjusted": 2.4404066230853004e-06,
+      "relative_diff": 0.020534931273012043
+    },
+    {
+      "metric": "hhi",
+      "baseline": "full_history",
+      "treatment": "decay_half_life_5",
+      "design": "paired",
+      "n": 30,
+      "mean_diff": -0.003300951833130292,
+      "ci_low": -0.004452211642787336,
+      "ci_high": -0.0021496920234732484,
+      "statistic": -5.864188500058489,
+      "p_value": 2.313394500668854e-06,
+      "effect_size": -1.0706494409814733,
+      "p_adjusted": 9.253578002675417e-06,
+      "relative_diff": -0.04688335593013774
+    }
+  ],
+  "runs": [
+    {
+      "arm": "full_history",
+      "replication": 0,
+      "seed": 16903535267509100118,
+      "metrics": {
+        "completion_rate": 0.8333333333333334,
+        "average_cost": 0.03528303854713466,
+        "buyer_utility": 79.59653910402768,
+        "hhi": 0.059424
+      },
+      "performance": {
+        "wall_seconds": 0.24480691700591706,
+        "auctions_per_second": 2450.9111398412724,
+        "mean_auction_ms": 0.38516171463318943
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 0,
+      "seed": 16903535267509100118,
+      "metrics": {
+        "completion_rate": 0.84,
+        "average_cost": 0.035597400500654845,
+        "buyer_utility": 79.17992083465252,
+        "hhi": 0.060311161501637685
+      },
+      "performance": {
+        "wall_seconds": 0.2451758749957662,
+        "auctions_per_second": 2447.222835486408,
+        "mean_auction_ms": 0.3859392483718693
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 0,
+      "seed": 16903535267509100118,
+      "metrics": {
+        "completion_rate": 0.85,
+        "average_cost": 0.03605970095115568,
+        "buyer_utility": 79.46991124298476,
+        "hhi": 0.058077662437524026
+      },
+      "performance": {
+        "wall_seconds": 0.24267008301103488,
+        "auctions_per_second": 2472.4926639297205,
+        "mean_auction_ms": 0.38221749496491003
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 1,
+      "seed": 15507725645267785840,
+      "metrics": {
+        "completion_rate": 0.855,
+        "average_cost": 0.027767883074114992,
+        "buyer_utility": 83.41106520762804,
+        "hhi": 0.06948766762042641
+      },
+      "performance": {
+        "wall_seconds": 0.2533403330016881,
+        "auctions_per_second": 2368.3556143269216,
+        "mean_auction_ms": 0.3993529849200665
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 1,
+      "seed": 15507725645267785840,
+      "metrics": {
+        "completion_rate": 0.86,
+        "average_cost": 0.028083841537810093,
+        "buyer_utility": 83.53068818157527,
+        "hhi": 0.06921158584219698
+      },
+      "performance": {
+        "wall_seconds": 0.25771133399393875,
+        "auctions_per_second": 2328.1863110223617,
+        "mean_auction_ms": 0.4064675266999984
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 1,
+      "seed": 15507725645267785840,
+      "metrics": {
+        "completion_rate": 0.875,
+        "average_cost": 0.029034163204911832,
+        "buyer_utility": 85.10511558265846,
+        "hhi": 0.06564353741496598
+      },
+      "performance": {
+        "wall_seconds": 0.2542009579919977,
+        "auctions_per_second": 2360.337288811036,
+        "mean_auction_ms": 0.4009753330319654
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 2,
+      "seed": 7165596119480428323,
+      "metrics": {
+        "completion_rate": 0.8083333333333333,
+        "average_cost": 0.030521673615583528,
+        "buyer_utility": 77.56280821080159,
+        "hhi": 0.0725815708364332
+      },
+      "performance": {
+        "wall_seconds": 0.2769801669928711,
+        "auctions_per_second": 2166.2200817990074,
+        "mean_auction_ms": 0.4378734801381749
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 2,
+      "seed": 7165596119480428323,
+      "metrics": {
+        "completion_rate": 0.81,
+        "average_cost": 0.03054154941581292,
+        "buyer_utility": 78.76336005449087,
+        "hhi": 0.07003505563176345
+      },
+      "performance": {
+        "wall_seconds": 0.295060457996442,
+        "auctions_per_second": 2033.4815585734473,
+        "mean_auction_ms": 0.46748173345501226
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 2,
+      "seed": 7165596119480428323,
+      "metrics": {
+        "completion_rate": 0.8266666666666667,
+        "average_cost": 0.032078701257702284,
+        "buyer_utility": 78.74178904228413,
+        "hhi": 0.05950019510926118
+      },
+      "performance": {
+        "wall_seconds": 0.27457054100523237,
+        "auctions_per_second": 2185.2307891565324,
+        "mean_auction_ms": 0.4338322785770288
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 3,
+      "seed": 11024261015271162521,
+      "metrics": {
+        "completion_rate": 0.8233333333333334,
+        "average_cost": 0.02909242540303565,
+        "buyer_utility": 78.87994838730303,
+        "hhi": 0.07857037486272517
+      },
+      "performance": {
+        "wall_seconds": 0.2685768749943236,
+        "auctions_per_second": 2233.9972494381027,
+        "mean_auction_ms": 0.42399569174449425
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 3,
+      "seed": 11024261015271162521,
+      "metrics": {
+        "completion_rate": 0.8316666666666667,
+        "average_cost": 0.02915523041107212,
+        "buyer_utility": 79.96031258733917,
+        "hhi": 0.07895952225091465
+      },
+      "performance": {
+        "wall_seconds": 0.2708556660072645,
+        "auctions_per_second": 2215.2019518170523,
+        "mean_auction_ms": 0.4275556400534697
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 3,
+      "seed": 11024261015271162521,
+      "metrics": {
+        "completion_rate": 0.8533333333333334,
+        "average_cost": 0.029869224053830513,
+        "buyer_utility": 81.49881536899072,
+        "hhi": 0.0760345458984375
+      },
+      "performance": {
+        "wall_seconds": 0.2735165830090409,
+        "auctions_per_second": 2193.651271155897,
+        "mean_auction_ms": 0.43182922844910837
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 4,
+      "seed": 15340491601102931558,
+      "metrics": {
+        "completion_rate": 0.815,
+        "average_cost": 0.03542683068873361,
+        "buyer_utility": 75.77839872517967,
+        "hhi": 0.06757666620664853
+      },
+      "performance": {
+        "wall_seconds": 0.25067358299565967,
+        "auctions_per_second": 2393.550979045083,
+        "mean_auction_ms": 0.394863241793549
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 4,
+      "seed": 15340491601102931558,
+      "metrics": {
+        "completion_rate": 0.8316666666666667,
+        "average_cost": 0.03552477621357355,
+        "buyer_utility": 76.67311495087279,
+        "hhi": 0.06667844707450975
+      },
+      "performance": {
+        "wall_seconds": 0.2541653329972178,
+        "auctions_per_second": 2360.668124659502,
+        "mean_auction_ms": 0.40043867857699905
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 4,
+      "seed": 15340491601102931558,
+      "metrics": {
+        "completion_rate": 0.8566666666666667,
+        "average_cost": 0.03591365271162659,
+        "buyer_utility": 78.58018236001847,
+        "hhi": 0.06897152114339354
+      },
+      "performance": {
+        "wall_seconds": 0.2569246250059223,
+        "auctions_per_second": 2335.3152699402385,
+        "mean_auction_ms": 0.4051045745533581
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 5,
+      "seed": 16942688876243308062,
+      "metrics": {
+        "completion_rate": 0.855,
+        "average_cost": 0.03870664452136676,
+        "buyer_utility": 78.57563778673634,
+        "hhi": 0.06663778788535123
+      },
+      "performance": {
+        "wall_seconds": 0.2477627920015948,
+        "auctions_per_second": 2421.671128068891,
+        "mean_auction_ms": 0.39039720851481735
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 5,
+      "seed": 16942688876243308062,
+      "metrics": {
+        "completion_rate": 0.865,
+        "average_cost": 0.038848238587854175,
+        "buyer_utility": 79.78454988744483,
+        "hhi": 0.06801652800516779
+      },
+      "performance": {
+        "wall_seconds": 0.24677199999860022,
+        "auctions_per_second": 2431.3941614259456,
+        "mean_auction_ms": 0.3886836286983453
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 5,
+      "seed": 16942688876243308062,
+      "metrics": {
+        "completion_rate": 0.8733333333333333,
+        "average_cost": 0.03887335752068473,
+        "buyer_utility": 80.10730744685482,
+        "hhi": 0.06650253481731834
+      },
+      "performance": {
+        "wall_seconds": 0.24388116599584464,
+        "auctions_per_second": 2460.214578481321,
+        "mean_auction_ms": 0.3842172882529364
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 6,
+      "seed": 2583324376779592786,
+      "metrics": {
+        "completion_rate": 0.8916666666666667,
+        "average_cost": 0.03183161339220133,
+        "buyer_utility": 83.68027490226623,
+        "hhi": 0.07105249366756922
+      },
+      "performance": {
+        "wall_seconds": 0.2570863750006538,
+        "auctions_per_second": 2333.845969077413,
+        "mean_auction_ms": 0.40450695540736586
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 6,
+      "seed": 2583324376779592786,
+      "metrics": {
+        "completion_rate": 0.895,
+        "average_cost": 0.03205422755250252,
+        "buyer_utility": 83.92894873308154,
+        "hhi": 0.07080858205979144
+      },
+      "performance": {
+        "wall_seconds": 0.25072395800089,
+        "auctions_per_second": 2393.0700711013433,
+        "mean_auction_ms": 0.39516964670231874
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 6,
+      "seed": 2583324376779592786,
+      "metrics": {
+        "completion_rate": 0.9,
+        "average_cost": 0.03281291900009374,
+        "buyer_utility": 83.91979660606648,
+        "hhi": 0.06827846364883401
+      },
+      "performance": {
+        "wall_seconds": 0.24785900001006667,
+        "auctions_per_second": 2420.731141397453,
+        "mean_auction_ms": 0.3897347852277259
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 7,
+      "seed": 1113911235463209085,
+      "metrics": {
+        "completion_rate": 0.8466666666666667,
+        "average_cost": 0.026572819822671144,
+        "buyer_utility": 81.87774651075807,
+        "hhi": 0.07073439146878294
+      },
+      "performance": {
+        "wall_seconds": 0.25958658299350645,
+        "auctions_per_second": 2311.367533255788,
+        "mean_auction_ms": 0.40926446512457915
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 7,
+      "seed": 1113911235463209085,
+      "metrics": {
+        "completion_rate": 0.8566666666666667,
+        "average_cost": 0.02689837289452019,
+        "buyer_utility": 82.28137063379103,
+        "hhi": 0.06944843979469788
+      },
+      "performance": {
+        "wall_seconds": 0.2592105410003569,
+        "auctions_per_second": 2314.720681051215,
+        "mean_auction_ms": 0.4085607019563516
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 7,
+      "seed": 1113911235463209085,
+      "metrics": {
+        "completion_rate": 0.8633333333333333,
+        "average_cost": 0.02750830302026606,
+        "buyer_utility": 82.97818466003422,
+        "hhi": 0.06838747186237533
+      },
+      "performance": {
+        "wall_seconds": 0.2602200000110315,
+        "auctions_per_second": 2305.7412957288607,
+        "mean_auction_ms": 0.41022813515155576
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 8,
+      "seed": 9575356803611413354,
+      "metrics": {
+        "completion_rate": 0.8533333333333334,
+        "average_cost": 0.03127405671679588,
+        "buyer_utility": 82.62583550828299,
+        "hhi": 0.0592193603515625
+      },
+      "performance": {
+        "wall_seconds": 0.2425457500066841,
+        "auctions_per_second": 2473.7601049841737,
+        "mean_auction_ms": 0.3816398765532843
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 8,
+      "seed": 9575356803611413354,
+      "metrics": {
+        "completion_rate": 0.8633333333333333,
+        "average_cost": 0.03145197809888074,
+        "buyer_utility": 83.40178521814103,
+        "hhi": 0.059420700347341274
+      },
+      "performance": {
+        "wall_seconds": 0.24366337500396185,
+        "auctions_per_second": 2462.4135653962944,
+        "mean_auction_ms": 0.3835072248087575
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 8,
+      "seed": 9575356803611413354,
+      "metrics": {
+        "completion_rate": 0.8866666666666667,
+        "average_cost": 0.03200531348783197,
+        "buyer_utility": 85.87284380693484,
+        "hhi": 0.059789982474984446
+      },
+      "performance": {
+        "wall_seconds": 0.24149316700641066,
+        "auctions_per_second": 2484.5423472543735,
+        "mean_auction_ms": 0.3798847302581028
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 9,
+      "seed": 16939299317921539107,
+      "metrics": {
+        "completion_rate": 0.77,
+        "average_cost": 0.03086951684988436,
+        "buyer_utility": 72.11842276713446,
+        "hhi": 0.05868518206180544
+      },
+      "performance": {
+        "wall_seconds": 0.25853200000710785,
+        "auctions_per_second": 2320.7958782027144,
+        "mean_auction_ms": 0.4077207002895496
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 9,
+      "seed": 16939299317921539107,
+      "metrics": {
+        "completion_rate": 0.7883333333333333,
+        "average_cost": 0.031224264102929864,
+        "buyer_utility": 74.0630539464328,
+        "hhi": 0.05888820850225049
+      },
+      "performance": {
+        "wall_seconds": 0.27756720900652,
+        "auctions_per_second": 2161.638624920951,
+        "mean_auction_ms": 0.43924888979139115
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 9,
+      "seed": 16939299317921539107,
+      "metrics": {
+        "completion_rate": 0.8033333333333333,
+        "average_cost": 0.032308767132456076,
+        "buyer_utility": 76.65108173210213,
+        "hhi": 0.056326509529794594
+      },
+      "performance": {
+        "wall_seconds": 0.2570847080060048,
+        "auctions_per_second": 2333.861102255781,
+        "mean_auction_ms": 0.4049879981660827
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 10,
+      "seed": 16546292518884912847,
+      "metrics": {
+        "completion_rate": 0.8566666666666667,
+        "average_cost": 0.03888036451840544,
+        "buyer_utility": 77.76144119703807,
+        "hhi": 0.08168178170752016
+      },
+      "performance": {
+        "wall_seconds": 0.2520312080014264,
+        "auctions_per_second": 2380.6575572839542,
+        "mean_auction_ms": 0.39668617660936434
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 10,
+      "seed": 16546292518884912847,
+      "metrics": {
+        "completion_rate": 0.86,
+        "average_cost": 0.03833691162146281,
+        "buyer_utility": 77.86364173921673,
+        "hhi": 0.07890901989063158
+      },
+      "performance": {
+        "wall_seconds": 0.2555025420006132,
+        "auctions_per_second": 2348.3132312576367,
+        "mean_auction_ms": 0.40214228846404393
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 10,
+      "seed": 16546292518884912847,
+      "metrics": {
+        "completion_rate": 0.8633333333333333,
+        "average_cost": 0.03845740948681656,
+        "buyer_utility": 78.25737848342362,
+        "hhi": 0.07833812853117873
+      },
+      "performance": {
+        "wall_seconds": 0.2570407909952337,
+        "auctions_per_second": 2334.259856876669,
+        "mean_auction_ms": 0.4048070012747
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 11,
+      "seed": 3594948670914858363,
+      "metrics": {
+        "completion_rate": 0.8466666666666667,
+        "average_cost": 0.031758936404406836,
+        "buyer_utility": 79.46839923039674,
+        "hhi": 0.06676638353276707
+      },
+      "performance": {
+        "wall_seconds": 0.28252687500207685,
+        "auctions_per_second": 2123.6917726697307,
+        "mean_auction_ms": 0.4466332547114386
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 11,
+      "seed": 3594948670914858363,
+      "metrics": {
+        "completion_rate": 0.85,
+        "average_cost": 0.03199677621377877,
+        "buyer_utility": 79.378385335991,
+        "hhi": 0.06370626682045367
+      },
+      "performance": {
+        "wall_seconds": 0.28266037499997765,
+        "auctions_per_second": 2122.6887567811636,
+        "mean_auction_ms": 0.4469984746780635
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 11,
+      "seed": 3594948670914858363,
+      "metrics": {
+        "completion_rate": 0.8816666666666667,
+        "average_cost": 0.03309850007036941,
+        "buyer_utility": 82.17230212940898,
+        "hhi": 0.061395578203336895
+      },
+      "performance": {
+        "wall_seconds": 0.32197350000205915,
+        "auctions_per_second": 1863.5074004418461,
+        "mean_auction_ms": 0.5081099415595721
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 12,
+      "seed": 12034001953195691483,
+      "metrics": {
+        "completion_rate": 0.8816666666666667,
+        "average_cost": 0.03193037075811521,
+        "buyer_utility": 84.45541656768793,
+        "hhi": 0.06025921862772074
+      },
+      "performance": {
+        "wall_seconds": 0.24050995899597183,
+        "auctions_per_second": 2494.6991904399647,
+        "mean_auction_ms": 0.3782175047914886
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 12,
+      "seed": 12034001953195691483,
+      "metrics": {
+        "completion_rate": 0.885,
+        "average_cost": 0.03174542388962508,
+        "buyer_utility": 84.67622799272942,
+        "hhi": 0.060026031968960246
+      },
+      "performance": {
+        "wall_seconds": 0.24248166700999718,
+        "auctions_per_second": 2474.4138697102526,
+        "mean_auction_ms": 0.3814406048816939
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 12,
+      "seed": 12034001953195691483,
+      "metrics": {
+        "completion_rate": 0.8933333333333333,
+        "average_cost": 0.032128869766283895,
+        "buyer_utility": 85.1817332304274,
+        "hhi": 0.05887307863666741
+      },
+      "performance": {
+        "wall_seconds": 0.2402478330041049,
+        "auctions_per_second": 2497.421069307827,
+        "mean_auction_ms": 0.37794674217972596
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 13,
+      "seed": 15234093841253825310,
+      "metrics": {
+        "completion_rate": 0.84,
+        "average_cost": 0.03179631444860884,
+        "buyer_utility": 79.01744399475122,
+        "hhi": 0.058791572184429326
+      },
+      "performance": {
+        "wall_seconds": 0.22929158399347216,
+        "auctions_per_second": 2616.7554410417515,
+        "mean_auction_ms": 0.36021331514348276
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 13,
+      "seed": 15234093841253825310,
+      "metrics": {
+        "completion_rate": 0.8416666666666667,
+        "average_cost": 0.03157388850770019,
+        "buyer_utility": 79.7907911833064,
+        "hhi": 0.058923634937751206
+      },
+      "performance": {
+        "wall_seconds": 0.23216766701079905,
+        "auctions_per_second": 2584.339187816758,
+        "mean_auction_ms": 0.36460923198319506
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 13,
+      "seed": 15234093841253825310,
+      "metrics": {
+        "completion_rate": 0.85,
+        "average_cost": 0.03213624436710299,
+        "buyer_utility": 79.74168447428588,
+        "hhi": 0.05847750865051903
+      },
+      "performance": {
+        "wall_seconds": 0.23283641699526925,
+        "auctions_per_second": 2576.916479573686,
+        "mean_auction_ms": 0.36577077832286403
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 14,
+      "seed": 4128312302127379179,
+      "metrics": {
+        "completion_rate": 0.9033333333333333,
+        "average_cost": 0.030390169589416583,
+        "buyer_utility": 86.79830134636052,
+        "hhi": 0.07212592421127163
+      },
+      "performance": {
+        "wall_seconds": 0.25507258300785907,
+        "auctions_per_second": 2352.271627646917,
+        "mean_auction_ms": 0.40200206846445025
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 14,
+      "seed": 4128312302127379179,
+      "metrics": {
+        "completion_rate": 0.9033333333333333,
+        "average_cost": 0.030373710765035807,
+        "buyer_utility": 86.52519043497377,
+        "hhi": 0.07347394507155404
+      },
+      "performance": {
+        "wall_seconds": 0.2598042500030715,
+        "auctions_per_second": 2309.4310427674163,
+        "mean_auction_ms": 0.4100111919736567
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 14,
+      "seed": 4128312302127379179,
+      "metrics": {
+        "completion_rate": 0.905,
+        "average_cost": 0.030511331117402077,
+        "buyer_utility": 86.28689106791603,
+        "hhi": 0.07024951754966101
+      },
+      "performance": {
+        "wall_seconds": 0.2635538750037085,
+        "auctions_per_second": 2276.574381581592,
+        "mean_auction_ms": 0.4152294648762715
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 15,
+      "seed": 17608475764291303783,
+      "metrics": {
+        "completion_rate": 0.7766666666666666,
+        "average_cost": 0.033624151574821154,
+        "buyer_utility": 69.45996279891283,
+        "hhi": 0.08204240269667888
+      },
+      "performance": {
+        "wall_seconds": 0.27333854099560995,
+        "auctions_per_second": 2195.0801296244445,
+        "mean_auction_ms": 0.4314047237615644
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 15,
+      "seed": 17608475764291303783,
+      "metrics": {
+        "completion_rate": 0.7916666666666666,
+        "average_cost": 0.03463821885107455,
+        "buyer_utility": 71.43234396763353,
+        "hhi": 0.07748698060941828
+      },
+      "performance": {
+        "wall_seconds": 0.27769133300171234,
+        "auctions_per_second": 2160.67240383156,
+        "mean_auction_ms": 0.43818528193999856
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 15,
+      "seed": 17608475764291303783,
+      "metrics": {
+        "completion_rate": 0.8266666666666667,
+        "average_cost": 0.03563737574364581,
+        "buyer_utility": 73.65466771006092,
+        "hhi": 0.07258877471383975
+      },
+      "performance": {
+        "wall_seconds": 0.2832127500005299,
+        "auctions_per_second": 2118.54868821717,
+        "mean_auction_ms": 0.44730792988654383
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 16,
+      "seed": 11928576805678051328,
+      "metrics": {
+        "completion_rate": 0.875,
+        "average_cost": 0.03015503843557435,
+        "buyer_utility": 84.16465745083107,
+        "hhi": 0.06126077097505669
+      },
+      "performance": {
+        "wall_seconds": 0.27425941699766554,
+        "auctions_per_second": 2187.7097478301253,
+        "mean_auction_ms": 0.43383387974851456
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 16,
+      "seed": 11928576805678051328,
+      "metrics": {
+        "completion_rate": 0.8816666666666667,
+        "average_cost": 0.029983650032654154,
+        "buyer_utility": 84.63357152602859,
+        "hhi": 0.06173148323512281
+      },
+      "performance": {
+        "wall_seconds": 0.2599336670100456,
+        "auctions_per_second": 2308.2812122864098,
+        "mean_auction_ms": 0.4101061968443294
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 16,
+      "seed": 11928576805678051328,
+      "metrics": {
+        "completion_rate": 0.8883333333333333,
+        "average_cost": 0.03132332719709188,
+        "buyer_utility": 84.39647045841726,
+        "hhi": 0.05826695155391444
+      },
+      "performance": {
+        "wall_seconds": 0.27421337499981746,
+        "auctions_per_second": 2188.0770768398856,
+        "mean_auction_ms": 0.4330142299295403
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 17,
+      "seed": 1635666538368580815,
+      "metrics": {
+        "completion_rate": 0.8866666666666667,
+        "average_cost": 0.03702265608802109,
+        "buyer_utility": 84.92335873812681,
+        "hhi": 0.07106817796370625
+      },
+      "performance": {
+        "wall_seconds": 0.25260733399773017,
+        "auctions_per_second": 2375.2279496579913,
+        "mean_auction_ms": 0.397904082929017
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 17,
+      "seed": 1635666538368580815,
+      "metrics": {
+        "completion_rate": 0.8883333333333333,
+        "average_cost": 0.03723873951252455,
+        "buyer_utility": 85.1344577442997,
+        "hhi": 0.0701927916955602
+      },
+      "performance": {
+        "wall_seconds": 0.24998862500069663,
+        "auctions_per_second": 2400.109204962138,
+        "mean_auction_ms": 0.39415709354216233
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 17,
+      "seed": 1635666538368580815,
+      "metrics": {
+        "completion_rate": 0.8833333333333333,
+        "average_cost": 0.037633879718688285,
+        "buyer_utility": 83.15413293489763,
+        "hhi": 0.06812388750444998
+      },
+      "performance": {
+        "wall_seconds": 0.25318254200101364,
+        "auctions_per_second": 2369.8316450176007,
+        "mean_auction_ms": 0.39875429169721127
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 18,
+      "seed": 2228924186576455312,
+      "metrics": {
+        "completion_rate": 0.8733333333333333,
+        "average_cost": 0.029910797177276502,
+        "buyer_utility": 83.29813623629157,
+        "hhi": 0.10096293922265602
+      },
+      "performance": {
+        "wall_seconds": 0.26136379200033844,
+        "auctions_per_second": 2295.650806899921,
+        "mean_auction_ms": 0.4120010688347975
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 18,
+      "seed": 2228924186576455312,
+      "metrics": {
+        "completion_rate": 0.8816666666666667,
+        "average_cost": 0.030063556455012914,
+        "buyer_utility": 84.28673977394001,
+        "hhi": 0.09725880053315991
+      },
+      "performance": {
+        "wall_seconds": 0.2624735830031568,
+        "auctions_per_second": 2285.9443344162514,
+        "mean_auction_ms": 0.41396589995808125
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 18,
+      "seed": 2228924186576455312,
+      "metrics": {
+        "completion_rate": 0.9,
+        "average_cost": 0.031013030484874245,
+        "buyer_utility": 85.62540913393764,
+        "hhi": 0.09217421124828533
+      },
+      "performance": {
+        "wall_seconds": 0.26012449999689125,
+        "auctions_per_second": 2306.587807019987,
+        "mean_auction_ms": 0.41008650963097654
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 19,
+      "seed": 4199717455306043288,
+      "metrics": {
+        "completion_rate": 0.8383333333333334,
+        "average_cost": 0.030171248668754324,
+        "buyer_utility": 80.22455085695522,
+        "hhi": 0.0804991126797861
+      },
+      "performance": {
+        "wall_seconds": 0.2630550830072025,
+        "auctions_per_second": 2280.891108968124,
+        "mean_auction_ms": 0.4148049172363244
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 19,
+      "seed": 4199717455306043288,
+      "metrics": {
+        "completion_rate": 0.8466666666666667,
+        "average_cost": 0.03051479294865817,
+        "buyer_utility": 81.39731888107475,
+        "hhi": 0.08179366358732718
+      },
+      "performance": {
+        "wall_seconds": 0.264160291000735,
+        "auctions_per_second": 2271.3481944124997,
+        "mean_auction_ms": 0.41690570341112715
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 19,
+      "seed": 4199717455306043288,
+      "metrics": {
+        "completion_rate": 0.8616666666666667,
+        "average_cost": 0.03156857226987209,
+        "buyer_utility": 81.83468105784289,
+        "hhi": 0.07511345397678168
+      },
+      "performance": {
+        "wall_seconds": 0.26386408299731556,
+        "auctions_per_second": 2273.8979598299634,
+        "mean_auction_ms": 0.41636512153975974
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 20,
+      "seed": 10889773286790632150,
+      "metrics": {
+        "completion_rate": 0.8483333333333334,
+        "average_cost": 0.02732156218999638,
+        "buyer_utility": 82.47524846860654,
+        "hhi": 0.08278106074934094
+      },
+      "performance": {
+        "wall_seconds": 0.2697194169886643,
+        "auctions_per_second": 2224.5339497571904,
+        "mean_auction_ms": 0.42553790990496054
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 20,
+      "seed": 10889773286790632150,
+      "metrics": {
+        "completion_rate": 0.8566666666666667,
+        "average_cost": 0.02749112948404297,
+        "buyer_utility": 83.84432163378037,
+        "hhi": 0.08312767793607775
+      },
+      "performance": {
+        "wall_seconds": 0.2708728750003502,
+        "auctions_per_second": 2215.0612164441504,
+        "mean_auction_ms": 0.4273018816456897
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 20,
+      "seed": 10889773286790632150,
+      "metrics": {
+        "completion_rate": 0.865,
+        "average_cost": 0.027985763574957658,
+        "buyer_utility": 83.96127849008569,
+        "hhi": 0.0799484706397734
+      },
+      "performance": {
+        "wall_seconds": 0.26900883299822453,
+        "auctions_per_second": 2230.41003268454,
+        "mean_auction_ms": 0.42462708331489313
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 21,
+      "seed": 10129266088436986788,
+      "metrics": {
+        "completion_rate": 0.7916666666666666,
+        "average_cost": 0.03672947798212436,
+        "buyer_utility": 71.81280822516212,
+        "hhi": 0.06210747922437673
+      },
+      "performance": {
+        "wall_seconds": 0.25025949999690056,
+        "auctions_per_second": 2397.5113832139477,
+        "mean_auction_ms": 0.3936604947860663
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 21,
+      "seed": 10129266088436986788,
+      "metrics": {
+        "completion_rate": 0.7966666666666666,
+        "average_cost": 0.03713211400602207,
+        "buyer_utility": 71.63568218968645,
+        "hhi": 0.06115089021550743
+      },
+      "performance": {
+        "wall_seconds": 0.25779133298783563,
+        "auctions_per_second": 2327.463817522182,
+        "mean_auction_ms": 0.4060152829333674
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 21,
+      "seed": 10129266088436986788,
+      "metrics": {
+        "completion_rate": 0.835,
+        "average_cost": 0.03806485326695089,
+        "buyer_utility": 75.59102848125423,
+        "hhi": 0.056418101919912665
+      },
+      "performance": {
+        "wall_seconds": 0.2528667919978034,
+        "auctions_per_second": 2372.79080918309,
+        "mean_auction_ms": 0.39841784845824196
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 22,
+      "seed": 2754098298013829382,
+      "metrics": {
+        "completion_rate": 0.8266666666666667,
+        "average_cost": 0.035872591618162634,
+        "buyer_utility": 76.73972962369808,
+        "hhi": 0.07419029656607701
+      },
+      "performance": {
+        "wall_seconds": 0.25435091700637713,
+        "auctions_per_second": 2358.9456922813324,
+        "mean_auction_ms": 0.4008502478488178
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 22,
+      "seed": 2754098298013829382,
+      "metrics": {
+        "completion_rate": 0.8416666666666667,
+        "average_cost": 0.03619600134359355,
+        "buyer_utility": 77.83247694698406,
+        "hhi": 0.07398098225664151
+      },
+      "performance": {
+        "wall_seconds": 0.26276254099502694,
+        "auctions_per_second": 2283.4304986088396,
+        "mean_auction_ms": 0.41395309318128665
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 22,
+      "seed": 2754098298013829382,
+      "metrics": {
+        "completion_rate": 0.8566666666666667,
+        "average_cost": 0.03683113002047971,
+        "buyer_utility": 78.74864039551272,
+        "hhi": 0.07002377023119198
+      },
+      "performance": {
+        "wall_seconds": 0.27459454198833555,
+        "auctions_per_second": 2185.0397886841,
+        "mean_auction_ms": 0.4343152867174164
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 23,
+      "seed": 13284820348930711617,
+      "metrics": {
+        "completion_rate": 0.85,
+        "average_cost": 0.03239880734512843,
+        "buyer_utility": 79.94518675856091,
+        "hhi": 0.0782083813917724
+      },
+      "performance": {
+        "wall_seconds": 0.25454483399516903,
+        "auctions_per_second": 2357.148603579153,
+        "mean_auction_ms": 0.40055255694217823
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 23,
+      "seed": 13284820348930711617,
+      "metrics": {
+        "completion_rate": 0.855,
+        "average_cost": 0.032670962143827954,
+        "buyer_utility": 80.0515266110682,
+        "hhi": 0.07704174883819902
+      },
+      "performance": {
+        "wall_seconds": 0.2578290000092238,
+        "auctions_per_second": 2327.123791266828,
+        "mean_auction_ms": 0.40661521219590213
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 23,
+      "seed": 13284820348930711617,
+      "metrics": {
+        "completion_rate": 0.88,
+        "average_cost": 0.0331186155870674,
+        "buyer_utility": 82.44087737459083,
+        "hhi": 0.07823978420569329
+      },
+      "performance": {
+        "wall_seconds": 0.2591883749992121,
+        "auctions_per_second": 2314.9186378510376,
+        "mean_auction_ms": 0.40890008490047575
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 24,
+      "seed": 6170468144425667755,
+      "metrics": {
+        "completion_rate": 0.8033333333333333,
+        "average_cost": 0.03070929144929573,
+        "buyer_utility": 76.2186431299376,
+        "hhi": 0.061681100532015636
+      },
+      "performance": {
+        "wall_seconds": 0.2553877500031376,
+        "auctions_per_second": 2349.3687539540506,
+        "mean_auction_ms": 0.40263841874548234
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 24,
+      "seed": 6170468144425667755,
+      "metrics": {
+        "completion_rate": 0.82,
+        "average_cost": 0.030957127266950542,
+        "buyer_utility": 77.45405342359177,
+        "hhi": 0.05920748231872563
+      },
+      "performance": {
+        "wall_seconds": 0.25654183300503064,
+        "auctions_per_second": 2338.7998478526283,
+        "mean_auction_ms": 0.40445086485609255
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 24,
+      "seed": 6170468144425667755,
+      "metrics": {
+        "completion_rate": 0.8366666666666667,
+        "average_cost": 0.031386454255353774,
+        "buyer_utility": 78.5228402237059,
+        "hhi": 0.05752289646196092
+      },
+      "performance": {
+        "wall_seconds": 0.2563665000052424,
+        "auctions_per_second": 2340.399389107901,
+        "mean_auction_ms": 0.4038806399573029
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 25,
+      "seed": 12059144125152549337,
+      "metrics": {
+        "completion_rate": 0.8666666666666667,
+        "average_cost": 0.03085818979710319,
+        "buyer_utility": 80.74751228953087,
+        "hhi": 0.0871301775147929
+      },
+      "performance": {
+        "wall_seconds": 0.23919812501117121,
+        "auctions_per_second": 2508.3808661626354,
+        "mean_auction_ms": 0.3762424136220943
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 25,
+      "seed": 12059144125152549337,
+      "metrics": {
+        "completion_rate": 0.8716666666666667,
+        "average_cost": 0.03149683483520495,
+        "buyer_utility": 80.29881801629925,
+        "hhi": 0.08511346146112478
+      },
+      "performance": {
+        "wall_seconds": 0.2398098330013454,
+        "auctions_per_second": 2501.9824770764667,
+        "mean_auction_ms": 0.3772338198662813
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 25,
+      "seed": 12059144125152549337,
+      "metrics": {
+        "completion_rate": 0.8783333333333333,
+        "average_cost": 0.03162562855895379,
+        "buyer_utility": 81.04059847151535,
+        "hhi": 0.08556902592095171
+      },
+      "performance": {
+        "wall_seconds": 0.24117854099313263,
+        "auctions_per_second": 2487.783521408252,
+        "mean_auction_ms": 0.37978416359692346
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 26,
+      "seed": 10135758009553720987,
+      "metrics": {
+        "completion_rate": 0.8166666666666667,
+        "average_cost": 0.031464255214176305,
+        "buyer_utility": 77.51982801422562,
+        "hhi": 0.0526780508121616
+      },
+      "performance": {
+        "wall_seconds": 0.2084293749940116,
+        "auctions_per_second": 2878.6729318611574,
+        "mean_auction_ms": 0.3264085496145223
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 26,
+      "seed": 10135758009553720987,
+      "metrics": {
+        "completion_rate": 0.8266666666666667,
+        "average_cost": 0.031615762899139144,
+        "buyer_utility": 78.57306409619753,
+        "hhi": 0.052793314255983353
+      },
+      "performance": {
+        "wall_seconds": 0.211052832994028,
+        "auctions_per_second": 2842.890055008064,
+        "mean_auction_ms": 0.3308261947677238
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 26,
+      "seed": 10135758009553720987,
+      "metrics": {
+        "completion_rate": 0.835,
+        "average_cost": 0.03243779325754394,
+        "buyer_utility": 79.09412558132628,
+        "hhi": 0.05131055254759941
+      },
+      "performance": {
+        "wall_seconds": 0.20926095799950417,
+        "auctions_per_second": 2867.2333613297405,
+        "mean_auction_ms": 0.3278613934283688
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 27,
+      "seed": 17113445382727499865,
+      "metrics": {
+        "completion_rate": 0.7916666666666666,
+        "average_cost": 0.034428233935355684,
+        "buyer_utility": 72.53789247103518,
+        "hhi": 0.06009529085872576
+      },
+      "performance": {
+        "wall_seconds": 0.22294620900356676,
+        "auctions_per_second": 2691.232125819197,
+        "mean_auction_ms": 0.3494840464554727
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 27,
+      "seed": 17113445382727499865,
+      "metrics": {
+        "completion_rate": 0.7916666666666666,
+        "average_cost": 0.03438846697565422,
+        "buyer_utility": 72.46335135143573,
+        "hhi": 0.05997119113573407
+      },
+      "performance": {
+        "wall_seconds": 0.22446883299562614,
+        "auctions_per_second": 2672.9768760890347,
+        "mean_auction_ms": 0.35256506174240104
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 27,
+      "seed": 17113445382727499865,
+      "metrics": {
+        "completion_rate": 0.8083333333333333,
+        "average_cost": 0.03503263368108245,
+        "buyer_utility": 74.38077567586853,
+        "hhi": 0.05808481241364651
+      },
+      "performance": {
+        "wall_seconds": 0.22499887501180638,
+        "auctions_per_second": 2666.679999926738,
+        "mean_auction_ms": 0.35332499678285484
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 28,
+      "seed": 4073684211006855427,
+      "metrics": {
+        "completion_rate": 0.85,
+        "average_cost": 0.03282238715681943,
+        "buyer_utility": 80.78525591349947,
+        "hhi": 0.07141868512110727
+      },
+      "performance": {
+        "wall_seconds": 0.24830845900578424,
+        "auctions_per_second": 2416.3494163766013,
+        "mean_auction_ms": 0.3911501952097751
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 28,
+      "seed": 4073684211006855427,
+      "metrics": {
+        "completion_rate": 0.8533333333333334,
+        "average_cost": 0.03325179187790954,
+        "buyer_utility": 81.05555976716582,
+        "hhi": 0.06980133056640625
+      },
+      "performance": {
+        "wall_seconds": 0.24961162501131184,
+        "auctions_per_second": 2403.734200972448,
+        "mean_auction_ms": 0.39315182191785425
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 28,
+      "seed": 4073684211006855427,
+      "metrics": {
+        "completion_rate": 0.8666666666666667,
+        "average_cost": 0.0336003244151349,
+        "buyer_utility": 82.67385959631379,
+        "hhi": 0.06852071005917161
+      },
+      "performance": {
+        "wall_seconds": 0.29136862501036376,
+        "auctions_per_second": 2059.247113441464,
+        "mean_auction_ms": 0.4589338934359451
+      }
+    },
+    {
+      "arm": "full_history",
+      "replication": 29,
+      "seed": 17340962974543944314,
+      "metrics": {
+        "completion_rate": 0.8566666666666667,
+        "average_cost": 0.02677813580111724,
+        "buyer_utility": 83.23287208835411,
+        "hhi": 0.07251434541022574
+      },
+      "performance": {
+        "wall_seconds": 0.27731774999119807,
+        "auctions_per_second": 2163.583110057123,
+        "mean_auction_ms": 0.4381205680450269
+      }
+    },
+    {
+      "arm": "decay_half_life_20",
+      "replication": 29,
+      "seed": 17340962974543944314,
+      "metrics": {
+        "completion_rate": 0.8716666666666667,
+        "average_cost": 0.027304334937367624,
+        "buyer_utility": 83.8563830975344,
+        "hhi": 0.06991214825484683
+      },
+      "performance": {
+        "wall_seconds": 0.29807895798876416,
+        "auctions_per_second": 2012.8894842104771,
+        "mean_auction_ms": 0.47222936681161326
+      }
+    },
+    {
+      "arm": "decay_half_life_5",
+      "replication": 29,
+      "seed": 17340962974543944314,
+      "metrics": {
+        "completion_rate": 0.885,
+        "average_cost": 0.028044939365245877,
+        "buyer_utility": 84.99896810658828,
+        "hhi": 0.06645245264416001
+      },
+      "performance": {
+        "wall_seconds": 0.2749876250018133,
+        "auctions_per_second": 2181.9163680403567,
+        "mean_auction_ms": 0.43398941517807543
+      }
+    }
+  ]
+}

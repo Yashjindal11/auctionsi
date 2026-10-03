@@ -12,7 +12,7 @@ Giving reputation weight in selection raises concentration (HHI, top-agent share
 
 - Replications: 30 per arm (common random numbers across arms)
 - Seed: 19
-- AuctionSI 0.1.0, Python 3.12.15, git commit 4cdec6d83de3d2823b91590873730666f37fb1dd
+- AuctionSI 0.1.1, Python 3.12.15, git commit 0162c05e54894a8575355e5fb4d3f5d47dd18a08
 - Baseline arm: `price_only`
 - Confidence level: 95%; alpha: 0.05
 
