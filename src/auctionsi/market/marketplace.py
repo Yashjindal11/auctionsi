@@ -112,13 +112,13 @@ class Marketplace:
         self.limits = limits
         self.disclose_clearing_price = disclose_clearing_price
         self.bidding_window = bidding_window
-        self.store = store
         self.plugins = plugins or default_registry()
         self.log: EventLog | None = EventLog(max_events) if keep_events else None
         if self.log is not None:
             self.bus.subscribe(self.log)
+        self.store: MarketStore | None = None
         if store is not None:
-            self.bus.subscribe(store.record_event)
+            self.attach_store(store)
         self._agents: dict[str, Agent] = {}
         self._tasks: dict[str, Task] = {}
         self._busy: dict[str, list[float]] = {}
@@ -127,6 +127,13 @@ class Marketplace:
         self.results: dict[str, AuctionResult] = {}
 
     # ------------------------------------------------------------------ plugins
+
+    def attach_store(self, store: MarketStore) -> None:
+        """Persist everything from now on (events, tasks, auctions, observations)."""
+        if self.store is not None:
+            raise ValidationError("a store is already attached")
+        self.store = store
+        self.bus.subscribe(store.record_event)
 
     def register_auction_mechanism(
         self, name: str, factory: Callable[..., AuctionMechanism]

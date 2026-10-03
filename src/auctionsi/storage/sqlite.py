@@ -286,6 +286,10 @@ class SQLiteStore:
             "spec": json.loads(row["spec"]) if row["spec"] else None,
         }
 
+    def has_task(self, task_id: str) -> bool:
+        row = self.conn.execute("SELECT 1 FROM tasks WHERE task_id = ?", (task_id,)).fetchone()
+        return row is not None
+
     def list_tasks(self, limit: int = 1000) -> list[dict[str, Any]]:
         rows = self.conn.execute(
             "SELECT data FROM tasks ORDER BY rowid DESC LIMIT ?", (limit,)

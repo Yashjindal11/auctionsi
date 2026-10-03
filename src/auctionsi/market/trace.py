@@ -29,9 +29,9 @@ def describe_event(event: Event) -> str:
         case E.AUCTION_OPENED:
             return "auction opened (" + ("sealed" if d.get("sealed") else "open") + " bidding)"
         case E.BID_SUBMITTED:
-            return f"bid from {agent}: {d['bid']['price']}"
+            return f"bid from {agent}: {d['bid']['price']:.6g}"
         case E.BID_REVISED:
-            return f"revised bid from {agent}: {d['bid']['price']} (round {d.get('round')})"
+            return f"revised bid from {agent}: {d['bid']['price']:.6g} (round {d.get('round')})"
         case E.BID_REJECTED:
             reasons = ", ".join(r["code"] for r in d.get("reasons", []))
             return f"bid from {agent} rejected: {reasons}"

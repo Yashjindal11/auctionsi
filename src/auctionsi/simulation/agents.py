@@ -138,7 +138,7 @@ class SimulatedAgent(Agent):
         self.strategy.observe(notice)
 
     def spec(self) -> dict[str, Any]:
-        """Everything needed to rebuild this agent (used by the CLI registry)."""
+        """Everything needed to rebuild this agent with :func:`agent_from_spec`."""
         return {
             "agent_id": self.agent_id,
             "capabilities": [c.to_dict() for c in self.capabilities],
@@ -155,3 +155,58 @@ class SimulatedAgent(Agent):
             "operator": self.operator,
             "max_concurrent_tasks": self.max_concurrent_tasks,
         }
+
+
+_SPEC_KEYS = {
+    "agent_id",
+    "name",
+    "capabilities",
+    "cost_model",
+    "quality",
+    "quality_sd",
+    "reliability",
+    "latency_mean",
+    "latency_sigma",
+    "strategy",
+    "quality_report_bias",
+    "latency_report_bias",
+    "seed",
+    "operator",
+    "max_concurrent_tasks",
+}
+
+
+def agent_from_spec(spec: Mapping[str, Any]) -> SimulatedAgent:
+    """Build a simulated agent from a (validated) declarative spec, as found in YAML."""
+    from auctionsi.bidding.strategies import BUILTIN_STRATEGIES
+
+    if not isinstance(spec, Mapping):
+        raise ValidationError("agent spec must be a mapping")
+    unknown = set(spec) - _SPEC_KEYS
+    if unknown:
+        raise ValidationError(f"unknown agent spec fields: {sorted(unknown)}")
+    if "agent_id" not in spec or "capabilities" not in spec:
+        raise ValidationError("agent spec needs agent_id and capabilities")
+    values = dict(spec)
+    cost = values.pop("cost_model", {}) or {}
+    if not isinstance(cost, Mapping):
+        raise ValidationError("cost_model must be a mapping")
+    strategy_spec = values.pop("strategy", "cost_plus")
+    if isinstance(strategy_spec, str):
+        strategy_spec = {"name": strategy_spec}
+    if (
+        not isinstance(strategy_spec, Mapping)
+        or strategy_spec.get("name") not in BUILTIN_STRATEGIES
+    ):
+        raise ValidationError(f"unknown strategy {strategy_spec!r}")
+    params = {k: v for k, v in strategy_spec.items() if k != "name"}
+    try:
+        strategy = BUILTIN_STRATEGIES[strategy_spec["name"]](**params)
+        return SimulatedAgent(
+            values.pop("agent_id"),
+            cost_model=CostModel(**cost),
+            strategy=strategy,
+            **values,
+        )
+    except TypeError as exc:
+        raise ValidationError(f"invalid agent spec: {exc}") from exc

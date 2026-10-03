@@ -47,7 +47,7 @@ class ScoredBid:
     def explain(self) -> str:
         lines = [f"agent {self.agent_id}: score {self.score:.6g}"]
         for name, value in self.contributions.items():
-            lines.append(f"  {name:<22} {value:+.6g}")
+            lines.append(f"  {name:<22} {value + 0.0:+.6g}")
         if self.effective_cost is not None:
             lines.append(f"  effective cost          {self.effective_cost:.6g}")
         for name, value in self.details.items():
