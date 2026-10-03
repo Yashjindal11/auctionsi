@@ -18,12 +18,20 @@ class Clock(Protocol):
 class WallClock:
     """Seconds since the Unix epoch."""
 
+    simulated = False
+
     def now(self) -> float:
         return time.time()
 
 
 class ManualClock:
-    """A clock that only moves when told to. Time never goes backwards."""
+    """A clock that only moves when told to. Time never goes backwards.
+
+    The marketplace treats it as simulated time: an agent stays busy (counts
+    against its capacity) until ``start + reported latency``.
+    """
+
+    simulated = True
 
     def __init__(self, start: float = 0.0) -> None:
         self._now = float(start)

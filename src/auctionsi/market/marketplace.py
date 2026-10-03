@@ -574,7 +574,9 @@ class Marketplace:
 
         execution = self._execute(agent, task, contract)
         done = start + execution.latency
-        self._busy.setdefault(agent.agent_id, []).append(done)
+        # With a real clock the synchronous call has already finished, so only simulated time holds capacity.
+        if getattr(self.clock, "simulated", False):
+            self._busy.setdefault(agent.agent_id, []).append(done)
         if execution.success:
             contract.transition(ContractStatus.DELIVERED, done)
             self._emit(
