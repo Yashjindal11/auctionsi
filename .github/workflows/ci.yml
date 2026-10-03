@@ -76,7 +76,7 @@ jobs:
           /tmp/clean/bin/auctionsi agent register agents.yaml
           /tmp/clean/bin/auctionsi task submit task.yaml || test $? -eq 1
           /tmp/clean/bin/auctionsi market simulate --agents 10 --tasks 50
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
