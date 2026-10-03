@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+coverage.xml
+htmlcov/
+
+# AuctionSI outputs are per-user
+*.db
+auctionsi-results/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

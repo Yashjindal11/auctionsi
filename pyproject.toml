@@ -1,0 +1,117 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "auctionsi"
+dynamic = ["version"]
+description = "An open-source marketplace and auction framework for autonomous agents."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.11"
+authors = [{ name = "Yash Jindal" }]
+keywords = [
+    "multi-agent-systems",
+    "agents",
+    "auction",
+    "mechanism-design",
+    "marketplace",
+    "simulation",
+    "agent-framework",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pydantic>=2.6",
+    "pyyaml>=6.0",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+plotly = ["plotly>=5.18"]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "hypothesis>=6.100",
+    "ruff==0.16.10",
+    "mypy>=1.10",
+    "types-PyYAML",
+    "build>=1.2",
+    "plotly>=5.18",
+]
+
+[project.scripts]
+auctionsi = "auctionsi.cli.main:main"
+
+[project.urls]
+Homepage = "https://github.com/Yashjindal11/auctionsi"
+Documentation = "https://github.com/Yashjindal11/auctionsi/tree/main/docs"
+Issues = "https://github.com/Yashjindal11/auctionsi/issues"
+
+[tool.hatch.version]
+path = "src/auctionsi/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/auctionsi"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/auctionsi", "tests", "docs", "README.md", "LICENSE", "NOTICE", "CHANGELOG.md"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.format]
+exclude = ["*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "S"]
+ignore = [
+    "E501",   # line length is handled by ruff format
+    "S101",   # assert is used for internal invariants and tests
+    "S311",   # simulation randomness is not cryptographic
+    "SIM108", # if/else blocks are often clearer than nested ternaries
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "B011"]
+"examples/**" = ["S"]
+"benchmarks/**" = ["S"]
+"research/**" = ["S"]
+"scripts/**" = ["S"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["auctionsi"]
+mypy_path = "src"
+plugins = ["pydantic.mypy"]
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = ["scipy.*", "plotly.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+    "integration: tests that exercise several subsystems end to end",
+    "slow: long-running tests",
+]
+
+[tool.coverage.run]
+source = ["auctionsi"]
+branch = true
