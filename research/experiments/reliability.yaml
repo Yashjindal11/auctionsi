@@ -1,0 +1,18 @@
+name: reliability
+description: >
+  Agents' reliability is drawn uniformly from [0.4, 1.0]. Three selection
+  policies decide between cheap-but-flaky and pricier-but-reliable bidders.
+hypothesis: >
+  Lowest-price selection awards many tasks to unreliable agents; risk-adjusted and
+  reputation-adjusted selection raise completion rate and buyer utility.
+seed: 11
+replications: 30
+environment:
+  agents: {count: 30, reliability_distribution: {name: uniform, low: 0.4, high: 1.0}}
+  tasks: {count: 400}
+settlement: {name: pay_on_pass, penalty_rate: 0.0}
+arms:
+  - {name: lowest_price, policy: lowest_price}
+  - {name: risk_adjusted, policy: {name: risk_adjusted_cost}}
+  - {name: reputation_adjusted, policy: {name: reputation_adjusted_cost}}
+metrics: [completion_rate, total_cost, average_cost, buyer_utility, total_surplus, hhi]

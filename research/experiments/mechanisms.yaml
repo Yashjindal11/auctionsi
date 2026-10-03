@@ -1,0 +1,26 @@
+name: mechanisms
+description: >
+  Four market designs on the same synthetic market: pay-as-bid and second-price
+  reverse auctions with lowest-price selection, and pay-as-bid with quality-weighted
+  and risk-adjusted selection.
+hypothesis: >
+  With bidders whose strategy does not react to the mechanism (cost-plus 20%),
+  second-price payments raise buyer cost relative to first-price without changing
+  allocation, while risk-adjusted selection raises completion rate at some cost.
+limitations:
+  - Bidders use a fixed cost-plus strategy in every arm, so the classic incentive argument for second-price auctions (bidders shading less) is deliberately not modelled here.
+seed: 2026
+replications: 30
+environment:
+  agents: {count: 40, reliability_distribution: {name: uniform, low: 0.6, high: 1.0}}
+  tasks: {count: 400, min_quality: 0.6}
+arms:
+  - {name: first_price, mechanism: first_price_reverse, policy: lowest_price}
+  - {name: second_price, mechanism: second_price_reverse, policy: lowest_price}
+  - name: quality_weighted
+    mechanism: first_price_reverse
+    policy: {name: weighted_score, price_weight: 0.5, quality_weight: 0.5, latency_weight: 0.0}
+  - name: risk_adjusted
+    mechanism: first_price_reverse
+    policy: {name: risk_adjusted_cost}
+metrics: [total_cost, average_cost, average_quality, completion_rate, cost_efficiency, buyer_utility]

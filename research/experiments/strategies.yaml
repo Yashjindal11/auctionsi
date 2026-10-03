@@ -1,0 +1,19 @@
+name: strategies
+description: >
+  Every agent in the market uses the same bidding strategy; arms change which one.
+hypothesis: >
+  Aggressive (below-cost) bidding lowers buyer cost but produces negative agent
+  utility; conservative and greedy bidding transfer surplus from buyer to agents;
+  adaptive (profit-seeking) bidders settle between the two.
+seed: 17
+replications: 30
+environment:
+  agents: {count: 30}
+  tasks: {count: 400}
+arms:
+  - {name: cost_plus, environment: {agents: {strategy: cost_plus}}}
+  - {name: aggressive, environment: {agents: {strategy: aggressive}}}
+  - {name: conservative, environment: {agents: {strategy: conservative}}}
+  - {name: greedy, environment: {agents: {strategy: greedy}}}
+  - {name: adaptive, environment: {agents: {strategy: profit_maximizing}}}
+metrics: [average_cost, buyer_utility, agent_utility, total_surplus, completion_rate]

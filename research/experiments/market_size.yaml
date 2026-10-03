@@ -1,0 +1,20 @@
+name: market_size
+description: >
+  The same task stream (300 tasks) served by markets of 10, 50, 100, 500 and
+  1000 synthetic agents. Arms differ in population, so they are paired by
+  replication seed rather than by identical agents.
+hypothesis: >
+  More competitors lower the average price paid and raise completion, with
+  diminishing returns; concentration of wins (HHI) falls as the market grows.
+seed: 7
+replications: 20
+environment:
+  agents: {count: 10}
+  tasks: {count: 300}
+arms:
+  - {name: n10, environment: {agents: {count: 10}}}
+  - {name: n50, environment: {agents: {count: 50}}}
+  - {name: n100, environment: {agents: {count: 100}}}
+  - {name: n500, environment: {agents: {count: 500}}}
+  - {name: n1000, environment: {agents: {count: 1000}}}
+metrics: [average_cost, completion_rate, hhi, average_bid_count, cost_efficiency, opportunity_rate]

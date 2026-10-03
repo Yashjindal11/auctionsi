@@ -1,0 +1,23 @@
+name: reputation
+description: >
+  Risk-adjusted selection whose failure estimates come from different reputation
+  systems: none (bid confidence only), full-history per task type, exponentially
+  decaying, and a single global profile per agent.
+hypothesis: >
+  Any learned reputation improves completion over no reputation when agents differ
+  in reliability; the variants differ little from each other in a stationary market.
+limitations:
+  - Agent reliability is constant within a run, so the advantage decay is designed for (adapting to agents that change) is not exercised.
+seed: 13
+replications: 30
+environment:
+  agents: {count: 30, reliability_distribution: {name: uniform, low: 0.4, high: 1.0}}
+  tasks: {count: 500}
+policy: {name: risk_adjusted_cost, newcomer_failure_probability: 0.2, min_observations: 3}
+arms:
+  - {name: none, reputation: none}
+  - {name: full_history, reputation: {name: multi_dimensional}}
+  - name: decaying
+    reputation: {name: multi_dimensional, decay: {name: exponential, half_life: 10}}
+  - {name: global, reputation: {name: multi_dimensional, task_specific: false}}
+metrics: [completion_rate, average_cost, buyer_utility, hhi, opportunity_rate]

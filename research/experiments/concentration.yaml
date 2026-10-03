@@ -1,0 +1,18 @@
+name: concentration
+description: >
+  Does weighting reputation in winner selection concentrate work on a few agents?
+  Agents can each run up to three tasks at once, so capacity does not force spreading.
+hypothesis: >
+  Giving reputation weight in selection raises concentration (HHI, top-agent share,
+  revenue Gini) relative to price-only selection.
+seed: 19
+replications: 30
+environment:
+  agents: {count: 30, capacity_distribution: 3}
+  tasks: {count: 400}
+arms:
+  - {name: price_only, policy: lowest_price}
+  - name: reputation_weighted
+    policy: {name: weighted_score, price_weight: 0.5, quality_weight: 0.0, latency_weight: 0.0, reputation_weight: 0.5}
+  - {name: reputation_adjusted, policy: reputation_adjusted_cost}
+metrics: [hhi, top_agent_share, revenue_gini, opportunity_rate, average_cost, completion_rate]
