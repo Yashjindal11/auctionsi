@@ -20,6 +20,7 @@ from auctionsi.experiments.config import (
     EnvironmentConfig,
     ExperimentConfig,
 )
+from auctionsi.experiments.environment import build_population
 from auctionsi.experiments.manifest import build_manifest
 from auctionsi.market.recovery import RecoveryPolicy
 from auctionsi.market.validation import BidValidationConfig
@@ -174,9 +175,10 @@ def run_arm(
     validation = BidValidationConfig(
         **(arm.validation if arm.validation is not None else config.validation)
     )
+    agents, tasks, changes = build_population(env, rep_seed)
     result = simulate_market(
-        env.agents.count,
-        env.tasks.count,
+        agents,
+        tasks,
         seed=rep_seed,
         mechanism=mechanism,
         policy=policy,
@@ -184,8 +186,7 @@ def run_arm(
         settlement=settlement,
         recovery=recovery,
         validation=validation,
-        agent_options=env.agents.options(),
-        task_options=env.tasks.options(),
+        changes=changes,
     )
     scalars = result.metrics.scalars()
     return ArmRun(

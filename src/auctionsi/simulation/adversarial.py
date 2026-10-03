@@ -7,12 +7,13 @@ can be compared. They contain no networking or exploitation code.
 
 from __future__ import annotations
 
+import copy
 from collections import Counter
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
-from auctionsi.bidding.strategies import BidInputs, BidStrategy
+from auctionsi.bidding.strategies import BUILTIN_STRATEGIES, BidInputs, BidStrategy
 from auctionsi.core.agent import Agent
 from auctionsi.core.capability import Capability
 from auctionsi.simulation.agents import SimulatedAgent
@@ -89,7 +90,7 @@ def make_sybils(
                 reliability=template.reliability,
                 latency_mean=template.latency_mean,
                 latency_sigma=template.latency_sigma,
-                strategy=type(template.strategy)(),
+                strategy=_copy_strategy(template.strategy),
                 quality_report_bias=template.quality_report_bias,
                 seed=derive_seed(template.seed, "sybil", i),
                 operator=template.operator,
@@ -97,6 +98,15 @@ def make_sybils(
             )
         )
     return out
+
+
+def _copy_strategy(strategy: BidStrategy) -> BidStrategy:
+    """Fresh (unlearned) copy for built-in strategies; a deep copy otherwise."""
+    spec = strategy.to_spec()
+    factory = BUILTIN_STRATEGIES.get(spec.get("name", ""))
+    if factory is not None:
+        return factory(**{k: v for k, v in spec.items() if k != "name"})
+    return copy.deepcopy(strategy)
 
 
 def overstate_quality(agents: Iterable[SimulatedAgent], amount: float) -> None:
