@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1] - 2026-10-03
+
+- Fix: agent capacity is only held on simulated clocks. With a real clock a
+  synchronous execution has already finished, and coarse OS timers (Windows) made
+  agents look permanently busy.
+- Text files are always read and written as UTF-8.
+- First PyPI release (`pip install auctionsi`), published with trusted publishing.
+
 ## [0.1.0] - 2026-10-03
 
 First release.

@@ -23,8 +23,9 @@ plugins.
 ## Install
 
 ```bash
-pip install -e ".[dev]"        # from a clone; Python 3.11+
-pip install -e ".[plotly]"     # optional figures
+pip install auctionsi           # Python 3.11+
+pip install -e ".[dev]"        # from a clone, for development
+pip install "auctionsi[plotly]"  # optional figures
 ```
 
 ## Quick start
