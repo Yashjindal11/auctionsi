@@ -6,6 +6,7 @@ point is to compare how markets behave when bidders behave differently.
 
 from __future__ import annotations
 
+import math
 import random
 from abc import ABC, abstractmethod
 from collections.abc import Callable
@@ -225,6 +226,84 @@ class ReputationMaximizingBid(BidStrategy):
         return inputs.cost * (1 + self.markup)
 
 
+@dataclass
+class BanditMarkup(BidStrategy):
+    """Learns which markup earns the most, treating each markup as a bandit arm.
+
+    The reward of one auction is the relative profit ``(payment - cost) / cost`` if
+    the bid won and 0 if it lost, so arms are comparable across task sizes.
+    ``ucb1`` is deterministic; ``epsilon_greedy`` explores with the agent's seeded rng.
+    Under pay-on-pass settlement the reward ignores later verification failures.
+    """
+
+    markups: tuple[float, ...] = (0.0, 0.05, 0.1, 0.2, 0.3, 0.45, 0.6)
+    algorithm: str = "ucb1"
+    epsilon: float = 0.1
+    exploration: float = 0.5
+    name = "bandit"
+    _counts: list[int] = field(default_factory=list, repr=False)
+    _rewards: list[float] = field(default_factory=list, repr=False)
+    _pending: dict[str, tuple[int, float]] = field(default_factory=dict, repr=False)
+
+    def __post_init__(self) -> None:
+        if not self.markups:
+            raise ValidationError("markups must not be empty")
+        if self.algorithm not in ("ucb1", "epsilon_greedy"):
+            raise ValidationError("algorithm must be 'ucb1' or 'epsilon_greedy'")
+        self.markups = tuple(self.markups)
+        self._counts = [0] * len(self.markups)
+        self._rewards = [0.0] * len(self.markups)
+
+    def _choose(self, rng: random.Random) -> int:
+        untried = [i for i, n in enumerate(self._counts) if n == 0]
+        if untried:
+            return untried[0]
+        means = [r / n for r, n in zip(self._rewards, self._counts, strict=True)]
+        if self.algorithm == "epsilon_greedy":
+            if rng.random() < self.epsilon:
+                return rng.randrange(len(self.markups))
+            return max(range(len(means)), key=lambda i: means[i])
+        total = sum(self._counts)
+        return max(
+            range(len(means)),
+            key=lambda i: (
+                means[i] + self.exploration * math.sqrt(math.log(total) / self._counts[i])
+            ),
+        )
+
+    def price(self, inputs: BidInputs) -> float | None:
+        arm = self._choose(inputs.rng)
+        self._pending[inputs.task.task_id] = (arm, inputs.cost)
+        return inputs.cost * (1 + self.markups[arm])
+
+    def observe(self, notice: AuctionNotice) -> None:
+        pending = self._pending.pop(notice.task.task_id, None)
+        if pending is None:
+            return
+        arm, cost = pending
+        reward = 0.0
+        if notice.won and notice.payment is not None and cost > 0:
+            reward = (notice.payment - cost) / cost
+        self._counts[arm] += 1
+        self._rewards[arm] += reward
+
+    def preferred_markup(self) -> float | None:
+        """Markup with the highest average reward so far (``None`` before any data)."""
+        tried = [i for i, n in enumerate(self._counts) if n]
+        if not tried:
+            return None
+        return self.markups[max(tried, key=lambda i: self._rewards[i] / self._counts[i])]
+
+    def to_spec(self) -> dict[str, Any]:
+        return {
+            "name": self.name,
+            "markups": list(self.markups),
+            "algorithm": self.algorithm,
+            "epsilon": self.epsilon,
+            "exploration": self.exploration,
+        }
+
+
 BUILTIN_STRATEGIES: dict[str, Callable[..., BidStrategy]] = {
     cls.name: cls
     for cls in (
@@ -240,5 +319,6 @@ BUILTIN_STRATEGIES: dict[str, Callable[..., BidStrategy]] = {
         RiskAwareBid,
         AdaptiveMarkup,
         ReputationMaximizingBid,
+        BanditMarkup,
     )
 }
