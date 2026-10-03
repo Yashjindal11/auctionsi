@@ -22,7 +22,8 @@ def describe_event(event: Event) -> str:
         case E.AGENTS_DISCOVERED:
             return (
                 f"{d.get('registered', 0)} agents registered, "
-                f"{len(d.get('eligible', []))} eligible, {len(d.get('excluded', {}))} excluded"
+                f"{len(d.get('eligible', []))} eligible, {len(d.get('excluded', {}))} excluded, "
+                f"{d.get('not_capable', 0)} without the capability"
             )
         case E.TASK_ANNOUNCED:
             return "task announced"

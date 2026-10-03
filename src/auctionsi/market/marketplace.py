@@ -27,7 +27,7 @@ from auctionsi.errors import (
 )
 from auctionsi.market.clock import Clock, IdGenerator, WallClock
 from auctionsi.market.discovery import DiscoveryResult, find_agents
-from auctionsi.market.events import EventBus, EventLog, EventType
+from auctionsi.market.events import Event, EventBus, EventLog, EventType
 from auctionsi.market.intake import BidIntake
 from auctionsi.market.recovery import RecoveryPolicy
 from auctionsi.market.result import AuctionResult, ContractOutcome
@@ -97,6 +97,7 @@ class Marketplace:
         bidding_window: float | None = None,
         store: MarketStore | None = None,
         plugins: PluginRegistry | None = None,
+        retain_results: bool = True,
     ) -> None:
         self.name = name
         self.mechanism = mechanism or FirstPriceReverseAuction()
@@ -113,15 +114,18 @@ class Marketplace:
         self.disclose_clearing_price = disclose_clearing_price
         self.bidding_window = bidding_window
         self.plugins = plugins or default_registry()
+        self.retain_results = retain_results
         self.log: EventLog | None = EventLog(max_events) if keep_events else None
+        self._collecting: dict[str, list[Event]] = {}
         if self.log is not None:
             self.bus.subscribe(self.log)
+            self.bus.subscribe(self._collect)
         self.store: MarketStore | None = None
         if store is not None:
             self.attach_store(store)
         self._agents: dict[str, Agent] = {}
         self._sorted_agents: list[Agent] | None = None
-        self._tasks: dict[str, Task] = {}
+        self._task_ids: set[str] = set()
         self._busy: dict[str, list[float]] = {}
         self._pending: dict[str, _Pending] = {}
         self.auctions: dict[str, Auction] = {}
@@ -240,10 +244,10 @@ class Marketplace:
         agents are asked for bids immediately. Leaves the auction in BID_COLLECTION."""
         if not isinstance(task, Task):
             raise ValidationError("task must be a Task")
-        if task.task_id in self._tasks:
+        if task.task_id in self._task_ids:
             raise ValidationError(f"task {task.task_id} was already submitted")
-        self._tasks[task.task_id] = task
-        self.bus.publish(
+        self._task_ids.add(task.task_id)
+        task_event = self.bus.publish(
             E.TASK_CREATED, self.clock.now(), task_id=task.task_id, data=task.to_dict()
         )
         if self.store is not None:
@@ -258,6 +262,7 @@ class Marketplace:
             exclude=set(),
             parent=None,
             solicit=solicit,
+            task_event=task_event,
         )
 
     def submit_bid(self, auction_id: str, agent_id: str, proposal: object) -> Bid | None:
@@ -292,6 +297,10 @@ class Marketplace:
         return auction
 
     # --------------------------------------------------------------- internals
+
+    def _collect(self, event: Event) -> None:
+        if event.auction_id is not None and event.auction_id in self._collecting:
+            self._collecting[event.auction_id].append(event)
 
     def _auction(self, auction_id: str) -> Auction:
         try:
@@ -329,6 +338,7 @@ class Marketplace:
         exclude: set[str],
         parent: str | None,
         solicit: bool,
+        task_event: Event | None = None,
     ) -> Auction:
         now = self.clock.now()
         auction = Auction(
@@ -340,6 +350,8 @@ class Marketplace:
             parent_auction_id=parent,
         )
         self.auctions[auction.auction_id] = auction
+        if self.log is not None:
+            self._collecting[auction.auction_id] = [task_event] if task_event else []
         self._emit(
             E.AUCTION_CREATED,
             auction,
@@ -360,6 +372,7 @@ class Marketplace:
                 "registered": len(self._agents),
                 "eligible": discovery.candidate_ids,
                 "excluded": discovery.excluded,
+                "not_capable": discovery.not_capable,
             },
         )
         auction.transition(S.ANNOUNCED, now)
@@ -689,15 +702,11 @@ class Marketplace:
     def _finish(self, result: AuctionResult, reason: str = "") -> AuctionResult:
         auction = result.auction
         result.reason = reason
-        if self.log is not None:
-            first = auction.parent_auction_id is None
-            result.events = [
-                e
-                for e in self.log.events
-                if e.auction_id == auction.auction_id
-                or (first and e.type == E.TASK_CREATED and e.task_id == auction.task_id)
-            ]
-        self.results[auction.auction_id] = result
+        result.events = self._collecting.pop(auction.auction_id, [])
+        if self.retain_results:
+            self.results[auction.auction_id] = result
+        else:
+            self.auctions.pop(auction.auction_id, None)
         self._notify(result)
         if self.store is not None:
             self.store.save_auction(result.to_dict())

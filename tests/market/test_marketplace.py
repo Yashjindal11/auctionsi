@@ -94,8 +94,10 @@ def test_discovery_filters_ineligible_agents(market_factory: MarketFactory) -> N
     market.register(off)
     result = market.submit_task(task())
     assert result.auction.participants == ["ok"]
-    assert set(result.auction.excluded) == {"wrong", "off"}
+    assert set(result.auction.excluded) == {"off"}
+    assert result.discovery.not_capable == 1
     assert "unavailable" in result.auction.excluded["off"]
+    assert "1 without the capability" in "\n".join(result.trace())
 
 
 def test_capacity_blocks_busy_agents(market_factory: MarketFactory) -> None:
@@ -334,6 +336,16 @@ def test_registration_rules(market_factory: MarketFactory) -> None:
     market.submit_task(task("t1"))
     with pytest.raises(ValidationError):
         market.submit_task(task("t1"))
+
+
+def test_long_running_markets_can_drop_finished_auctions(market_factory: MarketFactory) -> None:
+    market = market_factory(retain_results=False, keep_events=False)
+    market.register(ScriptedAgent("a", 1.0))
+    result = market.submit_task(task())
+    assert result.succeeded
+    assert result.events == []
+    assert market.results == {}
+    assert market.auctions == {}
 
 
 def test_exact_verifier_end_to_end(market_factory: MarketFactory) -> None:

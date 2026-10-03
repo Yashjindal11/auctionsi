@@ -174,6 +174,7 @@ def simulate_market(
         clock=clock,
         ids=IdGenerator(),
         keep_events=keep_events,
+        retain_results=keep_events,
         disclose_clearing_price=disclose_clearing_price,
     )
     for agent in agent_list:

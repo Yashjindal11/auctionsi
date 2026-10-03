@@ -11,8 +11,14 @@ from auctionsi.core.task import Task
 
 @dataclass(frozen=True, slots=True)
 class DiscoveryResult:
+    """``excluded`` lists, with reasons, agents that *claim the capability* but were
+    filtered out (unavailable, at capacity, incompatible formats or constraints).
+    Agents without the capability at all are only counted in ``not_capable``, which
+    keeps records small in markets with many unrelated agents."""
+
     candidates: list[Agent]
     excluded: dict[str, list[str]] = field(default_factory=dict)
+    not_capable: int = 0
 
     @property
     def candidate_ids(self) -> list[str]:
@@ -36,18 +42,19 @@ def find_agents(
     banned = set(exclude)
     candidates: list[Agent] = []
     excluded: dict[str, list[str]] = {}
+    not_capable = 0
     ordered = agents if presorted else sorted(agents, key=lambda a: a.agent_id)
     for agent in ordered:
+        capability = agent.capability(task.task_type)
+        if capability is None:
+            not_capable += 1
+            continue
         reasons: list[str] = []
         if agent.agent_id in banned:
             reasons.append("excluded for this auction")
         if not agent.available:
             reasons.append("unavailable")
-        capability = agent.capability(task.task_type)
-        if capability is None:
-            reasons.append(f"no capability {task.task_type!r}")
-        else:
-            reasons.extend(capability.incompatibilities(task))
+        reasons.extend(capability.incompatibilities(task))
         in_use = active.get(agent.agent_id, 0)
         if in_use >= agent.max_concurrent_tasks:
             reasons.append(f"at capacity ({in_use}/{agent.max_concurrent_tasks})")
@@ -55,4 +62,4 @@ def find_agents(
             excluded[agent.agent_id] = reasons
         else:
             candidates.append(agent)
-    return DiscoveryResult(candidates, excluded)
+    return DiscoveryResult(candidates, excluded, not_capable)
