@@ -328,6 +328,7 @@ class Marketplace:
             E.AUCTION_CREATED,
             auction,
             data={
+                "task": task.to_dict(),
                 "mechanism": mechanism.to_spec(),
                 "policy": policy.to_spec(),
                 "parent_auction_id": parent,
