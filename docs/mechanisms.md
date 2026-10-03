@@ -86,5 +86,33 @@ Rules for mechanisms: be deterministic given the inputs (replay depends on it),
 never award an invalid bid, document payment rules in `payment_rule`, and override
 `collect_bids` only if you need a different collection protocol.
 
-Forward auctions (agents bidding to *buy* a resource) are anticipated by
-`AuctionMechanism.direction` but not implemented in v0.1.
+## `forward` — agents bid to buy
+
+- **Rules:** sealed; the task describes what is on offer and `Task.reserve_price` is
+  the minimum acceptable bid (lower bids are rejected with `BELOW_RESERVE`). The
+  highest bid wins. Ranking is by price only; the selection policy is not used.
+- **Payment:** `pricing: first` charges the winner its bid; `pricing: second`
+  charges the larger of the runner-up bid and the reserve (Vickrey for one item
+  under private values, single shot).
+- **Settlement:** contracts and settlements carry `direction: forward`; buyer cost
+  is negative (the market receives money) and no refund applies.
+
+## `bundle_reverse` — combinatorial procurement
+
+- **Rules:** the task lists items in `requirements["items"]`; each bid covers the
+  items in `terms["items"]` (all items when absent). Winner determination picks the
+  non-overlapping set of bids that covers every item at the lowest total price,
+  solved exactly by dynamic programming over item subsets (capped at `max_items`,
+  default 12). Ties are broken by the policy ranking.
+- **Payment:** pay-as-bid, one contract per winner.
+- **Incentives:** pay-as-bid bundle auctions invite strategic bundle pricing; no
+  incentive property is claimed.
+
+## `capacity` — reserving future work
+
+- **Rules:** the task asks for `requirements["units"]` units (e.g. 100 tasks next
+  hour). A bid's `price` is per unit and `capacity` (or `terms["units"]`) is the
+  units offered. Units are filled from the cheapest offers up; the last winner may
+  be partially filled. `Award.quantity` records the units reserved.
+- **Payment:** `pricing: pay_as_bid` (own unit price) or `uniform` (the first
+  rejected unit price, or the budget per unit / own price when supply runs out).

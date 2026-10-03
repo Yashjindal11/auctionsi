@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.2.0] - 2026-10-04
+
+Mechanisms and bidding
+- Forward auctions (first or second price) with `Task.reserve_price`;
+  direction-aware contracts and settlements.
+- Bundle (combinatorial) reverse auction with exact winner determination.
+- Capacity (multi-unit) procurement auction, pay-as-bid or uniform; `Award.quantity`.
+- Learning bidder `BanditMarkup` (`bandit`: UCB1 or epsilon-greedy).
+- `ExplorationBonus` selection policy.
+
+Marketplace
+- Concurrent bid solicitation with a deadline (`bid_timeout`), `execution_timeout`.
+- HMAC-signed bids bound to agent, auction and task (`bid_keys`, `require_signatures`).
+- New rejection codes `TIMEOUT`, `BAD_SIGNATURE`, `BELOW_RESERVE`.
+- Capability index for discovery; `retain_results=False` for long runs.
+
+Research
+- Experiment configs: `environment.adversaries`, mid-run `environment.changes`,
+  factorial `factors`.
+- Metrics: `average_winning_markup`, `total_verification_cost`, `bid_cv`,
+  `relative_distance`; buyer utility subtracts verification cost.
+- Calibration reports (`auctionsi calibration`).
+- Four new experiments (learning bidders, reputation decay, collusion screens,
+  factorial); all results regenerated.
+
+Interfaces and storage
+- Optional REST/WebSocket API with API-key auth (`auctionsi[api]`, `auctionsi serve`).
+- Web dashboard bundled in the wheel.
+- PostgreSQL store (`auctionsi[postgres]`, `--db postgresql://...`) on a shared SQL
+  base; SQLite schema v2 (indexes, `tasks.saved_at`).
+- HTTP agents can be registered declaratively (`kind: http`).
+
+Fixes
+- Reputation quality and claim calibration use delivered work only, so failed
+  executions no longer count as quality 0.
+- Sybil copies of colluders keep an independent copy of the strategy.
+- Factor levels that share a plugin name get distinct arm labels.
+
+CI: PostgreSQL service, coverage gate (88%), dashboard build, docs site.
+
 ## [0.1.1] - 2026-10-03
 
 - Fix: agent capacity is only held on simulated clocks. With a real clock a

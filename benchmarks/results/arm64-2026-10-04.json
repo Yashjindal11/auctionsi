@@ -1,0 +1,61 @@
+{
+  "auctionsi_version": "0.1.1",
+  "python": "3.12.15",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "date": "2026-10-04",
+  "scenarios": {
+    "A": {
+      "agents": 10,
+      "tasks": 100,
+      "seconds": 0.02087908299290575,
+      "auctions_per_second": 4789.482374967223,
+      "events": 1524,
+      "events_per_second": 72991.71139450048,
+      "bids": 245,
+      "bids_per_second": 11734.231818669698,
+      "mean_bids_per_auction": 2.45,
+      "peak_memory_mb": 0.213665
+    },
+    "B": {
+      "agents": 100,
+      "tasks": 1000,
+      "seconds": 0.41445154100074433,
+      "auctions_per_second": 2412.8273177254373,
+      "events": 22605,
+      "events_per_second": 54541.96151718351,
+      "bids": 8003,
+      "bids_per_second": 19309.857023756675,
+      "mean_bids_per_auction": 8.003,
+      "peak_memory_mb": 1.690704
+    },
+    "C": {
+      "agents": 1000,
+      "tasks": 10000,
+      "seconds": 21.292349625000497,
+      "auctions_per_second": 469.6522542659388,
+      "events": 705259,
+      "events_per_second": 33122.64791913417,
+      "bids": 482934,
+      "bids_per_second": 22681.10417616669,
+      "mean_bids_per_auction": 48.2934,
+      "peak_memory_mb": 17.182983
+    }
+  },
+  "sqlite_A": {
+    "agents": 10,
+    "tasks": 100,
+    "seconds": 0.06070924999949057,
+    "auctions_per_second": 1647.1954438712246,
+    "events": 1524,
+    "events_per_second": 25103.25856459746,
+    "bids": 245,
+    "bids_per_second": 4035.6288374845,
+    "mean_bids_per_auction": 2.45
+  },
+  "reputation": {
+    "updates": 200000,
+    "seconds": 0.7686748749983963,
+    "updates_per_second": 260188.02813142198
+  }
+}

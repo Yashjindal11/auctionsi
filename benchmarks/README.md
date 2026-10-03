@@ -20,17 +20,21 @@ compare runs from different hardware.
 
 ## Latest recorded run
 
-AuctionSI 0.1.0.dev0, Python 3.12.15, macOS 26.6.2 on Apple silicon (arm64),
-recorded 2026-10-03 (`results/arm64-2026-10-03.json`).
+The 0.2.0 code just before the version bump (the JSON records 0.1.1), Python 3.12.15, macOS 26.6.2 on Apple silicon (arm64),
+recorded 2026-10-04 (`results/arm64-2026-10-04.json`).
 
 | scenario | auctions/s | bids/s | events/s | mean bids/auction | peak traced memory (MB) |
 |---|---|---|---|---|---|
-| A | 4,715 | 11,551 | 71,855 | 2.5 | 0 |
-| B | 2,449 | 19,600 | 55,360 | 8.0 | 2 |
-| C | 456 | 22,032 | 32,175 | 48.3 | 17 |
+| A | 4,789 | 11,734 | 72,992 | 2.5 | 0 |
+| B | 2,413 | 19,310 | 54,542 | 8.0 | 2 |
+| C | 470 | 22,681 | 33,123 | 48.3 | 17 |
 
-- SQLite-persisted scenario A (one transaction per run): 1,616 auctions/s.
-- Reputation updates (exponential decay, 1,000 agents): about 250,000 per second.
+- SQLite-persisted scenario A (one transaction per run): 1,647 auctions/s.
+- Reputation updates (exponential decay, 1,000 agents): about 260,000 per second.
+
+The 0.2 capability index (agents indexed by capability, rebuilt when an agent's
+capabilities change) did not measurably change these numbers: discovery was not
+the bottleneck; soliciting and validating bids is.
 
 Throughput per auction falls as markets grow because every eligible agent is
 asked to bid: cost scales with bids per auction, which is why bids/s stays

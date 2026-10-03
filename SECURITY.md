@@ -27,12 +27,28 @@ Input handling:
   payloads have size limits (`auctionsi.security.Limits`).
 - YAML is loaded with a safe loader that also rejects aliases (billion-laughs);
   config files have a size limit; unknown config keys are errors.
-- SQLite storage uses parameterised queries and JSON columns; nothing is pickled.
+- SQLite and PostgreSQL storage use parameterised queries and JSON columns; nothing
+  is pickled. Storage status output strips credentials from database URLs.
 - `safe_path` confines user-supplied paths to a base directory.
+- Bids can be required to carry an HMAC-SHA256 signature bound to the agent,
+  auction and task ids (`require_signatures=True`), so bids cannot be forged or
+  replayed across auctions by someone without the agent's key.
+- Agents get a bid deadline and an optional execution timeout; slow agents become
+  recorded `TIMEOUT` rejections or failures.
+
+The optional API (`auctionsi serve`):
+
+- `AUCTIONSI_API_KEY` enables `X-API-Key` authentication (constant-time compare)
+  on all `/api/*` routes except health, and on the WebSocket (`?key=`). Without a
+  key the API is open, so it binds to 127.0.0.1 by default and warns otherwise.
+- Bodies are capped at 1 MB and validated against strict schemas; simulation sizes
+  are capped. Static files are served only from inside the bundled directory.
+- There is one shared market per process: no multi-tenant isolation or per-user
+  permissions. Put it behind TLS and a reverse proxy if exposed beyond a host.
 
 Market-level abuse (collusion, Sybil identities, misreporting, reputation gaming)
 is a research topic in this project: there are simulation tools to measure it and a
 per-operator bid cap, but no claim that the built-in defences are sufficient.
 
-Out of scope for v0.1: authentication and multi-tenant isolation (the framework is
-local and single-user), and sandboxing of in-process Python agents you register.
+Out of scope: multi-tenant isolation, and sandboxing of in-process Python agents you
+register.

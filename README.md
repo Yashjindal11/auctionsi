@@ -26,6 +26,8 @@ plugins.
 pip install auctionsi           # Python 3.11+
 pip install -e ".[dev]"        # from a clone, for development
 pip install "auctionsi[plotly]"  # optional figures
+pip install "auctionsi[api]"     # REST/WebSocket API and web dashboard
+pip install "auctionsi[postgres]" # PostgreSQL store
 ```
 
 ## Quick start
@@ -54,25 +56,38 @@ print("\n".join(result.trace()))        # every lifecycle event
 assert result.winner == "agent-a"       # C was cheapest, failed verification, A took over
 ```
 
-## What is in v0.1
+## What is in v0.2
 
 | area | contents |
 |---|---|
-| Mechanisms | first-price (pay-as-bid), second-price (critical value), multi-winner (pay-as-bid or uniform), open descending with bid revisions |
-| Selection | lowest price, highest quality, lowest latency, weighted score, risk-adjusted cost, reputation-adjusted cost; every score is broken into named contributions |
-| Bids | multi-dimensional (price, latency, quality, cost, confidence, capacity, validity); validated with structured rejection reasons |
+| Mechanisms | first-price (pay-as-bid), second-price (critical value), multi-winner (pay-as-bid or uniform), open descending with bid revisions, forward auctions with reserve prices, bundle (combinatorial) auctions with exact winner determination, capacity (multi-unit) procurement |
+| Selection | lowest price, highest quality, lowest latency, weighted score, risk-adjusted cost, reputation-adjusted cost, exploration bonus; every score is broken into named contributions |
+| Bids | multi-dimensional (price, latency, quality, cost, confidence, capacity, validity); validated with structured rejection reasons; optional HMAC signatures bound to agent, auction and task; bid and execution timeouts |
 | Verification | schema, exact match, tolerance, metric threshold, unit tests, composite, human approval; quality score always derived from checks |
-| Settlement | pay on pass (penalties, late penalties, bonuses), quality-proportional, partial payment |
-| Reputation | per agent and per task type: success, quality, timeliness, estimate calibration, violations; no/exponential/rolling decay |
+| Settlement | pay on pass (penalties, late penalties, bonuses), quality-proportional, partial payment; direction-aware for forward auctions |
+| Reputation | per agent and per task type: success, quality, timeliness, estimate calibration, violations; no/exponential/rolling decay; calibration reports (claimed vs delivered) |
 | Recovery | retry, fail over to backup bids, re-open the auction |
-| Observability | immutable events, traces, JSON logs, counters, SQLite persistence, deterministic replay |
-| Simulation | synthetic agents/tasks, 12 bid strategies, market dynamics, collusion/Sybil/misreporting tools, market metrics (HHI, Gini, surplus, efficiency...) |
-| Experiments | YAML configs, common random numbers, CIs, paired tests with Holm adjustment, run manifests, Markdown reports |
+| Observability | immutable events, traces, JSON logs, counters, SQLite or PostgreSQL persistence, deterministic replay |
+| Simulation | synthetic agents/tasks, 13 bid strategies including a learning (bandit) bidder, market dynamics, collusion/Sybil/misreporting, market metrics (HHI, Gini, surplus, efficiency, collusion screens...) |
+| Experiments | YAML configs, adversaries and mid-run changes in config, factorial sweeps, common random numbers, CIs, paired tests with Holm adjustment, run manifests, Markdown reports |
 | Adapters | Python function, HTTP, OpenAI-compatible (optional), human-in-the-loop |
-| CLI | `auctionsi init / agent / task / auction / market / experiment / replay / report` |
+| Interfaces | CLI, REST/WebSocket API with API-key auth (`auctionsi serve`), web dashboard |
 
-Not in v0.1 (see the roadmap): REST/WebSocket API, web dashboard, distributed
-execution, combinatorial and forward auctions, learning bidders.
+Not in v0.2 (see the roadmap): distributed execution, agent protocol
+interoperability, a stable public API.
+
+## API and dashboard
+
+```bash
+pip install "auctionsi[api]"
+auctionsi serve --port 8000                  # http://127.0.0.1:8000
+AUCTIONSI_API_KEY=... auctionsi serve --host 0.0.0.0   # set a key beyond localhost (warns if unset)
+```
+
+The dashboard shows the market overview, agents with reputation, auctions with
+bids, scores and traces, live events, simulations, calibration and experiment
+results. The API exposes the same data plus staged auctions for external bidders
+(`POST /api/auctions`, `/bids`, `/close`); see [docs/api.md](docs/api.md).
 
 ## Simulate and experiment
 
@@ -96,8 +111,9 @@ auctionsi market simulate --agents 100 --tasks 1000 --seed 42
 auctionsi experiment run research/experiments/mechanisms.yaml
 ```
 
-Six reproducible experiments (mechanisms, market size, reliability, reputation,
-strategies, concentration) with their reports are in [research/](research/README.md).
+Ten reproducible experiments (mechanisms, market size, reliability, reputation,
+reputation decay, strategies, learning bidders, concentration, collusion screens
+and a factorial sweep) with their reports are in [research/](research/README.md).
 All results there come from synthetic markets and say so.
 
 ## Examples
@@ -115,26 +131,25 @@ Measured on an Apple-silicon laptop, Python 3.12 (details and method in
 
 | scenario | agents | tasks | auctions/s | bids/s | peak MB |
 |---|---|---|---|---|---|
-| A | 10 | 100 | 4,715 | 11,551 | 0 |
-| B | 100 | 1,000 | 2,449 | 19,600 | 2 |
-| C | 1,000 | 10,000 | 456 | 22,032 | 17 |
+| A | 10 | 100 | 4,789 | 11,734 | 0 |
+| B | 100 | 1,000 | 2,413 | 19,310 | 2 |
+| C | 1,000 | 10,000 | 470 | 22,681 | 17 |
 
 ## Documentation
 
 [docs/](docs/README.md): concepts, architecture, mechanisms (with assumptions and
-limitations), selection, simulation and metrics, extending, CLI, and
+limitations), selection, simulation and metrics, extending, CLI, API, and
 [security](SECURITY.md).
 
 ## Roadmap
 
-- **v0.1** core marketplace (this release)
-- **v0.2** more mechanisms (scoring auctions, reserve-price variants)
-- **v0.3** richer simulation and experiment designs (factorial sweeps)
-- **v0.4** reputation research and stronger adversarial models and defences
-- **v0.5** persistence backends (PostgreSQL) and distributed execution
-- **v0.6** REST/WebSocket API and web dashboard
-- **v0.7** agent protocol interoperability
-- **v0.8** advanced mechanism research (combinatorial, forward, capacity auctions, learning bidders)
+- **v0.1** core marketplace
+- **v0.2** (this release) forward, bundle and capacity auctions; learning bidders;
+  factorial experiments, adversaries and mid-run changes in config; calibration;
+  signed bids and timeouts; PostgreSQL; REST/WebSocket API and dashboard
+- **next** scoring auctions and reserve-price variants for reverse auctions,
+  stronger collusion detection (per-auction screens), distributed execution,
+  agent protocol interoperability
 - **v1.0** stable public API
 
 No dates are promised.

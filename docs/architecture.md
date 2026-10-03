@@ -36,8 +36,10 @@ AuctionSI is the infrastructure; everything that decides an outcome is a plugin.
 | `simulation` | synthetic agents/tasks, `simulate_market`, metrics, adversaries |
 | `experiments` | configs, the replicated runner, manifests |
 | `statistics` | summaries, paired/Welch comparisons, Holm, concentration |
-| `storage` | `MarketStore` protocol, SQLite and in-memory stores |
-| `adapters` | Python-function, HTTP, OpenAI-compatible and human agents |
+| `storage` | `MarketStore` protocol, a dialect-neutral SQL base, SQLite, PostgreSQL and in-memory stores; `open_store(url)` |
+| `adapters` | Python-function, HTTP, OpenAI-compatible and human agents; declarative agent specs |
+| `security` | input limits, safe YAML loading, safe paths, HMAC bid signatures |
+| `api` | optional FastAPI app (REST + WebSocket) and the built dashboard |
 | `reports`, `visualization`, `observability`, `cli`, `config`, `plugins` | outputs and wiring |
 
 ## Key decisions
@@ -53,15 +55,19 @@ AuctionSI is the infrastructure; everything that decides an outcome is a plugin.
 - **Events, not callbacks.** Every lifecycle step publishes an immutable, timestamped
   `Event` with a sequence number. Persistence, logging and metrics are subscribers.
   Full event sourcing is not implemented, but events carry enough to add it.
-- **Synchronous core.** `submit_task` runs the lifecycle to completion in-process.
-  Time comes from a `Clock` (wall clock in production, `ManualClock` in simulations),
-  and agent capacity is tracked against it.
+- **Synchronous core, concurrent bidding.** `submit_task` runs the lifecycle to
+  completion in-process. Bids are solicited concurrently from a worker pool with a
+  deadline (`bid_timeout`, defaulting to the bidding window on real clocks);
+  execution can have its own `execution_timeout`. Time comes from a `Clock` (wall
+  clock in production, `ManualClock` in simulations); agent capacity is held only on
+  simulated clocks, where execution time is modelled.
 - **Local first.** No network calls, API keys or cloud services in the core.
-  Persistence is SQLite with versioned migrations and JSON columns (no pickle).
+  Persistence is SQLite (or PostgreSQL) with versioned migrations and JSON columns
+  (no pickle).
 
-## Not in v0.1
+## Not in v0.2
 
-REST/WebSocket API, web dashboard, distributed execution, combinatorial (bundle)
-and forward auctions, capacity reservations and learning bidders. The interfaces
-(`AuctionMechanism.direction`, the staged `open_auction`/`submit_bid`/`close_auction`
-API, `MarketStore`) are designed so these can be added without changing the core.
+Distributed execution across processes or machines, agent protocol
+interoperability, scoring auctions. The staged `open_auction`/`submit_bid`/
+`close_auction` API (also exposed over REST) is the integration point for external
+bidders.

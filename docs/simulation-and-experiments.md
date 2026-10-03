@@ -27,6 +27,13 @@ Generator options include `capability_distribution` (`mixed`, `specialist`,
 `reliability_distribution`, `capacity_distribution` (preset names, numbers, or
 `{name: lognormal, median: .., sigma: ..}` style specs) and `strategy`.
 
+## Learning bidders
+
+`BanditMarkup` (strategy name `bandit`) learns a markup over cost from a fixed grid
+with UCB1 (`algorithm: ucb1`) or epsilon-greedy (`algorithm: epsilon_greedy`). The
+reward for a won task is realised profit relative to cost; a loss is reward 0. It
+does not observe rivals' bids.
+
 ## Adversarial participants
 
 `auctionsi.simulation.adversarial`: `form_ring` (bid-rotation collusion with cover
@@ -34,6 +41,19 @@ bids), `make_sybils` (extra identities with one operator), `overstate_quality`,
 `add_fake_capability`, `exit_scam` (reputation built then abandoned),
 `operator_hhi`, `price_inflation`. Defence example:
 `BidValidationConfig(max_bids_per_operator=1)`.
+
+In experiment configs the same tools are declarative:
+
+```yaml
+environment:
+  adversaries: {colluders: 5, winner_markup: 0.6, cover_markup: 1.2, sybil_copies: 2, overstaters: 3}
+  changes:
+    - {at_task: 200, agents: 10, set: {reliability: 0.3}}   # or at: <sim seconds>
+    - {at: 500, agents: [agent-0003], leave: true}
+```
+
+Changeable attributes: `reliability`, `available`, `quality`, `latency_mean`,
+`quality_report_bias`, `latency_report_bias`.
 
 ## Metrics (per run)
 
@@ -52,6 +72,19 @@ bids), `make_sybils` (extra identities with one operator), `overstate_quality`,
   reliability; it is *one* notion of allocation efficiency, not "the" efficiency.
 - `quality_adjusted_cost` = total_cost / Σ quality.
 - `participation_rate`, `opportunity_rate` = share of agents that bid / won at least once.
+- `average_winning_markup` = mean of (awarded bid price / true expected cost − 1).
+- `total_verification_cost`; `buyer_utility` subtracts it.
+- `bid_cv` = mean coefficient of variation of valid bids per auction; `relative_distance`
+  = mean (second-lowest − lowest) / SD of the losing bids. Both use auctions with at
+  least 3 bids; they are collusion screens from the procurement literature, hints
+  rather than proof.
+
+## Calibration
+
+`auctionsi calibration [--agent ID] [--json]` (and `/api/calibration`) compares each
+agent's claimed quality and latency with what it delivered, plus reliability bins
+(claimed confidence vs observed success). Only delivered work counts towards
+quality and latency calibration.
 
 ## Experiments
 
@@ -65,4 +98,15 @@ and Python versions, dependency versions, git commit), `results.json` and `repor
 
 ```bash
 auctionsi experiment run research/experiments/mechanisms.yaml --out results/mechanisms
+```
+
+`factors` crosses every level of each factor into arms (and with explicit arms, if
+any). Keys are `mechanism`, `policy`, `reputation`, `settlement` or
+`environment.<path>`:
+
+```yaml
+factors:
+  mechanism: [first_price_reverse, second_price_reverse]
+  policy: [lowest_price, risk_adjusted_cost]
+  environment.agents.count: [20, 100]
 ```

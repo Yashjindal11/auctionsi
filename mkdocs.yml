@@ -1,0 +1,16 @@
+site_name: AuctionSI
+site_description: Open-source marketplace and auction framework for autonomous agents
+repo_url: https://github.com/Yashjindal11/auctionsi
+docs_dir: docs
+theme:
+  name: readthedocs
+nav:
+  - Home: README.md
+  - Core concepts: concepts.md
+  - Architecture: architecture.md
+  - Mechanisms: mechanisms.md
+  - Selection: selection.md
+  - Simulation and experiments: simulation-and-experiments.md
+  - Extending: extending.md
+  - CLI: cli.md
+  - API and dashboard: api.md

@@ -15,14 +15,18 @@ auctionsi market simulate --agents 100 --tasks 1000 --seed 42 [--mechanism ..] [
 auctionsi experiment run experiment.yaml [--out DIR] [--replications N] [--save-db]
 auctionsi experiment compare --mechanisms first_price_reverse,second_price_reverse
 auctionsi report DIR                        # regenerate report.md
+auctionsi calibration [--agent ID]          # claimed vs delivered quality and latency
+auctionsi serve [--host 127.0.0.1] [--port 8000]   # API + dashboard (needs auctionsi[api])
 ```
 
-Global options: `--db PATH` (default `./auctionsi.db`), `--config PATH` (default
+Global options: `--db PATH_OR_URL` (default `./auctionsi.db`; a `postgresql://` URL
+uses PostgreSQL and needs `auctionsi[postgres]`), `--config PATH` (default
 `./auctionsi.yaml` if present). Most listing commands accept `--json`. Exit codes:
 0 success, 1 the auction failed or replay mismatched, 2 usage/config error.
 
-The CLI marketplace runs *simulated* agents from the registry (that is what can be
-persisted declaratively). Real agents are wired up in Python.
+The CLI marketplace runs agents from the registry: simulated agents, or HTTP agents
+given as `{kind: http, agent_id: .., base_url: .., capabilities: [..], token_env: ..}`.
+Python-function agents are wired up in Python.
 
 ## Market configuration (`auctionsi.yaml`)
 

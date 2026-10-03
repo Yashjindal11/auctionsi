@@ -27,3 +27,4 @@ src/auctionsi/api/static/
 .DS_Store
 .idea/
 .vscode/
+site/
