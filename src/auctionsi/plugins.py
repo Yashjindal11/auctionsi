@@ -89,6 +89,11 @@ def default_registry() -> PluginRegistry:
         s.ReputationAdjustedCost,
     ):
         reg.policies.register(pcls.name, pcls)
+
+    def exploration(base: Any = "lowest_price", weight: float = 0.01) -> Any:
+        return s.ExplorationBonus(reg.policies.create(base), weight)
+
+    reg.policies.register(s.ExplorationBonus.name, exploration)
     for vname, vfactory in (
         ("accept", v.AcceptVerifier),
         ("schema", v.SchemaVerifier),

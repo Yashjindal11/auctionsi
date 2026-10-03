@@ -8,6 +8,7 @@ price, then earlier bid, then agent id.
 
 from __future__ import annotations
 
+import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field, is_dataclass
@@ -322,6 +323,42 @@ class ReputationAdjustedCost(SelectionPolicy):
 
 
 ScoreFn = Callable[[Bid, Task, AgentFeatures], tuple[float, Mapping[str, float]]]
+
+
+class ExplorationBonus(SelectionPolicy):
+    """Wraps another policy and adds ``weight / sqrt(1 + observations)`` to each score,
+    so agents with little history still win some work and can build a reputation.
+
+    The bonus is in the base policy's score units: pick ``weight`` relative to typical
+    score differences (prices for cost policies, 0-1 for weighted scores).
+    """
+
+    name = "exploration_bonus"
+
+    def __init__(self, base: SelectionPolicy, weight: float = 0.01) -> None:
+        if weight < 0:
+            raise ValidationError("weight must be non-negative")
+        self.base = base
+        self.weight = weight
+
+    def score(self, bids: Sequence[Bid], task: Task, features: Features) -> list[ScoredBid]:
+        out = []
+        for scored in self.base.score(bids, task, features):
+            observed = _features(features, scored.agent_id).observations
+            bonus = self.weight / math.sqrt(1 + observed)
+            out.append(
+                ScoredBid(
+                    scored.bid,
+                    scored.score + bonus,
+                    {**scored.contributions, "exploration": bonus},
+                    scored.effective_cost,
+                    {**scored.details, "observations": observed},
+                )
+            )
+        return out
+
+    def to_spec(self) -> dict[str, Any]:
+        return {"name": self.name, "base": self.base.to_spec(), "weight": self.weight}
 
 
 class CallablePolicy(SelectionPolicy):

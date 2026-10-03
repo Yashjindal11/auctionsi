@@ -2,6 +2,7 @@
 
 from auctionsi.selection.policies import (
     CallablePolicy,
+    ExplorationBonus,
     HighestQuality,
     LowestLatency,
     LowestPrice,
@@ -16,6 +17,7 @@ from auctionsi.selection.policies import (
 
 __all__ = [
     "CallablePolicy",
+    "ExplorationBonus",
     "HighestQuality",
     "LowestLatency",
     "LowestPrice",
