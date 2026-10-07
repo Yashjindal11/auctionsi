@@ -187,9 +187,13 @@ class Marketplace:
             self.store.save_agent(profile, spec)
 
     def unregister(self, agent_id: str) -> Agent:
+        """Remove an agent from future auctions. Its past bids, contracts and
+        observations stay in the event log and the store."""
         agent = self.get_agent(agent_id)
         del self._agents[agent_id]
         self._sorted_agents = None
+        if self.store is not None:
+            self.store.delete_agent(agent_id)
         self.bus.publish(E.AGENT_UNREGISTERED, self.clock.now(), agent_id=agent_id)
         return agent
 

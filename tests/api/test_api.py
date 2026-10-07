@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Iterator
 from pathlib import Path
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
+from starlette.websockets import WebSocketDisconnect
 
 from auctionsi.api import create_app
+from auctionsi.api.app import _offer
 from auctionsi.config import MarketConfig
 
 AGENT = {
@@ -114,10 +118,56 @@ def test_api_key_and_websocket(tmp_path: Path) -> None:
         headers = {"X-API-Key": "s3cret"}
         assert c.get("/api/status", headers=headers).status_code == 200
         c.post("/api/agents", json=AGENT, headers=headers)
-        with c.websocket_connect("/api/events?key=s3cret") as ws:
+        with c.websocket_connect("/api/events") as ws:
+            ws.send_json({"type": "auth", "key": "s3cret"})
             c.post("/api/tasks", json={"task_type": "analysis"}, headers=headers)
             types = [ws.receive_json()["type"] for _ in range(4)]
         assert types[0] == "TaskCreated"
+        with c.websocket_connect("/api/events", headers=headers) as ws:
+            c.post("/api/tasks", json={"task_type": "analysis"}, headers=headers)
+            assert ws.receive_json()["type"] == "TaskCreated"
+
+
+@pytest.mark.parametrize(
+    "first_message",
+    [{"type": "auth", "key": "wrong"}, {"key": "s3cret"}, ["auth"], {"type": "auth", "key": 1}],
+)
+def test_websocket_rejects_bad_auth(tmp_path: Path, first_message: object) -> None:
+    app = create_app(tmp_path / "k.db", api_key="s3cret", static_dir=None)
+    with TestClient(app) as c, c.websocket_connect("/api/events") as ws:
+        ws.send_json(first_message)
+        with pytest.raises(WebSocketDisconnect) as exc:
+            ws.receive_json()
+        assert exc.value.code == 4401
+
+
+def test_websocket_rejects_wrong_header_and_non_ascii_keys(tmp_path: Path) -> None:
+    app = create_app(tmp_path / "k.db", api_key="s3cret", static_dir=None)
+    with TestClient(app) as c:
+        with (
+            c.websocket_connect("/api/events", headers={"X-API-Key": "nope"}) as ws,
+            pytest.raises(WebSocketDisconnect),
+        ):
+            ws.receive_json()
+        assert c.get("/api/status", headers={"X-API-Key": "clé".encode()}).status_code == 401
+
+
+def test_slow_websocket_client_loses_oldest_events() -> None:
+    queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue(maxsize=2)
+    for n in range(3):
+        _offer(queue, {"n": n})
+    assert [queue.get_nowait()["n"] for _ in range(2)] == [1, 2]
+
+
+def test_remove_agent(client: TestClient) -> None:
+    client.post("/api/agents", json=AGENT)
+    client.post("/api/tasks", json={"task_type": "analysis"})
+    assert client.delete("/api/agents/agent-a").status_code == 204
+    assert client.get("/api/agents").json() == []
+    assert client.get("/api/status").json()["agents_registered"] == 0
+    assert client.delete("/api/agents/agent-a").status_code == 404
+    assert not client.post("/api/tasks", json={"task_type": "analysis"}).json()["succeeded"]
+    assert len(client.get("/api/auctions").json()) == 2
 
 
 def test_agents_and_reputation_survive_restart(tmp_path: Path) -> None:

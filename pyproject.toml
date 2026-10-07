@@ -120,6 +120,10 @@ markers = [
     "integration: tests that exercise several subsystems end to end",
     "slow: long-running tests",
 ]
+filterwarnings = [
+    # Raised by starlette's TestClient import itself, not by AuctionSI code.
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated",
+]
 
 [tool.coverage.run]
 source = ["auctionsi"]

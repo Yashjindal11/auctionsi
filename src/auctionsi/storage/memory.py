@@ -23,6 +23,9 @@ class InMemoryStore:
     def save_agent(self, profile: Mapping[str, Any], spec: Mapping[str, Any] | None = None) -> None:
         self.agents[profile["agent_id"]] = {**profile, "spec": dict(spec) if spec else None}
 
+    def delete_agent(self, agent_id: str) -> bool:
+        return self.agents.pop(agent_id, None) is not None
+
     def save_task(self, task: Mapping[str, Any]) -> None:
         self.tasks[task["task_id"]] = dict(task)
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]
+
+- Agents can be removed: `Marketplace.unregister` also deletes the stored profile,
+  `DELETE /api/agents/{id}`, `auctionsi agent remove`, and a dashboard button.
+  Past bids, contracts and reputation observations are kept.
+- Breaking (API): the WebSocket no longer accepts `?key=`; send `X-API-Key` on the
+  upgrade or a first `{"type": "auth", "key": ...}` message.
+- Fix: a WebSocket client that fell 10,000 events behind made every broadcast
+  raise `QueueFull`; it now loses its oldest events instead.
+- Fix: a non-ASCII `X-API-Key` header caused a 500 instead of a 401.
+- Dashboard: live view reconnects with backoff, skips malformed frames, reports a
+  rejected key; clickable table rows work from the keyboard; labelled inputs;
+  invalid JSON and out-of-range task counts are reported before calling the API.
+- Dashboard test suite (Vitest + Testing Library), run in CI.
+
 ## [0.2.0] - 2026-10-04
 
 Mechanisms and bidding

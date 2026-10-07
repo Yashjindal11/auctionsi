@@ -5,6 +5,7 @@ auctionsi init my-market && cd my-market   # config, agents, task, experiment, d
 auctionsi agent register agents.yaml        # simulated agent specs
 auctionsi agent generate --count 20 --seed 1
 auctionsi agents list | agent show ID [--private]
+auctionsi agent remove ID                   # out of future auctions; history is kept
 auctionsi task submit task.yaml [--new-id]  # also: auction run --type sql --budget 0.1
 auctionsi tasks list
 auctionsi auctions list [--status settled]

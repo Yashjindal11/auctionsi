@@ -1,4 +1,4 @@
-"""Repository interface. Backends (in-memory, SQLite, later PostgreSQL) implement it
+"""Repository interface. Backends (in-memory, SQLite, PostgreSQL) implement it
 without the marketplace knowing which one is in use."""
 
 from __future__ import annotations
@@ -17,6 +17,8 @@ class MarketStore(Protocol):
     def save_agent(
         self, profile: Mapping[str, Any], spec: Mapping[str, Any] | None = None
     ) -> None: ...
+
+    def delete_agent(self, agent_id: str) -> bool: ...
 
     def save_task(self, task: Mapping[str, Any]) -> None: ...
 

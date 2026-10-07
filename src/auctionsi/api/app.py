@@ -40,6 +40,36 @@ from auctionsi.storage.sqlite import SQLiteStore
 
 STATIC_DIR = Path(__file__).parent / "static"
 MAX_BODY_BYTES = 1024 * 1024
+WS_QUEUE_SIZE = 10_000
+WS_AUTH_TIMEOUT = 5.0
+
+
+def _offer(queue: asyncio.Queue[dict[str, Any]], payload: dict[str, Any]) -> None:
+    """Enqueue for a live client; a client that falls behind loses its oldest events."""
+    if queue.full():
+        queue.get_nowait()
+    queue.put_nowait(payload)
+
+
+async def _ws_authenticated(websocket: WebSocket, key: str) -> bool:
+    """Accept the key from an ``X-API-Key`` upgrade header (non-browser clients) or
+    from a first ``{"type": "auth", "key": ...}`` message, so it never sits in a URL."""
+    header = websocket.headers.get("x-api-key")
+    if header is not None:
+        return _key_matches(header, key)
+    try:
+        message = await asyncio.wait_for(websocket.receive_json(), WS_AUTH_TIMEOUT)
+    except (TimeoutError, ValueError, WebSocketDisconnect, RuntimeError):
+        return False
+    if not isinstance(message, dict) or message.get("type") != "auth":
+        return False
+    supplied = message.get("key")
+    return isinstance(supplied, str) and _key_matches(supplied, key)
+
+
+def _key_matches(supplied: str, key: str) -> bool:
+    # Bytes, because compare_digest rejects non-ASCII str instead of returning False.
+    return hmac.compare_digest(supplied.encode(), key.encode())
 
 
 class MarketService:
@@ -87,7 +117,7 @@ def create_app(
             return
         payload = event.to_dict()
         for queue in list(clients):
-            loop.call_soon_threadsafe(queue.put_nowait, payload)
+            loop.call_soon_threadsafe(_offer, queue, payload)
 
     service.market.bus.subscribe(broadcast)
 
@@ -105,7 +135,7 @@ def create_app(
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
         if request.url.path.startswith("/api/") and request.url.path != "/api/health":
-            if key and not hmac.compare_digest(request.headers.get("x-api-key", ""), key):
+            if key and not _key_matches(request.headers.get("x-api-key", ""), key):
                 return JSONResponse({"detail": "missing or invalid X-API-Key"}, status_code=401)
             length = request.headers.get("content-length")
             if length and length.isdigit() and int(length) > MAX_BODY_BYTES:
@@ -188,6 +218,15 @@ def create_app(
             if store.get_agent(agent_id) is None:
                 raise NotFoundError(f"agent {agent_id} is not registered")
             return _reputation(agent_id)
+
+    @app.delete("/api/agents/{agent_id}", status_code=204)
+    def remove_agent(agent_id: str) -> Response:
+        with service.lock:
+            if any(a.agent_id == agent_id for a in market.agents):
+                market.unregister(agent_id)
+            elif not store.delete_agent(agent_id):
+                raise NotFoundError(f"agent {agent_id} is not registered")
+            return Response(status_code=204)
 
     # ------------------------------------------------------------------- tasks
 
@@ -365,11 +404,11 @@ def create_app(
 
     @app.websocket("/api/events")
     async def events(websocket: WebSocket) -> None:
-        if key and not hmac.compare_digest(websocket.query_params.get("key", ""), key):
+        await websocket.accept()
+        if key and not await _ws_authenticated(websocket, key):
             await websocket.close(code=4401)
             return
-        await websocket.accept()
-        queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue(maxsize=10_000)
+        queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue(maxsize=WS_QUEUE_SIZE)
         clients.add(queue)
         try:
             while True:

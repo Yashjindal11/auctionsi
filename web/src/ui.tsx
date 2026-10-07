@@ -56,7 +56,18 @@ export function Table<T extends Record<string, unknown>>({
             <tr
               key={i}
               onClick={onRow ? () => onRow(row) : undefined}
-              className={`border-b border-stone-100 last:border-0 ${onRow ? "cursor-pointer hover:bg-stone-50" : ""}`}
+              onKeyDown={
+                onRow
+                  ? (e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        onRow(row);
+                      }
+                    }
+                  : undefined
+              }
+              tabIndex={onRow ? 0 : undefined}
+              className={`border-b border-stone-100 last:border-0 ${onRow ? "cursor-pointer hover:bg-stone-50 focus:bg-stone-50 focus:outline-none" : ""}`}
             >
               {columns.map((c) => (
                 <td key={c.key} className={`px-2 py-1.5 ${c.align === "right" ? "num text-right" : ""}`}>

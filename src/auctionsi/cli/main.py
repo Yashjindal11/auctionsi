@@ -159,6 +159,13 @@ def cmd_agent_register(ctx: Context) -> int:
     return 0
 
 
+def cmd_agent_remove(ctx: Context) -> int:
+    if not ctx.store.delete_agent(ctx.args.agent_id):
+        raise NotFoundError(f"agent {ctx.args.agent_id} is not registered")
+    print(f"removed {ctx.args.agent_id} (its history stays in the database)")
+    return 0
+
+
 def cmd_agent_generate(ctx: Context) -> int:
     agents = generate_agents(
         ctx.args.count, seed=ctx.args.seed, strategy=ctx.args.strategy, prefix=ctx.args.prefix
@@ -536,6 +543,8 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument("agent_id")
         p.add_argument("--private", action="store_true", help="include the private agent spec")
         json_flag(p)
+        p = add(group, "remove", cmd_agent_remove, "remove an agent from future auctions")
+        p.add_argument("agent_id")
 
     def task_args(p: argparse.ArgumentParser) -> None:
         p.add_argument("file", nargs="?", help="task YAML/JSON file")

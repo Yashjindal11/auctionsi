@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fmt, post } from "../api";
+import { fmt, post, remove } from "../api";
 import { useApi } from "../hooks";
 import { Button, Card, ErrorNote, Table } from "../ui";
 
@@ -54,8 +54,15 @@ function RegisterAgent({ onDone }: { onDone: () => void }) {
   const [text, setText] = useState(EXAMPLE);
   const [error, setError] = useState<string | null>(null);
   async function submit() {
+    let spec: unknown;
     try {
-      await post("/agents", JSON.parse(text));
+      spec = JSON.parse(text);
+    } catch {
+      setError("The spec is not valid JSON.");
+      return;
+    }
+    try {
+      await post("/agents", spec);
       setError(null);
       onDone();
     } catch (err) {
@@ -67,7 +74,12 @@ function RegisterAgent({ onDone }: { onDone: () => void }) {
       <p className="mb-2 text-xs text-stone-500">
         A simulated agent spec, or <span className="font-mono">{"{kind: \"http\", agent_id, base_url, capabilities}"}</span> for a remote agent.
       </p>
-      <textarea className="h-48 w-full rounded border border-stone-300 p-2 font-mono text-xs" value={text} onChange={(e) => setText(e.target.value)} />
+      <textarea
+        aria-label="Agent spec (JSON)"
+        className="h-48 w-full rounded border border-stone-300 p-2 font-mono text-xs"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
       <div className="mt-2 flex items-center gap-3">
         <Button onClick={submit}>Register</Button>
         <ErrorNote error={error} />
@@ -97,19 +109,33 @@ const PROFILE_FIELDS: [string, string][] = [
 
 export function AgentDetail({ id, go }: { id: string; go: (to: string) => void }) {
   const { data, error } = useApi<AgentDetailData>(`/agents/${id}`);
+  const [removeError, setRemoveError] = useState<string | null>(null);
   if (error) return <ErrorNote error={error} />;
   if (!data) return <p className="text-sm text-stone-500">Loading…</p>;
   const { agent, reputation } = data;
   const types = Object.entries(reputation.by_task_type);
+  async function unregister() {
+    if (!confirm(`Remove ${id} from future auctions? Its history is kept.`)) return;
+    try {
+      await remove(`/agents/${encodeURIComponent(id)}`);
+      go("/agents");
+    } catch (err) {
+      setRemoveError((err as Error).message);
+    }
+  }
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="font-mono text-lg font-semibold">{agent.agent_id}</h1>
-        <p className="text-sm text-stone-600">
-          {agent.kind} · capabilities {agent.capabilities.map((c) => c.name).join(", ")} · capacity {agent.max_concurrent_tasks}
-          {agent.endpoint && <> · <span className="font-mono">{agent.endpoint}</span></>}
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-mono text-lg font-semibold">{agent.agent_id}</h1>
+          <p className="text-sm text-stone-600">
+            {agent.kind} · capabilities {agent.capabilities.map((c) => c.name).join(", ")} · capacity {agent.max_concurrent_tasks}
+            {agent.endpoint && <> · <span className="font-mono">{agent.endpoint}</span></>}
+          </p>
+        </div>
+        <Button variant="plain" onClick={unregister}>Remove agent</Button>
       </div>
+      <ErrorNote error={removeError} />
       <div className="grid gap-5 lg:grid-cols-2">
         <Card title="Reputation (all task types)">
           {reputation.overall ? (

@@ -39,7 +39,8 @@ Input handling:
 The optional API (`auctionsi serve`):
 
 - `AUCTIONSI_API_KEY` enables `X-API-Key` authentication (constant-time compare)
-  on all `/api/*` routes except health, and on the WebSocket (`?key=`). Without a
+  on all `/api/*` routes except health, and on the WebSocket (upgrade header or a
+  first auth message, so the key never sits in a URL or access log). Without a
   key the API is open, so it binds to 127.0.0.1 by default and warns otherwise.
 - Bodies are capped at 1 MB and validated against strict schemas; simulation sizes
   are capped. Static files are served only from inside the bundled directory.

@@ -92,6 +92,8 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - run: npm ci
+      - name: Dashboard tests
+        run: npm test
       - name: Type check and build dashboard
         run: npm run build
 

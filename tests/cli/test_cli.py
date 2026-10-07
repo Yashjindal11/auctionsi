@@ -108,6 +108,15 @@ def test_cli_end_to_end(
         code, out, _ = run(capsys, "agent", "show", observed[0].agent_id, "--json")
         assert "spec" not in json.loads(out)["agent"]
 
+    code, out, _ = run(capsys, "agent", "remove", "agent-00000")
+    assert code == 0
+    assert "removed agent-00000" in out
+    code, out, _ = run(capsys, "agents", "list", "--json")
+    assert "agent-00000" not in [a["agent_id"] for a in json.loads(out)]
+    code, _, err = run(capsys, "agent", "remove", "agent-00000")
+    assert code == 2
+    assert "not registered" in err
+
 
 def test_cli_simulate_experiment_and_report(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]

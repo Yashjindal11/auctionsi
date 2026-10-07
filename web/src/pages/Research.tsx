@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { eventsSocket, fmt, post } from "../api";
+import { fmt, post, subscribeEvents, type StreamState } from "../api";
 import { BarChart, Histogram, Line, Scatter } from "../charts";
 import { useApi } from "../hooks";
 import { Button, Card, ErrorNote, Field, inputCls, Stat, Table } from "../ui";
@@ -8,19 +8,17 @@ type EventRow = { seq: number; type: string; timestamp: number; auction_id: stri
 
 export function Live({ go }: { go: (to: string) => void }) {
   const [events, setEvents] = useState<EventRow[]>([]);
-  const [state, setState] = useState("connecting");
+  const [state, setState] = useState<StreamState>("connecting");
   const paused = useRef(false);
   const [isPaused, setPaused] = useState(false);
-  useEffect(() => {
-    const ws = eventsSocket();
-    ws.onopen = () => setState("live");
-    ws.onclose = () => setState("disconnected");
-    ws.onmessage = (msg) => {
-      if (paused.current) return;
-      setEvents((prev) => [JSON.parse(msg.data) as EventRow, ...prev].slice(0, 300));
-    };
-    return () => ws.close();
-  }, []);
+  useEffect(
+    () =>
+      subscribeEvents((event) => {
+        if (paused.current) return;
+        setEvents((prev) => [event as EventRow, ...prev].slice(0, 300));
+      }, setState),
+    [],
+  );
   return (
     <Card
       title={`Live events · ${state}`}
@@ -30,7 +28,11 @@ export function Live({ go }: { go: (to: string) => void }) {
         </Button>
       }
     >
-      <p className="mb-3 text-xs text-stone-500">Events stream here as auctions run (submit a task from the overview or the API).</p>
+      <p className="mb-3 text-xs text-stone-500">
+        {state === "unauthorized"
+          ? "The API key was rejected. Set it in the header bar and reload."
+          : "Events stream here as auctions run (submit a task from the overview or the API)."}
+      </p>
       <Table
         rows={events}
         onRow={(r) => r.auction_id && go(`/auctions/${r.auction_id}`)}
@@ -57,6 +59,8 @@ type SimResult = {
 };
 
 const RUN_SIZES = [10, 100, 1000];
+// Mirrors SimulateIn.tasks in src/auctionsi/api/schemas.py.
+const MAX_SIM_TASKS = 20_000;
 
 export function Simulate() {
   const plugins = useApi<Plugins>("/plugins");
@@ -65,6 +69,10 @@ export function Simulate() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   async function run() {
+    if (!Number.isInteger(form.tasks) || form.tasks < 1 || form.tasks > MAX_SIM_TASKS) {
+      setError(`Tasks must be a whole number from 1 to ${MAX_SIM_TASKS.toLocaleString()}.`);
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
@@ -90,7 +98,7 @@ export function Simulate() {
               {RUN_SIZES.map((n) => <option key={n} value={n}>{n}</option>)}
             </select>
           </Field>
-          <Field label="Tasks"><input className={inputCls} type="number" min={1} max={20000} value={form.tasks} onChange={(e) => setForm({ ...form, tasks: Number(e.target.value) })} /></Field>
+          <Field label="Tasks"><input className={inputCls} type="number" min={1} max={MAX_SIM_TASKS} value={form.tasks} onChange={(e) => setForm({ ...form, tasks: Number(e.target.value) })} /></Field>
           <Field label="Seed"><input className={inputCls} type="number" value={form.seed} onChange={(e) => setForm({ ...form, seed: Number(e.target.value) })} /></Field>
           <Field label="Mechanism">{select("mechanism", plugins.data?.mechanisms.filter((n) => !["forward", "bundle_reverse", "capacity"].includes(n)))}</Field>
           <Field label="Policy">{select("policy", plugins.data?.policies)}</Field>

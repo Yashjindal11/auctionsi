@@ -39,7 +39,12 @@ export function App() {
             {NAV.map(([to, label]) => {
               const active = to === "/" ? path === "/" : path.startsWith(to);
               return (
-                <a key={to} href={`#${to}`} className={`rounded px-2 py-1 ${active ? "bg-accent-soft font-medium text-accent" : "text-stone-600 hover:text-stone-900"}`}>
+                <a
+                  key={to}
+                  href={`#${to}`}
+                  aria-current={active ? "page" : undefined}
+                  className={`rounded px-2 py-1 ${active ? "bg-accent-soft font-medium text-accent" : "text-stone-600 hover:text-stone-900"}`}
+                >
                   {label}
                 </a>
               );
@@ -48,6 +53,8 @@ export function App() {
           <input
             className="ml-auto w-40 rounded border border-stone-300 px-2 py-1 text-xs"
             type="password"
+            aria-label="API key"
+            autoComplete="off"
             placeholder="API key (if set)"
             value={key}
             onChange={(e) => { setKey(e.target.value); setApiKey(e.target.value); }}
