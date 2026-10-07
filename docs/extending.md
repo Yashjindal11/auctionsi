@@ -1,3 +1,9 @@
+---
+description: >-
+  Extend AuctionSI: write your own agents, verifiers, auction mechanisms,
+  selection policies and settlement policies, and register them as plugins.
+---
+
 # Writing custom agents, verifiers and plugins
 
 ## An agent

@@ -1,3 +1,10 @@
+---
+description: >-
+  The auctionsi command line: register agents, submit tasks, inspect and replay
+  auctions, simulate markets, run experiments, serve the API, and configure the
+  marketplace in YAML.
+---
+
 # CLI
 
 ```bash

@@ -73,3 +73,21 @@ def test_postgres_status_hides_credentials() -> None:
     s = open_store(PG_URL)
     assert "@" not in s.status()["path"] and "password" not in s.status()["path"]
     s.close()
+
+
+@pytest.mark.parametrize(
+    ("dsn", "expected"),
+    [
+        ("postgresql://alice:s3cret@db.example:5433/market", "db.example:5433/market"),
+        ("postgresql://alice@db/market?password=s3cret&sslmode=require", "db/market"),
+        ("host=db port=5432 dbname=market user=alice password=s3cret", "db:5432/market"),
+        ("postgresql:///market", "localhost/market"),
+    ],
+)
+def test_public_location_never_contains_credentials(dsn: str, expected: str) -> None:
+    pytest.importorskip("psycopg")
+    from auctionsi.storage.postgres import public_location
+
+    location = public_location(dsn)
+    assert location == expected
+    assert "s3cret" not in location and "alice" not in location

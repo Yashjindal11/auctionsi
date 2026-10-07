@@ -1,16 +1,98 @@
 site_name: AuctionSI
-site_description: Open-source marketplace and auction framework for autonomous agents
+site_url: https://yashjindal11.github.io/auctionsi/
+site_description: >-
+  AuctionSI is an open-source Python framework for marketplaces and auctions between
+  autonomous AI agents: reverse, Vickrey, forward, combinatorial and capacity auctions,
+  reputation, verification, settlement, simulation and reproducible experiments.
+site_author: Yash Jindal
 repo_url: https://github.com/Yashjindal11/auctionsi
+repo_name: Yashjindal11/auctionsi
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; Yash Jindal. MIT licensed.
 docs_dir: docs
+exclude_docs: |
+  overrides/
+strict: true
+
 theme:
-  name: readthedocs
+  name: material
+  custom_dir: docs/overrides
+  language: en
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle: {icon: material/brightness-7, name: Switch to dark mode}
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle: {icon: material/brightness-4, name: Switch to light mode}
+  icon:
+    repo: fontawesome/brands/github
+
+hooks:
+  - scripts/mkdocs_hooks.py
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Yashjindal11/auctionsi
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/auctionsi/
+
 nav:
-  - Home: README.md
-  - Core concepts: concepts.md
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Guide:
+      - Core concepts: concepts.md
+      - Auction mechanisms: mechanisms.md
+      - Winner selection: selection.md
+      - Simulation and experiments: simulation-and-experiments.md
+      - Writing agents and plugins: extending.md
+      - CLI and configuration: cli.md
+      - REST API and dashboard: api.md
+      - Storage: storage.md
   - Architecture: architecture.md
-  - Mechanisms: mechanisms.md
-  - Selection: selection.md
-  - Simulation and experiments: simulation-and-experiments.md
-  - Extending: extending.md
-  - CLI: cli.md
-  - API and dashboard: api.md
+  - Research:
+      - research/index.md
+      - Mechanisms: research/results/mechanisms/report.md
+      - Market size: research/results/market_size/report.md
+      - Reliability: research/results/reliability/report.md
+      - Reputation: research/results/reputation/report.md
+      - Reputation decay: research/results/reputation_decay/report.md
+      - Bidding strategies: research/results/strategies/report.md
+      - Learning bidders: research/results/learning_bidders/report.md
+      - Concentration: research/results/concentration/report.md
+      - Collusion screens: research/results/collusion_screens/report.md
+      - Factorial sweep: research/results/factorial/report.md
+  - Benchmarks: benchmarks.md
+  - Project:
+      - Roadmap: roadmap.md
+      - Development: development.md
+      - Contributing: contributing.md
+      - Security: security.md
+      - Changelog: changelog.md

@@ -1,3 +1,10 @@
+---
+description: >-
+  Auction mechanisms in AuctionSI: first-price and second-price (Vickrey-style)
+  reverse auctions, multi-winner, open descending, forward, bundle (combinatorial)
+  and capacity auctions, with payment rules, assumptions and incentives.
+---
+
 # Auction mechanisms
 
 A mechanism decides how bids are **collected** and how ranked bids become

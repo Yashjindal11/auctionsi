@@ -137,7 +137,9 @@ Measured on an Apple-silicon laptop, Python 3.12 (details and method in
 
 ## Documentation
 
-[docs/](docs/README.md): concepts, architecture, mechanisms (with assumptions and
+[Documentation site](https://yashjindal11.github.io/auctionsi/) (source in
+[docs/](docs/index.md)): getting started, concepts, architecture, mechanisms (with
+assumptions and
 limitations), selection, simulation and metrics, extending, CLI, API, and
 [security](SECURITY.md).
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Winner selection policies in AuctionSI: lowest price, quality, latency, weighted
+  score, risk-adjusted and reputation-adjusted cost, exploration bonus, with
+  explainable score contributions.
+---
+
 # Winner selection
 
 A `SelectionPolicy` scores every valid bid (higher is better). Each score is the

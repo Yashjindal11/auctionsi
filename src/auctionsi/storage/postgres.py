@@ -97,6 +97,17 @@ MIGRATIONS: list[tuple[int, str]] = [
 ]
 
 
+def public_location(dsn: str) -> str:
+    """``host:port/dbname`` for status output: never the user, password or options,
+    whether the DSN is a URL or ``key=value`` pairs."""
+    from psycopg.conninfo import conninfo_to_dict
+
+    parts = conninfo_to_dict(dsn)
+    host = str(parts.get("host") or "localhost")
+    port = f":{parts['port']}" if parts.get("port") else ""
+    return f"{host}{port}/{parts.get('dbname') or ''}"
+
+
 class PostgresStore(SQLStore):
     migrations = MIGRATIONS
 
@@ -109,7 +120,7 @@ class PostgresStore(SQLStore):
                 'PostgreSQL support needs psycopg: pip install "auctionsi[postgres]"'
             ) from exc
         super().__init__()
-        self.path = dsn.split("@")[-1]  # never expose credentials in status()
+        self.path = public_location(dsn)
         self.run_id = run_id
         self.conn = psycopg.connect(dsn, row_factory=dict_row)
         self.migrate()

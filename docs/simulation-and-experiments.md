@@ -1,3 +1,10 @@
+---
+description: >-
+  Simulate agent markets and run reproducible experiments in AuctionSI: synthetic
+  agents and tasks, bidding strategies, learning bidders, collusion and Sybil
+  attacks, market metrics, factorial sweeps and statistical reports.
+---
+
 # Simulation, experiments and metrics
 
 ## Simulating a market

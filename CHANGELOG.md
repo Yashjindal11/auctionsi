@@ -10,6 +10,17 @@
 - Fix: a WebSocket client that fell 10,000 events behind made every broadcast
   raise `QueueFull`; it now loses its oldest events instead.
 - Fix: a non-ASCII `X-API-Key` header caused a 500 instead of a 401.
+- Fix: PostgreSQL `status()` could include the password for `key=value` DSNs or
+  passwords given as URL parameters; it now reports `host:port/dbname` only.
+- `MarketConfig.restore(store)` rebuilds a marketplace (agents and reputation)
+  from a store; the CLI and API share it. `open_store` accept
+- Documentation site on Material for MkDocs with search, per-page descriptions,
+  canonical URLs, sitemap, Open Graph and JSON-LD metadata; the changelog, security
+  policy, contributing guide, benchmarks and every research report are published
+  with working links. New pages: getting started, storage, development, roadmap.
+  CI builds the site in strict mode.
+- Tests for Markdown reports, bid validation, replay edge cases and CLI paths;
+  coverage gate raised to 93%.s `check_same_thread`.
 - Dashboard: live view reconnects with backoff, skips malformed frames, reports a
   rejected key; clickable table rows work from the keyboard; labelled inputs;
   invalid JSON and out-of-range task counts are reported before calling the API.

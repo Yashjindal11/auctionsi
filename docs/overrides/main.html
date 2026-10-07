@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {% if page and page.meta and page.meta.title %}
+    {% set title = page.meta.title ~ " - " ~ config.site_name %}
+  {% elif page and page.title and not page.is_homepage %}
+    {% set title = page.title ~ " - " ~ config.site_name %}
+  {% else %}
+    {% set title = config.site_name %}
+  {% endif %}
+  {% set description = (page.meta.description if page and page.meta and page.meta.description else config.site_description) %}
+  <meta property="og:type" content="{{ 'website' if page and page.is_homepage else 'article' }}">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  {% if page and page.canonical_url %}<meta property="og:url" content="{{ page.canonical_url }}">{% endif %}
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ title }}">
+  <meta name="twitter:description" content="{{ description }}">
+  {% if page and page.is_homepage %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "AuctionSI",
+    "description": {{ config.site_description | tojson }},
+    "url": {{ config.site_url | tojson }},
+    "codeRepository": "https://github.com/Yashjindal11/auctionsi",
+    "programmingLanguage": "Python",
+    "license": "https://opensource.org/licenses/MIT",
+    "author": {"@type": "Person", "name": "Yash Jindal", "url": "https://jindalyash.com/"},
+    "keywords": "auction framework, multi-agent systems, AI agent marketplace, mechanism design, reverse auction, Vickrey auction, combinatorial auction, reputation system, agent simulation"
+  }
+  </script>
+  {% endif %}
+{% endblock %}

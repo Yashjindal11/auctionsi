@@ -1,3 +1,10 @@
+---
+description: >-
+  AuctionSI architecture: package responsibilities, untrusted agents, separation of
+  selection policy and auction mechanism, pure decisions, events and replay,
+  concurrency and storage.
+---
+
 # Architecture
 
 AuctionSI is the infrastructure; everything that decides an outcome is a plugin.

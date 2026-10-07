@@ -1,3 +1,9 @@
+---
+description: >-
+  The AuctionSI REST and WebSocket API and web dashboard: endpoints, API-key
+  authentication, staged auctions for external bidders, live events and signed bids.
+---
+
 # REST/WebSocket API and dashboard
 
 ```bash

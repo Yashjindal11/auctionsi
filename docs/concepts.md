@@ -1,3 +1,10 @@
+---
+description: >-
+  Core concepts of AuctionSI: tasks, agents, capabilities, bids, the auction and
+  contract lifecycles, discovery, bid validation, verification, settlement,
+  reputation, recovery, events and replay.
+---
+
 # Core concepts
 
 | concept | object | notes |
