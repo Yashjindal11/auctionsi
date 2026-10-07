@@ -8,10 +8,12 @@ from auctionsi.storage.sqlite import SQLiteStore
 __all__ = ["InMemoryStore", "MarketStore", "SQLStore", "SQLiteStore", "open_store"]
 
 
-def open_store(url: str, *, run_id: str = "default") -> SQLStore:
-    """``postgresql://...`` opens a PostgresStore; anything else is a SQLite path."""
+def open_store(url: str, *, run_id: str = "default", check_same_thread: bool = True) -> SQLStore:
+    """``postgresql://...`` opens a PostgresStore; anything else is a SQLite path.
+    ``check_same_thread=False`` lets a SQLite store be shared across threads that
+    serialise access themselves (the API does, under its lock)."""
     if url.startswith(("postgresql://", "postgres://")):
         from auctionsi.storage.postgres import PostgresStore
 
         return PostgresStore(url, run_id=run_id)
-    return SQLiteStore(url, run_id=run_id)
+    return SQLiteStore(url, run_id=run_id, check_same_thread=check_same_thread)

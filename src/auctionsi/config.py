@@ -16,6 +16,7 @@ from auctionsi.plugins import PluginRegistry, default_registry
 from auctionsi.reputation.base import NoReputation, ReputationSystem
 from auctionsi.security.loading import load_config_file
 from auctionsi.storage.base import MarketStore
+from auctionsi.storage.sql import SQLStore
 
 Spec = str | dict[str, Any]
 
@@ -153,6 +154,21 @@ class MarketConfig(_Strict):
             disclose_clearing_price=self.market.disclose_clearing_price,
             bidding_window=self.auction.bidding_window,
         )
+
+    def restore(self, store: SQLStore, *, ids: IdGenerator | None = None) -> Marketplace:
+        """A marketplace with every stored agent that has a spec, and reputation rebuilt
+        from stored observations. The store is attached after loading, so re-registering
+        agents is not logged as new events."""
+        from auctionsi.adapters.specs import build_agent
+
+        market = self.build(ids=ids)
+        for observation in store.observations():
+            market.reputation.record(observation)
+        for profile in store.list_agents():
+            if profile.get("spec"):
+                market.register(build_agent(profile["spec"]))
+        market.attach_store(store)
+        return market
 
 
 DEFAULT_CONFIG_YAML = """\

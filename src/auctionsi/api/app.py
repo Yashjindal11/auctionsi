@@ -36,7 +36,6 @@ from auctionsi.market.trace import format_trace
 from auctionsi.observability import MarketCounters
 from auctionsi.reputation.base import MultiDimensionalReputation
 from auctionsi.storage import SQLStore, open_store
-from auctionsi.storage.sqlite import SQLiteStore
 
 STATIC_DIR = Path(__file__).parent / "static"
 MAX_BODY_BYTES = 1024 * 1024
@@ -78,19 +77,10 @@ class MarketService:
     def __init__(self, db_path: str | Path, config: MarketConfig) -> None:
         self.lock = threading.RLock()
         self.config = config
-        run_id = uuid.uuid4().hex[:8]
-        self.store: SQLStore = (
-            open_store(str(db_path), run_id=run_id)
-            if str(db_path).startswith(("postgresql://", "postgres://"))
-            else SQLiteStore(db_path, run_id=run_id, check_same_thread=False)
+        self.store: SQLStore = open_store(
+            str(db_path), run_id=uuid.uuid4().hex[:8], check_same_thread=False
         )
-        self.market = config.build(ids=IdGenerator(uuid.uuid4().hex[:6]))
-        for observation in self.store.observations():
-            self.market.reputation.record(observation)
-        for profile in self.store.list_agents():
-            if profile.get("spec"):
-                self.market.register(build_agent(profile["spec"]))
-        self.market.attach_store(self.store)
+        self.market = config.restore(self.store, ids=IdGenerator(uuid.uuid4().hex[:6]))
         self.counters = MarketCounters()
         self.counters.attach(self.market.bus)
 

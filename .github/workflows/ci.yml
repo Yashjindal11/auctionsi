@@ -77,7 +77,7 @@ jobs:
           cache: pip
       - run: pip install -e ".[dev]"
       - name: Full suite with PostgreSQL and a coverage gate
-        run: pytest --cov --cov-report=term --cov-fail-under=88
+        run: pytest --cov --cov-report=term --cov-fail-under=93
 
   web:
     runs-on: ubuntu-latest

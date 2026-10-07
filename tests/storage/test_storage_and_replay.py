@@ -134,6 +134,57 @@ def test_replay_edge_cases(market_factory: MarketFactory) -> None:
     assert not replay_auction(s2.events(r.auction_id)).replayable
 
 
+def _edit(events: list[Event], kind: EventType, change: dict[str, object]) -> list[Event]:
+    return [replace(e, data={**e.data, **change}) if e.type == kind else e for e in events]
+
+
+def test_replay_reports_open_and_unrebuildable_auctions(market_factory: MarketFactory) -> None:
+    store = InMemoryStore()
+    market = populated(market_factory, store)
+    opened = market.open_auction(task("open"))  # type: ignore[attr-defined]
+    report = replay_auction(store.events(opened.auction_id))
+    assert not report.replayable
+    assert report.notes == ["auction never closed"]
+    assert "Decision not replayable: auction never closed" in report.to_text()
+
+    with pytest.raises(NotFoundError):
+        replay_auction(
+            [e for e in store.events(opened.auction_id) if e.type != EventType.AUCTION_CREATED]
+        )
+
+    done = market.submit_task(task("done", budget=0.10))  # type: ignore[attr-defined]
+    events = store.events(done.auction_id)
+    unknown = _edit(events, EventType.WINNER_SELECTED, {"mechanism": {"name": "no_such_mechanism"}})
+    report = replay_auction(unknown)
+    assert not report.replayable
+    assert report.notes[0].startswith("cannot rebuild plugins")
+
+
+def test_replay_detects_award_and_payment_changes(market_factory: MarketFactory) -> None:
+    store = InMemoryStore()
+    market = populated(market_factory, store)
+    result = market.submit_task(task(budget=0.10))  # type: ignore[attr-defined]
+    events = store.events(result.auction_id)
+    selected = next(e for e in events if e.type == EventType.WINNER_SELECTED)
+    outcome = selected.data["outcome"]
+
+    paid_more = {
+        **outcome,
+        "awards": [{**a, "payment": a["payment"] + 1} for a in outcome["awards"]],
+    }
+    report = replay_auction(_edit(events, EventType.WINNER_SELECTED, {"outcome": paid_more}))
+    assert any(d.startswith("payment to") for d in report.differences)
+
+    extra = {**outcome, "awards": [*outcome["awards"], outcome["awards"][0]]}
+    report = replay_auction(_edit(events, EventType.WINNER_SELECTED, {"outcome": extra}))
+    assert "different number of awards" in report.differences
+
+    without_selection = [e for e in events if e.type != EventType.WINNER_SELECTED]
+    report = replay_auction(without_selection)
+    assert report.differences == ["valid bids existed but no WinnerSelected event"]
+    assert not report.matches
+
+
 def test_simulation_can_persist(tmp_path: Path) -> None:
     store = SQLiteStore(tmp_path / "sim.db")
     from auctionsi.market import Marketplace

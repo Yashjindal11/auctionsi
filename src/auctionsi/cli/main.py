@@ -98,17 +98,7 @@ class Context:
         return self._store
 
     def market(self) -> Marketplace:
-        """A marketplace with every registered agent and reputation rebuilt from history.
-        The store is attached after agents are loaded so re-loading them is not logged."""
-        market = self.config.build(ids=IdGenerator(uuid.uuid4().hex[:6]))
-        for observation in self.store.observations():
-            market.reputation.record(observation)
-        for profile in self.store.list_agents():
-            spec = profile.get("spec")
-            if spec:
-                market.register(build_agent(spec))
-        market.attach_store(self.store)
-        return market
+        return self.config.restore(self.store, ids=IdGenerator(uuid.uuid4().hex[:6]))
 
     def close(self) -> None:
         if self._store is not None:
